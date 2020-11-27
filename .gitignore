@@ -35,3 +35,4 @@ _ignore*
 
 # Local History for VS Code
 .history/
+/gradle/
