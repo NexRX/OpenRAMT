@@ -35,6 +35,7 @@ package application;
 import Controller.LauncherController;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -48,6 +49,7 @@ public class MainStart extends Application {
         stage.setMinWidth(800);
         stage.setMinHeight(450);
         stage.show();
+        stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
     }
     
     public static void main(String[] args) {

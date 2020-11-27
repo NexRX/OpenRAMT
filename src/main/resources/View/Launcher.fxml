@@ -34,6 +34,7 @@
  */
 -->
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ButtonBar?>
@@ -76,7 +77,8 @@
             <children> 
                 <TextField fx:id="textField" layoutX="12.0" layoutY="384.0" prefHeight="26.0" prefWidth="167.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="12.0" />
                 <Button fx:id="btnClckMe" layoutX="612.0" layoutY="384.0" onAction="#doSomething" text="Click Me" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-               <Label layoutX="12.0" layoutY="14.0" text="Pane 1 test." AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="14.0" />
+               <Label layoutX="12.0" layoutY="14.0" text="Main Pane!" AnchorPane.leftAnchor="12.0" AnchorPane.topAnchor="14.0" />
+               <JFXButton layoutX="619.0" layoutY="22.0" ripplerFill="#d31616" text="JFXB" />
             </children>
          </AnchorPane>
          <AnchorPane prefHeight="200.0" prefWidth="200.0" visible="false">
