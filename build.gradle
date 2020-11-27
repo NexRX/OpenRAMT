@@ -1,17 +1,21 @@
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'org.beryx.runtime' version '1.9.1'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.runtime' version '1.11.4'
 }
-
 
 repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
+}
+
 javafx {
     modules = ['javafx.controls', 'javafx.fxml']
-    version = '11.0.1'
+    version = '15.0.1'
 }
 
 application {
@@ -21,12 +25,23 @@ application {
 
 runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher {
+        noConsole = true
+    }
     jpackage {
-        // jpackageHome = 'C:/Program Files/AdoptOpenJDK/jdk-11.0.7.10-hotspot'
-        if(org.gradle.internal.os.OperatingSystem.current().windows) {
-            installerType = 'msi'
-            // imageOptions = ['--win-console']
-            installerOptions = ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+        def currentOs = org.gradle.internal.os.OperatingSystem.current()
+        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
+        imageOptions += ['--icon', "src/main/resources/openramt.$imgType"]
+        installerOptions += ['--resource-dir', "src/main/resources"]
+        installerOptions += ['--vendor', 'NexRX']
+        if(currentOs.windows) {
+            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+        }
+        else if (currentOs.linux) {
+            installerOptions += ['--linux-package-name', applicationName,'--linux-shortcut']
+        }
+        else if (currentOs.macOsX) {
+            installerOptions += ['--mac-package-name', applicationName]
         }
     }
 }
