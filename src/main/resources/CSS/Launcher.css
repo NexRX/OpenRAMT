@@ -1,0 +1,39 @@
+#root {
+    -fx-font-size: 14px;
+    -fx-font-family: sans-serif;
+    -fx-background-color: #7A7373;
+}
+
+#sidebox {
+	-fx-background-color: #544F4F;
+}
+
+#topbar {
+    -fx-background-color: #544F4F;
+}
+
+.topbar-buttons {
+	-fx-background-radius: 0;
+    -fx-background-color: #544F4F;
+}
+
+.topbar-buttons:hover {
+	-fx-background-radius: 0;
+	-fx-background-color: #776F6F;
+}
+
+#btnclose{
+	-fx-background-radius: 0;
+    -fx-background-color: #544F4F;
+}
+
+#btnclose:hover {
+	-fx-background-color: #FF6044;
+}
+.sidebar-buttons {
+	-fx-background-radius: 5em;
+    -fx-min-width: 3px;
+    -fx-min-height: 3px;
+    -fx-max-width: 3px;
+    -fx-max-height: 3px;
+}
