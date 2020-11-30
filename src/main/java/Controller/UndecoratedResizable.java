@@ -10,9 +10,17 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-//created by Alexander Berg from StackOverflow (Thanks to this guy, i'm too lazy to create something already done pretty well. Few modifications to suit my application (oc name: ResizeHelper))
+/**
+ * This class provides the static methods for hooking up the events for the ResizeListener class.
+ * Use this to completely setup the resizing events.
+ *
+ * @author Nex
+ */
 public class UndecoratedResizable {
 
+    /**
+     * Automatically set min and max which then calls the manual version with the values needed.
+     */
 	public static void addResizeListener(Stage stage, LauncherController lc) {
 		addResizeListener(stage, lc, 0, 0, Double.MAX_VALUE, Double.MAX_VALUE);
 	}
@@ -30,32 +38,46 @@ public class UndecoratedResizable {
 		resizeListener.setMaxWidth(maxWidth);
 		resizeListener.setMaxHeight(maxHeight);
 
+		// Get all the children from our controller and resizes them all at once through the loop (i.e. topBar, stackPane).
 		ObservableList<Node> children = lc.getChildrenUnmodifiable();
+		System.out.println(children.toString());
 		for (Node child : children) {
-			addListenerDeeply(child, resizeListener);
+			addListenerDeeply(child, resizeListener, false);
 		}
 	}
 
-	private static void addListenerDeeply(Node node, EventHandler<MouseEvent> listener) {
+    /**
+     * Intermediate function that adds the EventHandler from the given listener to the for every mouse event needed.
+     * This can be repeated recursively to the children of the given node when stated.
+     *
+     * @param node      The child/node to add the event handler for mouse events onto.
+     * @param listener  The event handler for the mouse events.
+     * @param recursive True to recursively add the event handlers to all sub-children or False just for the given node.
+     */
+	private static void addListenerDeeply(Node node, EventHandler<MouseEvent> listener, Boolean recursive) {
 		node.addEventHandler(MouseEvent.MOUSE_MOVED, listener);
 		node.addEventHandler(MouseEvent.MOUSE_PRESSED, listener);
 		node.addEventHandler(MouseEvent.MOUSE_DRAGGED, listener);
 		node.addEventHandler(MouseEvent.MOUSE_EXITED, listener);
 		node.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, listener);
-		if (node instanceof Parent) {
+		if (node instanceof Parent && recursive) {
 			Parent parent = (Parent) node;
 			ObservableList<Node> children = parent.getChildrenUnmodifiable();
+            System.out.println(children.toString());
 			for (Node child : children) {
-				addListenerDeeply(child, listener);
+				addListenerDeeply(child, listener, true);
 			}
 		}
 	}
 
+    /**
+     * When constructed will provide the functionality of actually handling the resize events needed for an undecorated
+     * window in the handle function.
+     */
 	static class ResizeListener implements EventHandler<MouseEvent> {
-		private Stage stage;
+		private final Stage stage;
 		private Cursor cursorEvent = Cursor.DEFAULT;
-		private int border = 4;
-		private double startX = 0;
+        private double startX = 0;
 		private double startY = 0;
 
 		// Max and min sizes for controlled stage
@@ -94,10 +116,11 @@ public class UndecoratedResizable {
                     sceneWidth = scene.getWidth(),
                     sceneHeight = scene.getHeight();
 
+            int border = 4;
             if (MouseEvent.MOUSE_MOVED.equals(mouseEventType)) {
-                if (mouseEventX < border+10 && mouseEventY > sceneHeight - border-10) {
+                if (mouseEventX < border +10 && mouseEventY > sceneHeight - border -10) {
                     cursorEvent = Cursor.SW_RESIZE;
-                } else if (mouseEventX > sceneWidth - border-10 && mouseEventY > sceneHeight - border-10) {
+                } else if (mouseEventX > sceneWidth - border -10 && mouseEventY > sceneHeight - border -10) {
                     cursorEvent = Cursor.SE_RESIZE;
                 } else if (mouseEventX < border && mouseEventY > 26) {
                     cursorEvent = Cursor.W_RESIZE;
