@@ -45,7 +45,7 @@ public class MainStart extends Application {
     public void start(Stage stage) throws Exception {
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setScene(new Scene(new LauncherController(stage)));
-        stage.setTitle("MCMS Launcher");
+        stage.setTitle("OpenRAMT");
         stage.setMinWidth(800);
         stage.setMinHeight(450);
         stage.show();
