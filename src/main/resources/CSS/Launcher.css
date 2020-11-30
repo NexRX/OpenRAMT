@@ -31,9 +31,29 @@
 	-fx-background-color: #FF6044;
 }
 .sidebar-buttons {
-	-fx-background-radius: 5em;
-    -fx-min-width: 3px;
-    -fx-min-height: 3px;
-    -fx-max-width: 3px;
-    -fx-max-height: 3px;
+    -fx-min-width: 70px;
+    -fx-min-height: 70px;
+    -fx-max-width: 70px;
+    -fx-max-height: 70px;
+
+    -fx-shape:"M 25, 50 a 25,25 0 1,1 50,0 a 25,25 0 1,1 -50,0";
+    /* Due to JavaFX CSS limitations the image must be the same size to fit. Cannot resize with CSS and Shape.*/
+    -fx-background-image: url("../IconPacks/pack1/SlightlyGalactic-default-70px.png");
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+
+    -fx-text-fill: white;
+    -fx-font-family: System;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+    -fx-content-display: center;
+    -fx-alignment: center;
+
+
+    -fx-border-width: 2px;
+    -fx-border-color: white;
+
+    -jfx-button-type: RAISED;
 }
