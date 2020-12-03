@@ -4,32 +4,37 @@
     -fx-background-color: #7A7373;
 }
 
-#sidebox {
-	-fx-background-color: #544F4F;
+.StackDisplay {
+
 }
 
-#topbar {
+.sideBar {
+    -fx-background-color: #544F4F;
+ }
+
+.topBar {
     -fx-background-color: #544F4F;
 }
 
-.topbar-buttons {
+.topBar-Buttons {
 	-fx-background-radius: 0;
     -fx-background-color: #544F4F;
 }
 
-.topbar-buttons:hover {
+.topBar-Buttons:hover {
 	-fx-background-radius: 0;
 	-fx-background-color: #776F6F;
 }
 
-#btnclose{
+#btnClose {
 	-fx-background-radius: 0;
     -fx-background-color: #544F4F;
 }
 
-#btnclose:hover {
+#btnClose:hover {
 	-fx-background-color: #FF6044;
 }
+
 .sidebar-buttons {
     -fx-min-width: 70px;
     -fx-min-height: 70px;
