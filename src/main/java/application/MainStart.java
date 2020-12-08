@@ -39,6 +39,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * The Main starting class that runs the initialisation of the application.
+ */
 public class MainStart extends Application {
     
     @Override
@@ -51,7 +54,11 @@ public class MainStart extends Application {
         stage.show();
         stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
     }
-    
+
+    /**
+     * After launcher, the most prompt function called. Finally does the launching.
+     * @param args Command-line arguments.
+     */
     public static void main(String[] args) {
         launch(args);
     }

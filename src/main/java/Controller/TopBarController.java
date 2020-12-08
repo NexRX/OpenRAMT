@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+/**
+ * The Top bar controller. Handles all tasks relating to the Top bar.
+ */
 public class TopBarController extends ButtonBar {
     private final Stage stage;
 
@@ -22,6 +25,12 @@ public class TopBarController extends ButtonBar {
     private double prevX;
     private double prevY;
 
+    /**
+     * Constructs the ButtonBar and loads its FXML file. Does a lot of the undecorated
+     * window processing.
+     * @param stage The stage in which this pane will be responsible for handling most
+     *              of the undecorated window processing.
+     */
     public TopBarController(Stage stage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/TopBar.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -39,6 +48,9 @@ public class TopBarController extends ButtonBar {
         applyEventHandlers();
     }
 
+    /**
+     * Applies this panes event handlers included those related to the stage.
+     */
     public void applyEventHandlers() {
         this.setOnMousePressed(event -> {
             xOffset = event.getSceneX();

@@ -7,16 +7,25 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 
+/**
+ * The model of the userdata that will be held in memory to be used throughout the program.
+ * It is Serializable and once done, should be stored in a database for long term storage.
+ */
 public class UserData implements Serializable {
+	private static final long serialVersionUID = 5359182082764197492L;
 
 	/**
-	 * 
+	 * The Mod's path.
 	 */
-	private static final long serialVersionUID = 5359182082764197492L;
-	//private boolean initStatus; 
 	private Path modPath;
+	/**
+	 * Servers ID.
+	 */
 	private String serverID;
 
+	/**
+	 * Constructs the user data by importing it via the hardcoded path "/application.data/userdata.bin".
+	 */
 	public UserData() {
 
 		// Importing data from serialised file of this class.
@@ -47,23 +56,36 @@ public class UserData implements Serializable {
 	}
 
 	/// getters and setters
-	// Mod Path 
-	private Path getModPath() {
+
+	/**
+	 * Get Mod's Path.
+	 * @return Mod Path.
+	 */
+	public Path getModPath() {
 		return modPath;
 	}
 
+	/**
+	 * Sets the Mod Path
+	 * @param path Mod path.
+	 */
 	public void setModPath(Path path) {
 		this.modPath = path;
 	}
 
-	// Server ID
-	private String getServerID() {
+	/**
+	 * Get Server's ID.
+	 * @return Server ID.
+	 */
+	public String getServerID() {
 		return serverID;
 	}
 
+	/**
+	 * Sets the Server ID
+	 * @param host Servers ID.
+	 */
 	public void setServerID(String host) {
 		this.serverID = host;
 	}
-	///
-
 }

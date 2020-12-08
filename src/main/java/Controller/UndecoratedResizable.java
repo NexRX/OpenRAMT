@@ -19,12 +19,26 @@ import javafx.stage.Stage;
 public class UndecoratedResizable {
 
     /**
-     * Automatically set min and max which then calls the manual version with the values needed.
+     * Automatically set min and max which then calls the manual version with the values needed. This function handles
+     * aadding the listeners for resizing events for the undecorated window.
+     * @param stage The stage which holds the application.
+     * @param lc The LauncherController needed to automatically set parameters for the manual function and add the
+     *           listeners.
      */
 	public static void addResizeListener(Stage stage, LauncherController lc) {
 		addResizeListener(stage, lc, 0, 0, Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 
+    /**
+     * The manual function in which you can assign any of the parameters manually. This function handles aadding the
+     * listeners for resizing events for the undecorated window.
+     * @param stage The stage which holds the application.
+     * @param lc The LauncherController to apply the ResizeListeners too.
+     * @param minWidth Minimum width in which the program can be resized to.
+     * @param minHeight Minimum height in which the program can be resized to.
+     * @param maxWidth Maximum width in which the program can be resized to.
+     * @param maxHeight Maximum height in which the program can be resized to.
+     */
 	public static void addResizeListener(Stage stage, LauncherController lc, double minWidth, double minHeight, double maxWidth, double maxHeight) {
 		ResizeListener resizeListener = new ResizeListener(stage);
 		lc.addEventHandler(MouseEvent.MOUSE_MOVED, resizeListener);
