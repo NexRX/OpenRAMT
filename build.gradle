@@ -23,7 +23,7 @@ javafx {
 }
 
 application {
-    mainClassName = "application.Launcher"
+    mainClass.set("application.Launcher")
     applicationName = 'OpenRAMT'
 }
 
