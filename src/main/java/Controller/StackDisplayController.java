@@ -2,7 +2,6 @@ package Controller;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.StackPane;
-
 import java.io.IOException;
 
 public class StackDisplayController extends StackPane {

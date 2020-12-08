@@ -2,7 +2,6 @@ package Controller;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
-
 import java.io.IOException;
 
 public class SideBarController extends VBox {
