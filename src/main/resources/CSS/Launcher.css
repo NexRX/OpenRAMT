@@ -21,7 +21,7 @@
 .login-field {
     -fx-background-color: #696969;
     -fx-prompt-text-fill: white;
-
+    -fx-text-fill: white;
 }
 
 .StackDisplay {

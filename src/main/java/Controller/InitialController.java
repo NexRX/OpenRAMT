@@ -1,10 +1,12 @@
 package Controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,6 +21,7 @@ import java.util.concurrent.Semaphore;
 public class InitialController extends AnchorPane {
     Stage stage;
     @FXML JFXProgressBar jfxProgress;
+    @FXML JFXButton btnClose;
 
     public InitialController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Initial.fxml"));
@@ -41,5 +44,10 @@ public class InitialController extends AnchorPane {
         );
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+
+        btnClose.setOnMouseClicked(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 }

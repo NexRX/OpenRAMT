@@ -13,8 +13,9 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_14
-    targetCompatibility = JavaVersion.VERSION_14
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(14))
+    }
 }
 
 javafx {
@@ -29,7 +30,8 @@ application {
 
 run{
     jvmArgs = [
-            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",     // Add this line
+            "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+            "--illegal-access=permit"
     ]
 }
 
@@ -37,11 +39,16 @@ runtime {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         noConsole = true
+        jvmArgs = [
+                "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+                "--illegal-access=permit"
+        ]
     }
     jpackage {
         def currentOs = org.gradle.internal.os.OperatingSystem.current()
         def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
         imageOptions += ['--icon', "src/main/resources/openramt.$imgType"]
+        appVersion = "0.0.1"
         installerOptions += ['--resource-dir', "src/main/resources"]
         installerOptions += ['--vendor', 'Nex']
         if(currentOs.windows) {
@@ -49,6 +56,7 @@ runtime {
         }
         else if (currentOs.linux) {
             installerOptions += ['--linux-package-name', applicationName,'--linux-shortcut']
+            installerType = 'msi'
         }
         else if (currentOs.macOsX) {
             installerOptions += ['--mac-package-name', applicationName]
