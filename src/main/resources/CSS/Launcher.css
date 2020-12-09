@@ -4,6 +4,26 @@
     -fx-background-color: #7A7373;
 }
 
+.default-background {
+    -fx-background-color: #544F4F;
+}
+
+.progress-bar > .track, .jfx-progress-bar > .bar {
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-color: #696969;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: #cb0303;
+}
+
+.login-field {
+    -fx-background-color: #696969;
+    -fx-prompt-text-fill: white;
+
+}
+
 .StackDisplay {
 
 }

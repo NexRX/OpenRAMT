@@ -32,27 +32,35 @@
 
 package application;
 
+import Controller.InitialController;
 import Controller.LauncherController;
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
+
+import java.util.concurrent.Semaphore;
 
 /**
  * The Main starting class that runs the initialisation of the application.
  */
 public class MainStart extends Application {
-    
     @Override
     public void start(Stage stage) throws Exception {
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setScene(new Scene(new LauncherController(stage)));
-        stage.setTitle("OpenRAMT");
-        stage.setMinWidth(800);
-        stage.setMinHeight(450);
-        stage.show();
+
+        InitialController ic = new InitialController();
+        stage.setScene(new Scene(ic));
         stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+        stage.setTitle("OpenRAMT");
+        stage.show();
+
+        //stage.setMinWidth(800);
+        //stage.setMinHeight(450);
+        //stage.setScene(new Scene(new LauncherController(stage)));
     }
 
     /**
