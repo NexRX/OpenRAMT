@@ -52,7 +52,7 @@ public class MainStart extends Application {
     public void start(Stage stage) throws Exception {
         stage.initStyle(StageStyle.UNDECORATED);
 
-        InitialController ic = new InitialController();
+        InitialController ic = new InitialController(stage);
         stage.setScene(new Scene(ic));
         stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
         stage.setTitle("OpenRAMT");

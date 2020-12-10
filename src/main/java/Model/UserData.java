@@ -23,10 +23,14 @@ public class UserData implements Serializable {
 	 */
 	private String serverID;
 
+	private String host;
+	private String username;
+	private String password;
+
 	/**
 	 * Constructs the user data by importing it via the hardcoded path "/application.data/userdata.bin".
 	 */
-	public UserData() {
+	public UserData(String host, String username, String password) {
 
 		// Importing data from serialised file of this class.
 		try
@@ -41,6 +45,9 @@ public class UserData implements Serializable {
 
 			this.modPath = userDataInput.getModPath();
 			this.serverID = userDataInput.getServerID();
+			this.host = host;
+			this.username = username;
+			this.password = password;
 		} 
 
 		catch(IOException ex) 
@@ -55,6 +62,12 @@ public class UserData implements Serializable {
 
 	}
 
+	public boolean connectable() {
+		if (this.host != null) {
+			return true;
+		}
+		return false;
+	}
 	/// getters and setters
 
 	/**
