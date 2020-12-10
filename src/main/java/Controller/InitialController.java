@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.UserData;
-import application.Launcher;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXProgressBar;
@@ -10,14 +9,13 @@ import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import java.io.IOException;
-import Controller.LauncherController;
 
 public class InitialController extends AnchorPane {
+    BackgroundThreader threads = new BackgroundThreader();
     Stage stage;
     @FXML JFXProgressBar jfxProgress;
     @FXML JFXButton btnClose;
@@ -41,11 +39,12 @@ public class InitialController extends AnchorPane {
             throw new RuntimeException(exception);
         }
         this.stage = stage;
+
         applyEventHandlers();
     }
 
-    private void progress(ReadOnlyDoubleProperty taskProgress) {
-        jfxProgress.progressProperty().bind(taskProgress);
+    private void progressProperty(ReadOnlyDoubleProperty taskProgress) {
+        jfxProgress.progressProperty();
     }
 
     private void applyEventHandlers() {
@@ -57,15 +56,13 @@ public class InitialController extends AnchorPane {
         btnLogin.setOnMouseClicked(event -> {
             jfxProgress.setProgress(0f);
 
-
-            initThread = starterThread;
-            initThread.setDaemon(false);
-            initThread.start();
+            int initIndex = threads.addThread(initRun);
+            threads.startThread(initIndex);
 
         });
     }
 
-    Thread starterThread = new Thread(new Runnable() { // http://tutorials.jenkov.com/javafx/concurrency.html
+    Runnable initRun = new Runnable() { // http://tutorials.jenkov.com/javafx/concurrency.html
         @Override
         public void run() {
             double progress = 0;
@@ -109,5 +106,5 @@ public class InitialController extends AnchorPane {
                 }
             });
         }
-    });
+    };
 }

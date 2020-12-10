@@ -34,20 +34,17 @@ package application;
 
 import Controller.InitialController;
 import Controller.LauncherController;
-import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Duration;
-
-import java.util.concurrent.Semaphore;
 
 /**
  * The Main starting class that runs the initialisation of the application.
  */
 public class MainStart extends Application {
+    Stage stage;
     @Override
     public void start(Stage stage) throws Exception {
         stage.initStyle(StageStyle.UNDECORATED);
@@ -61,6 +58,18 @@ public class MainStart extends Application {
         //stage.setMinWidth(800);
         //stage.setMinHeight(450);
         //stage.setScene(new Scene(new LauncherController(stage)));
+    }
+
+    public void initScene() {
+        stage.getScene().setRoot(new LauncherController(stage));
+        stage.setMinWidth(220);
+        stage.setMinHeight(300);
+    }
+
+    public void mainScene() {
+        stage.getScene().setRoot(new InitialController(stage));
+        stage.setMinWidth(800);
+        stage.setMinHeight(450);
     }
 
     /**
