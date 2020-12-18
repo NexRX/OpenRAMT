@@ -13,12 +13,6 @@ dependencies {
     implementation project(':Shared')
 }
 
-/* Fields */
-def jvmArgs
-def options
-
-/* Task Modifiers, etc... */
-
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(14))
@@ -35,7 +29,7 @@ application {
     applicationName = 'OpenRAMT'
 }
 
-run{
+run {
     jvmArgs = [
             "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
             "--illegal-access=permit"
@@ -43,7 +37,6 @@ run{
 }
 
 runtime {
-
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         noConsole = true

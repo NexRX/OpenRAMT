@@ -12,9 +12,7 @@ dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
     implementation project(':Shared')
 }
-/* Fields */
 
-/* Task Modifiers, etc... */
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(14))
