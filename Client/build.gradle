@@ -12,10 +12,7 @@ dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
     implementation project(':Shared')
 }
-
 /* Fields */
-def jvmArgs
-def options
 
 /* Task Modifiers, etc... */
 java {
