@@ -9,5 +9,4 @@
 
 rootProject.name = 'OpenRAMT'
 include('Shared', 'Client', 'Server')
-include 'Client'
 

@@ -43,10 +43,6 @@ public class InitialController extends AnchorPane {
         applyEventHandlers();
     }
 
-    private void progressProperty(ReadOnlyDoubleProperty taskProgress) {
-        jfxProgress.progressProperty();
-    }
-
     private void applyEventHandlers() {
         btnClose.setOnMouseClicked(event -> {
             Platform.exit();

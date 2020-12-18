@@ -29,7 +29,7 @@ application {
     applicationName = 'OpenRAMT'
 }
 
-run{
+run {
     jvmArgs = [
             "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
             "--illegal-access=permit"
