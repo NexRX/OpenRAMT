@@ -6,12 +6,12 @@ import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 public class InitialController extends AnchorPane {
@@ -40,6 +40,8 @@ public class InitialController extends AnchorPane {
         }
         this.stage = stage;
 
+
+
         applyEventHandlers();
     }
 
@@ -50,57 +52,9 @@ public class InitialController extends AnchorPane {
         });
 
         btnLogin.setOnMouseClicked(event -> {
-            jfxProgress.setProgress(0f);
-
-            int initIndex = threads.addThread(initRun);
-            threads.startThread(initIndex);
-
+            LoginService lss = new LoginService();
+            jfxProgress.progressProperty().bind(lss.getProgressProperty());
+            lss.execute("Something");
         });
     }
-
-    Runnable initRun = new Runnable() { // http://tutorials.jenkov.com/javafx/concurrency.html
-        @Override
-        public void run() {
-            double progress = 0;
-            for(int i=0; i<10; i++){
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                progress += 0.1;
-                final double reportedProgress = progress;
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        jfxProgress
-                                .setProgress(reportedProgress);
-                    }
-                });
-            }
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    lblProgress.setText("Section Complete.");
-                }
-
-            });
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    stage.getScene().setRoot(new LauncherController(stage));
-                    stage.setMinWidth(800);
-                    stage.setMinHeight(450);
-                }
-            });
-        }
-    };
 }

@@ -25,7 +25,7 @@ public class UndecoratedResizable {
      * @param lc The LauncherController needed to automatically set parameters for the manual function and add the
      *           listeners.
      */
-	public static void addResizeListener(Stage stage, LauncherController lc) {
+	public static void addResizeListener(Stage stage, Parent lc) {
 		addResizeListener(stage, lc, 0, 0, Double.MAX_VALUE, Double.MAX_VALUE);
 	}
 
@@ -39,7 +39,7 @@ public class UndecoratedResizable {
      * @param maxWidth Maximum width in which the program can be resized to.
      * @param maxHeight Maximum height in which the program can be resized to.
      */
-	public static void addResizeListener(Stage stage, LauncherController lc, double minWidth, double minHeight, double maxWidth, double maxHeight) {
+	public static void addResizeListener(Stage stage, Parent lc, double minWidth, double minHeight, double maxWidth, double maxHeight) {
 		ResizeListener resizeListener = new ResizeListener(stage);
 		lc.addEventHandler(MouseEvent.MOUSE_MOVED, resizeListener);
 		lc.addEventHandler(MouseEvent.MOUSE_PRESSED, resizeListener);

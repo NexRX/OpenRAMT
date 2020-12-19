@@ -32,8 +32,8 @@
 
 package application;
 
-import Controller.InitialController;
-import Controller.LauncherController;
+import Controller.ManagementController;
+import Controller.SetupController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -49,8 +49,8 @@ public class MainStart extends Application {
     public void start(Stage stage) throws Exception {
         stage.initStyle(StageStyle.UNDECORATED);
 
-        InitialController ic = new InitialController(stage);
-        stage.setScene(new Scene(ic));
+        SetupController sc = new SetupController(stage);
+        stage.setScene(new Scene(sc));
         stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
         stage.setTitle("OpenRAMT");
         stage.show();
@@ -61,13 +61,13 @@ public class MainStart extends Application {
     }
 
     public void initScene() {
-        stage.getScene().setRoot(new LauncherController(stage));
+        stage.getScene().setRoot(new SetupController(stage));
         stage.setMinWidth(220);
         stage.setMinHeight(300);
     }
 
     public void mainScene() {
-        stage.getScene().setRoot(new InitialController(stage));
+        stage.getScene().setRoot(new ManagementController(stage));
         stage.setMinWidth(800);
         stage.setMinHeight(450);
     }
