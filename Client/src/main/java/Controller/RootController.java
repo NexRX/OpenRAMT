@@ -10,12 +10,12 @@ import java.io.IOException;
  * The root pains controller.
  * Handles most of the innital tasks as well as the many generic (non-specific pane) tasks.
  */
-public class LauncherController extends AnchorPane {
+public class RootController extends AnchorPane {
 	/**
 	 * Constructs the AnchorPane and does a bulk of the post-initial tasks.
 	 */
-	public LauncherController() {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Launcher.fxml"));
+	public RootController() {
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Root.fxml"));
 		this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);

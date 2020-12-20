@@ -27,7 +27,7 @@ public class InitialController extends AnchorPane {
 
 
     public InitialController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Initial.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Root.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
