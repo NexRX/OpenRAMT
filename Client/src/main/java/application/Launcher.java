@@ -1,7 +1,7 @@
 package application;
 
 import Controller.InitialController;
-import Controller.LauncherController;
+import Controller.RootController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -46,13 +46,13 @@ public class Launcher {
         }
 
         public void initScene() {
-            stage.getScene().setRoot(new LauncherController());
+            stage.getScene().setRoot(new RootController());
             stage.setMinWidth(220);
             stage.setMinHeight(300);
         }
 
         public void mainScene() {
-            stage.getScene().setRoot(new InitialController());
+            stage.getScene().setRoot(new RootController());
             stage.setMinWidth(800);
             stage.setMinHeight(450);
         }
