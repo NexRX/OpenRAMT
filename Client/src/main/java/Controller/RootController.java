@@ -39,5 +39,4 @@ public class RootController extends AnchorPane {
 	private void applyEventHandlers() {
 	    UndecoratedResizable.addResizeListener(Launcher.MainStart.getStage(), this);
 	}
-
 }
