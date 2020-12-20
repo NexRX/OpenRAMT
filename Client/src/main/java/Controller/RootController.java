@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * The root pains controller.
- * Handles most of the innital tasks as well as the many generic (non-specific pane) tasks.
+ * Handles most of the post-initial tasks as well as the many generic (non-specific pane) tasks.
  */
 public class RootController extends AnchorPane {
 	/**
