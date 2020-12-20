@@ -1,5 +1,6 @@
 package Controller;
 
+import Controller.Services.LoginProgressibleService;
 import Model.UserData;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -10,13 +11,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class InitialController extends AnchorPane {
-    BackgroundThreader threads = new BackgroundThreader();
-    Stage stage;
     @FXML JFXProgressBar jfxProgress;
     @FXML JFXButton btnClose;
     @FXML JFXTextField loginHost;
@@ -24,10 +22,11 @@ public class InitialController extends AnchorPane {
     @FXML JFXPasswordField loginPassword;
     @FXML JFXButton btnLogin;
     @FXML Label lblProgress;
-    private UserData user;
-    private Thread initThread;
+    private UserData user = new UserData(null, null,null);
+    private final LoginProgressibleService loginTask;
 
-    public InitialController(Stage stage) {
+
+    public InitialController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Initial.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
         fxmlLoader.setRoot(this);
@@ -38,9 +37,9 @@ public class InitialController extends AnchorPane {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
-        this.stage = stage;
 
-
+        loginTask = new LoginProgressibleService();
+        jfxProgress.progressProperty().bind(loginTask.getProgressProperty());
 
         applyEventHandlers();
     }
@@ -51,10 +50,6 @@ public class InitialController extends AnchorPane {
             System.exit(0);
         });
 
-        btnLogin.setOnMouseClicked(event -> {
-            LoginService lss = new LoginService();
-            jfxProgress.progressProperty().bind(lss.getProgressProperty());
-            lss.execute("Something");
-        });
+        btnLogin.setOnMouseClicked(event -> {loginTask.restart();});
     }
 }

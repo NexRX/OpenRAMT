@@ -1,29 +1,11 @@
 package Controller;
 
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyFloatProperty;
-import javafx.beans.property.ReadOnlyFloatWrapper;
 
-public abstract class ProgressibleService<T1, T2> {
+public abstract class ProgressibleTask<T1, T2> implements Progressible {
     private T1 params;
     private boolean daemon = true;
-    private final ReadOnlyFloatWrapper progress = new ReadOnlyFloatWrapper(0);
-
-    protected abstract T2 backgroundTask(T1 param);
-
-    protected abstract void finalTask(T2 param);
-
-    public ReadOnlyFloatProperty getProgressProperty() {
-        return progress.getReadOnlyProperty();
-    }
-
-    protected void setProgress(float progressParams) {
-        progress.set(progressParams);
-    }
-
-    protected void addProgress(float progressParams) {
-        progress.set(progress.floatValue() + progressParams);
-    }
+    private volatile boolean ranOnce = false;
 
     protected  final Thread backGroundThread = new Thread(new Runnable() {
         @Override
@@ -35,8 +17,14 @@ public abstract class ProgressibleService<T1, T2> {
         }
     });
 
+    protected abstract T2 backgroundTask(T1 param);
+    protected abstract void finalTask(T2 param);
+    public boolean hasRan() {return ranOnce;}
+
     public void execute(final T1 params) {
+        ranOnce = true;
         this.params = params;
+
         Platform.runLater(() -> {
             backGroundThread.setDaemon(daemon);
             backGroundThread.start();

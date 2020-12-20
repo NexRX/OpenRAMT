@@ -1,5 +1,6 @@
 package Controller;
 
+import application.Launcher;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -28,10 +29,8 @@ public class TopBarController extends ButtonBar {
     /**
      * Constructs the ButtonBar and loads its FXML file. Does a lot of the undecorated
      * window processing.
-     * @param stage The stage in which this pane will be responsible for handling most
-     *              of the undecorated window processing.
      */
-    public TopBarController(Stage stage) {
+    public TopBarController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/TopBar.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
         fxmlLoader.setRoot(this);
@@ -43,7 +42,7 @@ public class TopBarController extends ButtonBar {
             throw new RuntimeException(exception);
         }
 
-        this.stage = stage;
+        this.stage = Launcher.MainStart.getStage();
 
         applyEventHandlers();
     }
