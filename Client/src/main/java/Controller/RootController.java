@@ -33,7 +33,7 @@ public class RootController extends AnchorPane {
 	private void addInitialChildren() {
 		this.getChildren().add(new TopBarController());
 		this.getChildren().add(new SideBarController());
-		this.getChildren().add(new StackDisplayController());
+		this.getChildren().add(new MainContentController());
 	}
 
 	private void applyEventHandlers() {

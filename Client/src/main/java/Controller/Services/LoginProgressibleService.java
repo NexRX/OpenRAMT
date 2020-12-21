@@ -1,15 +1,16 @@
 package Controller.Services;
 
+import Controller.Library.enums.Login;
 import Controller.Progressible;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 
-public class LoginProgressibleService extends Service<Void> implements Progressible {
+public class LoginProgressibleService extends Service<Login> implements Progressible {
     @Override
-    protected Task<Void> createTask() {
-        return new Task<>() {
+    protected Task<Login> createTask() {
+        return new Task<Login>() {
             @Override
-            protected Void call() {
+            protected Login call() {
                 setProgress(0d);
                 double inc = (1d/7d); // total progress per loop and increment amount.
                 for (double i = 0d; i < 1d; i+= inc) {
@@ -24,7 +25,7 @@ public class LoginProgressibleService extends Service<Void> implements Progressi
 
                     addProgress(inc);
                 }
-                return null;
+                return Login.SUCCESS;
             }
         };
     }

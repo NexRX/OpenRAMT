@@ -28,33 +28,39 @@ public class Launcher {
         public void start(Stage stage) throws Exception {
             this.stage = stage;
 
-            stage.initStyle(StageStyle.UNDECORATED);
-
-            InitialController ic = new InitialController();
-            stage.setScene(new Scene(ic));
-            stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
-            stage.setTitle("OpenRAMT");
-            stage.show();
-
-            //stage.setMinWidth(800);
-            //stage.setMinHeight(450);
-            //stage.setScene(new Scene(new LauncherController(stage)));
+            initScene();
         }
 
         public static Stage getStage() {
             return stage;
         }
 
-        public void initScene() {
-            stage.getScene().setRoot(new RootController());
+        public static void initScene() {
+            stage.close();
+            stage = new Stage();
+
+            stage.initStyle(StageStyle.UNDECORATED);
+
+            stage.setScene(new Scene(new InitialController()));
+            stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+            stage.setTitle("OpenRAMT");
             stage.setMinWidth(220);
             stage.setMinHeight(300);
+            stage.show();
         }
 
-        public void mainScene() {
-            stage.getScene().setRoot(new RootController());
+        public static void rootScene() {
+            stage.close();
+            stage = new Stage();
+
+            stage.initStyle(StageStyle.UNDECORATED);
+
+            stage.setScene(new Scene(new RootController()));
+            stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+            stage.setTitle("OpenRAMT");
             stage.setMinWidth(800);
             stage.setMinHeight(450);
+            stage.show();
         }
 
         /**

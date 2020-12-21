@@ -2,6 +2,7 @@ package Controller;
 
 import Controller.Services.LoginProgressibleService;
 import Model.UserData;
+import application.Launcher.MainStart;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXProgressBar;
@@ -9,6 +10,7 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
@@ -50,6 +52,25 @@ public class InitialController extends AnchorPane {
             System.exit(0);
         });
 
-        btnLogin.setOnMouseClicked(event -> {loginTask.restart();});
+        btnLogin.setOnMouseClicked(event -> {loginTask.restart(); });
+
+        loginTask.setOnSucceeded(event -> {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setAlertType(Alert.AlertType.ERROR);
+            switch (loginTask.getValue()) {
+                case SUCCESS:
+                    MainStart.rootScene();
+                    System.out.println("Switching");
+                    break;
+                case FAILED_CONNECTION:
+                    a.setContentText("The connection to the host failed.");
+                    a.show();
+                    break;
+                case FAILED_AUTHENTICATION:
+                    a.setContentText("Authentication failed. Please check user details.");
+                    a.show();
+                    break;
+            }
+        });
     }
 }

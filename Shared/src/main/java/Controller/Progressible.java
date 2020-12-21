@@ -14,11 +14,7 @@ public interface Progressible {
         progress.set(progress.getValue() + progressParams);
     }
 
-    default double getProgress() {
-        return progress.getValue();
-    }
+    default double getProgress() { return progress.getValue(); }
 
-    default ReadOnlyDoubleProperty getProgressProperty() {
-        return progress.getReadOnlyProperty();
-    }
+    default ReadOnlyDoubleProperty getProgressProperty() { return progress.getReadOnlyProperty(); }
 }

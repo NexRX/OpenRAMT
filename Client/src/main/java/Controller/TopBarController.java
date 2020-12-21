@@ -1,11 +1,15 @@
 package Controller;
 
 import application.Launcher;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -14,7 +18,7 @@ import java.io.IOException;
 /**
  * The Top bar controller. Handles all tasks relating to the Top bar.
  */
-public class TopBarController extends ButtonBar {
+public class TopBarController extends AnchorPane {
     private final Stage stage;
 
     private double xOffset = 0;
@@ -25,6 +29,11 @@ public class TopBarController extends ButtonBar {
     private double prevHeight;
     private double prevX;
     private double prevY;
+
+    @FXML JFXButton btnHelp, btnMin, btnMax, btnExit;
+    @FXML JFXProgressBar progressBarState;
+    @FXML Label lblState;
+
 
     /**
      * Constructs the ButtonBar and loads its FXML file. Does a lot of the undecorated
@@ -62,14 +71,10 @@ public class TopBarController extends ButtonBar {
             isMaximised = false;
         });
 
-        this.getButtons().get(2).setOnMouseClicked(event -> {
-            Platform.exit();
-            System.exit(0);
-        });
+        btnExit.setOnMouseClicked(event -> { Platform.exit(); System.exit(0); });
 
-        this.getButtons().get(1).setOnMouseClicked(event -> {
+        btnMax.setOnMouseClicked(event -> {
             ObservableList<Screen> screens = Screen.getScreensForRectangle(new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()));
-
 
             if (!isMaximised) {
                 Rectangle2D bounds = screens.get(0).getVisualBounds();
@@ -97,7 +102,7 @@ public class TopBarController extends ButtonBar {
             }
         });
 
-        this.getButtons().get(0).setOnMouseClicked(event -> stage.setIconified(true));
+        btnMin.setOnMouseClicked(event -> stage.setIconified(true));
     }
 }
 

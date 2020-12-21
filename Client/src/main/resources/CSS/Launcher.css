@@ -8,6 +8,10 @@
     -fx-background-color: #544F4F;
 }
 
+.secondary-background {
+    -fx-background-color: #474343;
+}
+
 .progress-bar > .track, .jfx-progress-bar > .bar {
     -fx-background-radius: 0;
     -fx-background-insets: 0;
@@ -25,30 +29,28 @@
 }
 
 .StackDisplay {
-
 }
 
 .sideBar {
-    -fx-background-color: #544F4F;
  }
 
 .topBar {
-    -fx-background-color: #544F4F;
 }
 
 .topBar-Buttons {
 	-fx-background-radius: 0;
-    -fx-background-color: #544F4F;
+    -fx-background-color: #474343;
+    -fx-alignment: CENTER;
 }
 
 .topBar-Buttons:hover {
-	-fx-background-radius: 0;
 	-fx-background-color: #776F6F;
 }
 
 #btnClose {
 	-fx-background-radius: 0;
-    -fx-background-color: #544F4F;
+    -fx-alignment: CENTER;
+    -fx-background-color: #474343;
 }
 
 #btnClose:hover {
