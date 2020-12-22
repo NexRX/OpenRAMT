@@ -8,6 +8,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.IOException;
+
 /**
  * Essentially the bootstrap to kickstart the main start class.
  */
@@ -21,7 +23,7 @@ public class Launcher {
     }
 
     public static class MainStart extends Application {
-        Stage stage;
+        private static Stage stage;
         @Override
         public void start(Stage stage) throws Exception {
             this.stage = stage;
@@ -29,7 +31,7 @@ public class Launcher {
             initScene();
         }
 
-        public void initScene() {
+        public static void initScene() {
             stage.close();
             stage = new Stage();
 
@@ -43,7 +45,7 @@ public class Launcher {
             stage.show();
         }
 
-        public void mainScene() {
+        public static void mainScene() throws IOException {
             stage.close();
             stage = new Stage();
 
@@ -51,8 +53,8 @@ public class Launcher {
             stage.setScene(new Scene(new ManagementController(stage)));
             stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
             stage.setTitle("OpenRAMT");
-            stage.setMinWidth(800);
-            stage.setMinHeight(450);
+            stage.setMinWidth(580);
+            stage.setMinHeight(410);
 
             stage.show();
         }

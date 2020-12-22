@@ -24,7 +24,7 @@ public class InitialController extends AnchorPane {
     @FXML JFXPasswordField loginPassword;
     @FXML JFXButton btnLogin;
     @FXML Label lblProgress;
-    private UserData user = new UserData(null, null,null);
+    private UserData user = new UserData(null, 0, null,null);
     private final LoginProgressibleService loginTask;
 
 
@@ -40,7 +40,7 @@ public class InitialController extends AnchorPane {
             throw new RuntimeException(exception);
         }
 
-        loginTask = new LoginProgressibleService();
+        loginTask = new LoginProgressibleService(user);
         jfxProgress.progressProperty().bind(loginTask.getProgressProperty());
 
         applyEventHandlers();
@@ -52,7 +52,22 @@ public class InitialController extends AnchorPane {
             System.exit(0);
         });
 
-        btnLogin.setOnMouseClicked(event -> {loginTask.restart(); });
+        btnLogin.setOnMouseClicked(event -> {
+            if (loginHost.getText().indexOf(':') > -1) { // <-- does it contain ":"?
+                String[] arr = loginHost.getText().split(":");
+                String host = arr[0];
+                try {
+                    int port = Integer.parseInt(arr[1]);
+                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText());
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText());
+            }
+            loginTask.updateUser(user);
+            loginTask.restart();
+        });
 
         loginTask.setOnSucceeded(event -> {
             Alert a = new Alert(Alert.AlertType.ERROR);

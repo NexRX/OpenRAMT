@@ -7,10 +7,10 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root id="initial" minHeight="289.0" minWidth="211.0" prefHeight="409.0" prefWidth="582.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="initial" minHeight="410.0" minWidth="580.0" prefHeight="410.0" prefWidth="580.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="X" />
-      <TableView layoutY="205.0" prefHeight="205.0" prefWidth="582.0">
+      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="X" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <TableView layoutY="205.0" prefHeight="205.0" prefWidth="582.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
         <columns>
             <TableColumn prefWidth="157.0" text="Current IP (If Active)" />
           <TableColumn prefWidth="166.0" text="Username" />
@@ -18,14 +18,14 @@
             <TableColumn prefWidth="130.0" text="Last Login" />
         </columns>
       </TableView>
-      <Label layoutX="26.0" layoutY="48.0" text="Selected User:" textFill="WHITE" />
-      <Label layoutX="254.0" layoutY="19.0" text="Placeholder Pane" textFill="WHITE" />
-      <JFXButton id="btnClose" fx:id="btnClose1" contentDisplay="CENTER" layoutX="26.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="⚙" textFill="WHITE">
+      <Label layoutX="26.0" layoutY="48.0" text="Selected User:" textFill="WHITE" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="40.0" />
+      <Label alignment="CENTER" layoutX="87.0" layoutY="17.0" prefHeight="17.0" prefWidth="407.0" text="Placeholder Pane" textAlignment="CENTER" textFill="WHITE" AnchorPane.leftAnchor="87.0" AnchorPane.rightAnchor="86.0" AnchorPane.topAnchor="17.0" />
+      <JFXButton id="btnClose" fx:id="btnClose1" contentDisplay="CENTER" layoutX="25.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="⚙" textFill="WHITE" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="0.0">
          <font>
             <Font size="10.0" />
          </font>
       </JFXButton>
-      <JFXButton id="btnClose" fx:id="btnClose11" contentDisplay="CENTER" layoutX="2.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="?" textFill="WHITE">
+      <JFXButton id="btnClose" fx:id="btnClose11" contentDisplay="CENTER" layoutX="2.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="?" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <font>
             <Font size="10.0" />
          </font>
