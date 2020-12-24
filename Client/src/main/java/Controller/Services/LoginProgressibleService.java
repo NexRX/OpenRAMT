@@ -1,6 +1,6 @@
 package Controller.Services;
 
-import Controller.Library.ClientWorker;
+import Controller.Socket.ClientWorker;
 import Controller.Library.enums.Login;
 import Controller.Progressible;
 import Model.TaskRequest;

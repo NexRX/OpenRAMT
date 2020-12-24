@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
-    implementation group: 'org.hsqldb', name: 'hsqldb', version: '2.5.1'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
     implementation project(':Shared')
 }
 
