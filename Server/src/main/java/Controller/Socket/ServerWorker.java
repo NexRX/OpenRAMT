@@ -2,19 +2,19 @@ package Controller.Socket;
 
 import Model.TaskRequest;
 
+import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 
 /**
 
  */
 public class ServerWorker implements Runnable{
-    protected Socket clientSocket = null;
+    protected SSLSocket clientSocket = null;
     protected String serverText = null;
 
-    public ServerWorker(Socket clientSocket, String serverText) {
+    public ServerWorker(SSLSocket clientSocket, String serverText) {
         this.clientSocket = clientSocket;
         this.serverText   = serverText;
     }
@@ -43,6 +43,7 @@ public class ServerWorker implements Runnable{
         } finally {
             try {
                 clientSocket.close();
+                System.out.println("Socket close completed");
             } catch (IOException e) {
                 e.printStackTrace();
             }

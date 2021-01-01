@@ -33,7 +33,7 @@ public class ManagementController extends AnchorPane {
     }
 
     private void serverStart() throws IOException {
-        server = new SecureServer();
+        server = new SecureServer(); // Pass port later and check it.
         new Thread(server).start();
     }
 

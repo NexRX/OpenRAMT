@@ -13,7 +13,7 @@ public class DBManager {
         try
         {
             if( !db.isFile() ) {
-                setup();
+                setupDB();
             }
 
             Class.forName("org.h2.Driver");
@@ -30,7 +30,7 @@ public class DBManager {
         con = null;
     }
 
-    public static void setup() throws SQLException {
+    private static void setupDB() throws SQLException {
         con = DriverManager.getConnection("jdbc:h2:./data/db", "RAMT", "" );
         Statement stmt = con.createStatement();
         stmt.executeUpdate( "create table users (id uuid DEFAULT random_uuid() NOT NULL PRIMARY KEY,\n" +
@@ -214,7 +214,7 @@ public class DBManager {
     }
 
     // Developer note: This and wipeDatabase are two methods to encapsulate dbPath.
-    private static boolean recursiveDelete(File dir) {
+        private static boolean recursiveDelete(File dir) {
         File[] allContents = dir.listFiles();
         if (allContents != null) {
             for (File file : allContents) {

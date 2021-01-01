@@ -36,3 +36,5 @@ _ignore*
 # Local History for VS Code
 .history/
 /gradle/
+/Client/data/
+/Server/data/

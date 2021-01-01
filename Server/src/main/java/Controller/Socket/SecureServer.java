@@ -1,32 +1,49 @@
 package Controller.Socket;
 
+import javax.net.ssl.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.Objects;
 
 public class SecureServer implements Runnable {
     protected int port = 3069; // Default
     protected boolean isStopped = false;
     protected Thread runningThread = null;
-    protected ServerSocket serverSocket = null;
+    protected SSLServerSocket serverSocket = null;
 
     public SecureServer() { // default (use default port)
+        try {
+            initialisation();
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
+            e.printStackTrace();
+        }
     }
 
     public SecureServer(int port) {
         this.port = port;
+
+        try {
+            initialisation();
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
         synchronized(this){this.runningThread = Thread.currentThread();}
-        openServerSocket();
 
         while(! isStopped()){
-            Socket clientSocket = null;
+            SSLSocket clientSocket;
 
             try {
-                clientSocket = this.serverSocket.accept();
+                clientSocket = (SSLSocket) this.serverSocket.accept();
             } catch (IOException e) {
                 if(isStopped()) {
                     System.out.println("Server Stopped.") ;
@@ -54,12 +71,31 @@ public class SecureServer implements Runnable {
         }
     }
 
-    private void openServerSocket() {
-        try {
-            this.serverSocket = new ServerSocket(this.port);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot open " + this.port, e);
-        }
+    private void initialisation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+        File ksFile = new File("data/keystore.jks");
+        char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
+
+        //if (!ksFile.isFile()) { //This was to support future implementation of replaceable cert.
+            Files.copy(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("Cert/keystore.jks")), Paths.get("data/keystore.jks"), StandardCopyOption.REPLACE_EXISTING);
+        //}
+
+        System.out.println(ksFile.exists() + " | " + ksFile.getAbsolutePath() + " | " +  ksFile.canRead()  + " | " +  ksFile.length());
+
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(new FileInputStream(ksFile), ksPwd);
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+        kmf.init(ks, ksPwd);
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ks);
+
+        SSLContext sc = SSLContext.getInstance("TLS");
+        TrustManager[] trustManagers = tmf.getTrustManagers();
+        sc.init(kmf.getKeyManagers(), trustManagers, null);
+
+        SSLServerSocketFactory ssf = sc.getServerSocketFactory();
+        this.serverSocket = (SSLServerSocket) ssf.createServerSocket(this.port);
     }
 
 }
