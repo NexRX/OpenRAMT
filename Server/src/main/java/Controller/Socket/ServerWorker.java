@@ -35,7 +35,7 @@ public class ServerWorker implements Runnable{
             // the errors and attack a listener to the tasks onSucced to update
             // the user on its success/failure. Update Progress of task to client.
             // Idea on remote progress update. Only have 3 states in which client is
-            // updated. 33% starting, 66% started, 100% finished.
+            // updated. 33% starting, 66% started, 100% finished etc.
 
         } catch (IOException | ClassNotFoundException e) {
             //report exception somewhere.

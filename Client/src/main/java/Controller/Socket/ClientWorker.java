@@ -7,8 +7,9 @@ import java.io.*;
 import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.concurrent.Callable;
 
-public class ClientWorker implements Runnable {
+public class ClientWorker implements Callable {
     private SSLSocket socket;
     private final TaskRequest request;
     private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
@@ -18,29 +19,6 @@ public class ClientWorker implements Runnable {
         System.setProperty("javax.net.ssl.trustStorePassword","jknm43c23C1EW342we");
 
         this.request = request;
-    }
-
-    @Override
-    public void run() {
-        try {
-            this.socket = (SSLSocket) Generation();
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        try {
-            ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
-
-            System.out.println("Sending request to the ServerSocket");
-            socketOutput.writeObject(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {socket.close(); } catch (IOException e) {e.printStackTrace(); }
-        }
-
     }
 
     private Socket Generation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
@@ -73,4 +51,26 @@ public class ClientWorker implements Runnable {
         return ssf.createSocket(this.request.getUser().getHost(), this.request.getUser().getPort());
     }
 
+    @Override
+    public Boolean call() throws Exception {
+        try {
+            this.socket = (SSLSocket) Generation();
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        try {
+            ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
+
+            System.out.println("Sending request to the ServerSocket");
+            socketOutput.writeObject(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {socket.close(); } catch (IOException e) {e.printStackTrace(); }
+        }
+        return true;
+    }
 }

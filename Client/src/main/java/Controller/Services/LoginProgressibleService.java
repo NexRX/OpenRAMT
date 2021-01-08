@@ -1,8 +1,8 @@
 package Controller.Services;
 
-import Controller.Socket.ClientWorker;
 import Controller.Library.enums.Login;
 import Controller.Progressible;
+import Controller.Socket.ClientWorker;
 import Model.TaskRequest;
 import Model.UserData;
 import javafx.concurrent.Service;
@@ -14,6 +14,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 
 public class LoginProgressibleService extends Service<Login> implements Progressible {
@@ -45,7 +47,10 @@ public class LoginProgressibleService extends Service<Login> implements Progress
                     }
                     System.out.println("Starting client socket");
                     try {
-                        new Thread(new ClientWorker(new TaskRequest(Model.Task.DEFAULT, user))).start();
+                        FutureTask<Boolean> futureTask = new FutureTask<>(new ClientWorker(new TaskRequest(Model.Task.DEFAULT, user)));
+                        Thread thread = new Thread(futureTask);
+                        thread.start();
+                        Boolean result = futureTask.get(); // will wait for the async completion
                     } catch (UnrecoverableKeyException e) {
                         e.printStackTrace();
                     } catch (CertificateException e) {
@@ -55,6 +60,10 @@ public class LoginProgressibleService extends Service<Login> implements Progress
                     } catch (KeyStoreException e) {
                         e.printStackTrace();
                     } catch (KeyManagementException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
                     addProgress(inc);
