@@ -14,12 +14,6 @@ dependencies {
     implementation project(':Shared')
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(14))
-    }
-}
-
 javafx {
     modules = ['javafx.controls', 'javafx.fxml']
     version = '14.0.2'
