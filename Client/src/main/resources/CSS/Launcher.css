@@ -84,3 +84,14 @@
 
     -jfx-button-type: RAISED;
 }
+
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+
+}
+.tab-pane .tab
+{
+    -fx-background-color: transparent;
+
+}

@@ -2,8 +2,10 @@ package Controller;
 
 import Controller.Library.SideButton;
 import com.jfoenix.controls.JFXButton;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
@@ -31,6 +33,14 @@ public class SideBarController extends VBox {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+        sbtnMain.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                System.out.println("Changing Pane");
+                MainContentController mc = (MainContentController) getParent().getChildrenUnmodifiable().get(2);
+                mc.changePane(1);
+            }
+        });
     }
 }
 

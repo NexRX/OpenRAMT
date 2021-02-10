@@ -1,5 +1,7 @@
 package Controller;
 
+import Controller.Content.TestController;
+import Controller.Content.WelcomeController;
 import application.Launcher;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
@@ -31,9 +33,10 @@ public class RootController extends AnchorPane {
 	}
 
 	private void addInitialChildren() {
+
 		this.getChildren().add(new TopBarController());
 		this.getChildren().add(new SideBarController());
-		this.getChildren().add(new MainContentController());
+		this.getChildren().add(new MainContentController(new WelcomeController(), new TestController()));
 	}
 
 	private void applyEventHandlers() {

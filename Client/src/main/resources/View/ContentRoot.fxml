@@ -7,19 +7,9 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import Controller.WizardPane?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" type="TabPane"  AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" AnchorPane.bottomAnchor="0.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1">
-  <tabs>
-    <Tab text="Main">
-      <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="600.0" styleClass="default-background">
-               <children>
-                  <JFXButton layoutX="274.0" layoutY="184.0" stylesheets="@../CSS/extracss.css" />
-                  <Label layoutX="275.0" layoutY="80.0" text="Welcome" />
-               </children></AnchorPane>
-      </content>
-    </Tab>
-  </tabs>
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" type="WizardPane"  AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="26.0" AnchorPane.bottomAnchor="0.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1">
    <stylesheets>
       <URL value="@../CSS/Launcher.css" />
       <URL value="@../CSS/extracss.css" />
