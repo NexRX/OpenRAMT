@@ -13,3 +13,5 @@ There will be 4 Milestones
 
 
 ## Misc
+
+Please see SECURITY.MD for more information about bugs and security issues.
