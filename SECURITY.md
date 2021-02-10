@@ -1,4 +1,15 @@
-# Security Policy
+# Security
+
+## Alpha / Pre-Release
+
+The program is currently in the pre release phase and all builds are most likely insecure as features and fixes are
+ slowly being rolled out
+
+## Reporting a Vulnerability
+
+If there is a vulnerability then please file an issue and describe the vulnerability with as much detail as possible.
+It is possible that it may be unnoticed. 
+
 
 ## Supported Versions
 
@@ -7,15 +18,5 @@ currently being supported with security updates.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
-## Reporting a Vulnerability
-
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+| 1.x.x   | True               |
+| < 1.0   | False              |
