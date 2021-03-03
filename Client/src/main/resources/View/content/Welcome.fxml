@@ -2,10 +2,26 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/14.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="610.0" type="VBox" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label layoutX="272.0" layoutY="183.0" text="Test" />
+      <AnchorPane fx:id="container" maxHeight="600.0" maxWidth="600.0" minHeight="400.0" minWidth="610.0" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css">
+         <children>
+            <Label fx:id="lblWelcome" alignment="CENTER" contentDisplay="CENTER" layoutX="258.0" layoutY="119.0" maxHeight="27.0" maxWidth="84.0" minHeight="27.0" minWidth="84.0" prefHeight="27.0" prefWidth="84.0" styleClass="lbl-header" stylesheets="@../../CSS/Launcher.css" text="Welcome" textAlignment="CENTER" AnchorPane.bottomAnchor="254.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="258.0" AnchorPane.topAnchor="119.0" />
+            <Label fx:id="lblHost" alignment="CENTER" layoutX="186.0" layoutY="162.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" styleClass="lbl-regular" text="Host:" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="221.0" AnchorPane.leftAnchor="186.0" AnchorPane.rightAnchor="349.0" AnchorPane.topAnchor="162.0" />
+            <Label fx:id="lblPort" alignment="CENTER" layoutX="186.0" layoutY="184.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Port:" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="199.0" AnchorPane.leftAnchor="186.0" AnchorPane.rightAnchor="349.0" AnchorPane.topAnchor="184.0" />
+            <Label fx:id="lblConnection" alignment="CENTER" layoutX="186.0" layoutY="208.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Connection:" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="186.0" AnchorPane.rightAnchor="349.0" AnchorPane.topAnchor="208.0" />
+            <Label fx:id="lblHostValue" alignment="CENTER" layoutX="258.0" layoutY="162.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Default" textAlignment="CENTER" AnchorPane.bottomAnchor="221.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="277.0" AnchorPane.topAnchor="162.0" />
+            <Label fx:id="lblPortValue" alignment="CENTER" layoutX="258.0" layoutY="184.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Default" textAlignment="CENTER" AnchorPane.bottomAnchor="199.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="277.0" AnchorPane.topAnchor="184.0" />
+            <Label fx:id="lblConnectionValue" alignment="CENTER" layoutX="258.0" layoutY="208.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Default" textAlignment="CENTER" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="277.0" AnchorPane.topAnchor="208.0" />
+            <Label fx:id="lblUsername" alignment="CENTER" layoutX="186.0" layoutY="240.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Username:" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="143.0" AnchorPane.leftAnchor="186.0" AnchorPane.rightAnchor="349.0" AnchorPane.topAnchor="240.0" />
+            <Label fx:id="lblGroup" alignment="CENTER" layoutX="186.0" layoutY="264.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Group:" textAlignment="CENTER" underline="true" AnchorPane.bottomAnchor="119.0" AnchorPane.leftAnchor="186.0" AnchorPane.rightAnchor="349.0" AnchorPane.topAnchor="264.0" />
+            <Label fx:id="lblUsernameValue" alignment="CENTER" layoutX="258.0" layoutY="240.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Default" textAlignment="CENTER" AnchorPane.bottomAnchor="143.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="277.0" AnchorPane.topAnchor="240.0" />
+            <Label fx:id="lblGroupValue" alignment="CENTER" layoutX="258.0" layoutY="264.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="17.0" prefWidth="65.0" text="Default" textAlignment="CENTER" AnchorPane.bottomAnchor="119.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="277.0" AnchorPane.topAnchor="264.0" />
+            <VBox prefHeight="200.0" prefWidth="100.0" />
+         </children>
+      </AnchorPane>
    </children>
 </fx:root>

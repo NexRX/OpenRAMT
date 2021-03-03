@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<fx:root hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <FlowPane prefHeight="722.0" prefWidth="601.0" styleClass="default-background">
+         <children>
+            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                    <xAxis>
+                      <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis label="Usage (%)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                    </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Usage" textAlignment="CENTER" />
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fillWidth="false" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+               <children>
+                  <PieChart id="innerchart">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </PieChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="RAM Usage" textAlignment="CENTER" />
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+               <children>
+                  <BarChart id="innerchart" alternativeColumnFillVisible="true" horizontalZeroLineVisible="false">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </BarChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="252.0" text="Disk Space" textAlignment="CENTER" />
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                     <xAxis>
+                        <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Usage (%)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                     </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="Disk I/O" textAlignment="CENTER" />
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                     <xAxis>
+                        <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Temp (*C)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                     </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Temps" textAlignment="CENTER" />
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                     <xAxis>
+                        <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Temp (*C)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                     </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="System Temps" textAlignment="CENTER" />
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </FlowPane>
+   </content>
+</fx:root>

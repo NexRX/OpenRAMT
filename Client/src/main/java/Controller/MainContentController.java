@@ -3,6 +3,7 @@ package Controller;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 
@@ -15,16 +16,17 @@ public class MainContentController extends WizardPane {
      */
     public MainContentController(Node... children) {
         super(children);
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/ContentRoot.fxml"));
-        this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+        this.setMaxHeight(-1);
+        this.setMaxWidth(-1);
+        this.setMinHeight(-1);
+        this.setMinWidth(-1);
+        this.setPrefHeight(-1);
+        this.setPrefWidth(-1);
+        AnchorPane.setTopAnchor(this, 26.0);
+        AnchorPane.setRightAnchor(this, 0.0);
+        AnchorPane.setBottomAnchor(this, 0.0);
+        AnchorPane.setLeftAnchor(this, 100.0);
+        this.setStyle("-fx-background-color: purple");
     }
 
 }

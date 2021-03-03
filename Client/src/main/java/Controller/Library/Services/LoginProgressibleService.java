@@ -1,8 +1,8 @@
-package Controller.Services;
+package Controller.Library.Services;
 
 import Controller.Library.enums.Login;
 import Controller.Progressible;
-import Controller.Socket.ClientWorker;
+import Controller.Library.Socket.ClientWorker;
 import Model.TaskRequest;
 import Model.UserData;
 import javafx.concurrent.Service;

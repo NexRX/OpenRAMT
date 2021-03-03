@@ -59,8 +59,8 @@ public class Launcher {
             stage.setScene(new Scene(new RootController()));
             stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
             stage.setTitle("OpenRAMT");
-            stage.setMinWidth(800);
-            stage.setMinHeight(450);
+            stage.setMinWidth(710);
+            stage.setMinHeight(425);
             stage.show();
         }
 

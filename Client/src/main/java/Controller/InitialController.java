@@ -1,6 +1,6 @@
 package Controller;
 
-import Controller.Services.LoginProgressibleService;
+import Controller.Library.Services.LoginProgressibleService;
 import Model.UserData;
 import application.Launcher.MainStart;
 import com.jfoenix.controls.JFXButton;

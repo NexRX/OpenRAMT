@@ -1,13 +1,39 @@
 package Controller.Library;
 
+import Model.AppPermission;
 import com.jfoenix.controls.JFXButton;
-
-import java.security.Permissions;
+import javafx.fxml.FXMLLoader;
+import java.io.IOException;
 
 public class SideButton extends JFXButton {
-    private final Permissions permission;
+    final String name;
+    private final AppPermission permission;
 
-    public SideButton(Permissions permission) {this.permission = permission;}
+    public SideButton(String name, AppPermission permission) {
+        super();
 
-    public Permissions getPermission() {return permission;}
+        this.name = name;
+        this.permission = permission;
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/SideButton.fxml"));
+        this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+
+        try {
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+
+        this.setText(this.name);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public AppPermission getAppPermission() {
+        return permission;
+    }
 }

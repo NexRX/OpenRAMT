@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="25.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="150.0" prefWidth="260.0" spacing="25.0">
+               <children>
+                  <JFXButton fx:id="btnRestart" buttonType="RAISED" prefHeight="150.0" prefWidth="260.0" styleClass="btn-power" text="Restart" textAlignment="CENTER" />
+                  <JFXButton fx:id="btnSleep" buttonType="RAISED" prefHeight="150.0" prefWidth="260.0" ripplerFill="RED" styleClass="btn-power" text="Sleep" textAlignment="CENTER" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="150.0" prefWidth="260.0" spacing="25.0">
+               <children>
+                  <JFXButton id="shutdown" fx:id="btnShutdown" buttonType="RAISED" prefHeight="150.0" prefWidth="260.0" ripplerFill="BLACK" styleClass="btn-power" text="Shutdown" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </JFXButton>
+                  <JFXButton fx:id="btnWake" alignment="CENTER" buttonType="RAISED" prefHeight="150.0" prefWidth="260.0" styleClass="btn-power" text="Wake (on-lan)" textAlignment="CENTER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</fx:root>

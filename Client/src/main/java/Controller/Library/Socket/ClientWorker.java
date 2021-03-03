@@ -1,4 +1,4 @@
-package Controller.Socket;
+package Controller.Library.Socket;
 
 import Model.TaskRequest;
 
@@ -7,6 +7,7 @@ import java.io.*;
 import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class ClientWorker implements Callable {
@@ -25,7 +26,7 @@ public class ClientWorker implements Callable {
         File ksFile = new File("data/keystore.jks");
 
         if(!ksFile.isFile()) {
-            byte in[] = Thread.currentThread().getContextClassLoader().getResourceAsStream("Cert/keystore.jks").readAllBytes();
+            byte[] in = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream("Cert/keystore.jks")).readAllBytes();
             ksFile.getParentFile().mkdirs();
             ksFile.createNewFile();
             FileOutputStream out = new FileOutputStream("data/keystore.jks");
