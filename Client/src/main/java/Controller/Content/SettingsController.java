@@ -1,11 +1,15 @@
 package Controller.Content;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
 public class SettingsController extends ScrollPane {
+    @FXML VBox container;
+
     /**
      * Constructs the VBox and loads its FXML file.
      */
@@ -20,5 +24,8 @@ public class SettingsController extends ScrollPane {
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }
+
+        container.prefWidthProperty().bind(this.widthProperty());
+        container.prefHeightProperty().bind(this.heightProperty());
     }
 }
