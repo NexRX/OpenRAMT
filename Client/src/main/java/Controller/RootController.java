@@ -79,7 +79,7 @@ public class RootController extends AnchorPane {
 
 		resizeHelperR.toFront();
 		resizeHelperB.toFront();
-		tb.toFront();
+		tb.toFront(); // This one should be unneeded. But avoids some unexpected behavior found 'only' in testing.
 	}
 
 	private boolean addPaneButton(Node child, String btnName, AppPermission buttonPerm, int index) {

@@ -1,14 +1,13 @@
 package Controller;
 
 import Controller.Library.SideButton;
+import Controller.Library.WizardPane;
 import Model.AppPermission;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**

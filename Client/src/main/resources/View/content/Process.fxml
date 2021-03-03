@@ -5,7 +5,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<fx:root prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/14.0.2" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <TableView fx:id="tblUsers" layoutX="14.0" layoutY="10.0" prefHeight="380.0" prefWidth="478.0" styleClass="secondary-background" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="112.0" AnchorPane.topAnchor="10.0">
          <columns>

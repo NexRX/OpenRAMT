@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root id="initial" minHeight="289.0" minWidth="211.0" prefHeight="300.0" prefWidth="220.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="initial" minHeight="289.0" minWidth="211.0" prefHeight="300.0" prefWidth="220.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/14.0.2" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fx:id="imageLogo" fitHeight="100.0" fitWidth="100.0" layoutX="60.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
          <image>
