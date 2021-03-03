@@ -249,3 +249,12 @@
 .scroll-pane .corner {
     -fx-background-insets: 0;
 }
+
+/* Extra / Misc */
+
+.tabless {
+    -fx-tab-max-height: 0 ;
+}
+.tabless .tab-header-area {
+    visibility: hidden;
+}
