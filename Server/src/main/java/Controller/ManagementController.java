@@ -11,8 +11,14 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ManagementController extends AnchorPane {
-    @FXML JFXButton btnClose;
     private Stage stage;
+
+    @FXML JFXButton btnClose;
+    @FXML JFXButton btnMin;
+
+    private double xOffset = 0;
+    private double yOffset = 0;
+
     SecureServer server;
 
     public ManagementController(Stage stage) throws IOException {
@@ -43,6 +49,18 @@ public class ManagementController extends AnchorPane {
     }
 
     private void applyEventHandlers() {
+        this.setOnMousePressed(event -> { // These next two control window movement
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        this.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
+        });
+
+        btnMin.setOnMouseClicked(event -> stage.setIconified(true));
+
         btnClose.setOnMouseClicked(event -> {
             stopServer();
             Platform.exit();
