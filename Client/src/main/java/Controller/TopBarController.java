@@ -60,7 +60,7 @@ public class TopBarController extends AnchorPane {
      * Applies this panes event handlers included those related to the stage.
      */
     public void applyEventHandlers() {
-        this.setOnMousePressed(event -> {
+        this.setOnMousePressed(event -> { // These next two control window movement
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });

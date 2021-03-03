@@ -10,10 +10,12 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root id="initial" minHeight="300.0" minWidth="420.0" prefHeight="300.0" prefWidth="420.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="initial" minHeight="300.0" minWidth="420.0" prefHeight="300.0" prefWidth="420.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+      <Pane fx:id="topBar" layoutX="26.0" prefHeight="25.0" prefWidth="372.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="0.0" />
       <ImageView fx:id="imageLogo" fitHeight="100.0" fitWidth="100.0" layoutX="160.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="25.0">
          <image>
             <Image url="@../IconPacks/openramt.png" />
@@ -28,7 +30,7 @@
       <JFXTextField fx:id="fieldUsername" focusColor="#bf0000" layoutX="14.0" layoutY="167.0" prefHeight="25.0" prefWidth="121.0" promptText="Username" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="14.0" />
       <JFXPasswordField fx:id="fieldPassword" focusColor="#bf0000" layoutX="14.0" layoutY="198.0" prefHeight="25.0" prefWidth="121.0" promptText="Password" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="14.0" />
       <JFXButton fx:id="btnSetup" buttonType="RAISED" layoutX="181.0" layoutY="267.0" ripplerFill="#bf0000" text="Setup" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="180.0" />
-      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="395.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="X" />
+      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="395.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="X" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <JFXTextField fx:id="fieldWhatever" focusColor="#bf0000" layoutX="282.0" layoutY="167.0" prefHeight="25.0" prefWidth="121.0" promptText="Whatever For Now" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="108.0" AnchorPane.rightAnchor="17.0" />
       <Label fx:id="lblAccount" alignment="CENTER" layoutX="14.0" layoutY="152.0" prefHeight="11.0" prefWidth="121.0" text="Root Account" textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="137.0" AnchorPane.leftAnchor="14.0">
          <font>

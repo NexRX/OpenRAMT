@@ -2,6 +2,7 @@ package Controller;
 
 import Controller.Library.Services.LoginProgressibleService;
 import Model.UserData;
+import application.Launcher;
 import application.Launcher.MainStart;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
@@ -13,10 +14,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class InitialController extends AnchorPane {
+    private final Stage stage;
+
     @FXML JFXProgressBar jfxProgress;
     @FXML JFXButton btnClose;
     @FXML JFXTextField loginHost;
@@ -24,6 +29,11 @@ public class InitialController extends AnchorPane {
     @FXML JFXPasswordField loginPassword;
     @FXML JFXButton btnLogin;
     @FXML Label lblProgress;
+    @FXML Pane topBar;
+
+    private double xOffset = 0;
+    private double yOffset = 0;
+
     private UserData user = new UserData(null, 0, null,null);
     private final LoginProgressibleService loginTask;
 
@@ -43,6 +53,8 @@ public class InitialController extends AnchorPane {
         loginTask = new LoginProgressibleService(user);
         jfxProgress.progressProperty().bind(loginTask.getProgressProperty());
 
+        this.stage = Launcher.MainStart.getStage();
+
         applyEventHandlers();
     }
 
@@ -50,6 +62,16 @@ public class InitialController extends AnchorPane {
         btnClose.setOnMouseClicked(event -> {
             Platform.exit();
             System.exit(0);
+        });
+
+        this.setOnMousePressed(event -> { // These next two control window movement
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+
+        this.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
         });
 
         btnLogin.setOnMouseClicked(event -> {
