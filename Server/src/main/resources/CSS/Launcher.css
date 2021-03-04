@@ -8,6 +8,14 @@
     -fx-background-color: #544F4F;
 }
 
+.secondary-background {
+    -fx-background-color: #474343;
+}
+
+.shouldnt-display-background {
+    -fx-background-color: purple;
+}
+
 .progress-bar > .track, .jfx-progress-bar > .bar {
     -fx-background-radius: 0;
     -fx-background-insets: 0;
@@ -24,31 +32,42 @@
     -fx-text-fill: white;
 }
 
-.StackDisplay {
-
+.lbl-header {
+    -fx-font-size: 18;
 }
 
-.sideBar {
-    -fx-background-color: #544F4F;
- }
+.btn-regular {
+    -fx-font-size: 105%;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(24, 24, 24, 0.17);
+    -fx-background-color: rgba(227, 0, 0, 0.1);
+}
 
-.topBar {
-    -fx-background-color: #544F4F;
+.btn-power {
+    -fx-font-size: 175%;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(24, 24, 24, 0.17);
+    -fx-background-color: rgba(14, 5, 5, 0.2);
+}
+
+.btn-power#shutdown {
+    -fx-background-color: rgba(184, 0, 0, 0.5);
 }
 
 .topBar-Buttons {
 	-fx-background-radius: 0;
-    -fx-background-color: #544F4F;
+    -fx-background-color: #474343;
+    -fx-alignment: CENTER;
 }
 
 .topBar-Buttons:hover {
-	-fx-background-radius: 0;
 	-fx-background-color: #776F6F;
 }
 
 #btnClose {
 	-fx-background-radius: 0;
-    -fx-background-color: #544F4F;
+    -fx-alignment: CENTER;
+    -fx-background-color: #474343;
 }
 
 #btnClose:hover {
@@ -81,4 +100,161 @@
     -fx-border-color: white;
 
     -jfx-button-type: RAISED;
+}
+
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+
+}
+.tab-pane .tab
+{
+    -fx-background-color: transparent;
+
+}
+
+.vboxChart#innerchart {
+    -fx-background-color: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: #695f5f;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(255, 0, 0, 0.5);
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 0, 0, 0.5);
+}
+
+.chart-legend-item{
+    -fx-text-fill: #ffffff;
+}
+
+.axis {
+    -fx-tick-label-fill: #ffffff;
+    -fx-tick-length: 5;
+}
+.axis-label {
+    -fx-text-fill: #ffffff;
+}
+
+.axis:left {
+    -fx-border-color: transparent #0f0f0f transparent transparent;
+}
+
+.axis:bottom{
+    -fx-border-color: #0f0f0f transparent transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-background-color: #695f5f;
+    -fx-border-color: black;
+}
+
+.table-view .column-resize-line,
+.tree-table-view .column-resize-line {
+    -fx-background: -fx-accent;
+    -fx-background-color: -fx-background;
+    -fx-padding: 0.0em 0.0416667em 0.0em 0.0416667em; /* 0 0.571429 0 0.571429 */
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view .corner {
+    -fx-background-color: transparent;
+}
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * Scroll Bar			                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.scroll-bar:vertical > .track-background, .scroll-bar:horizontal > .track-background {
+    -fx-background-color: #544F4F;
+    -fx-background-insets: 0.0;
+}
+
+.scroll-bar:vertical > .thumb, .scroll-bar:horizontal > .thumb {
+    -fx-background-color: #474343;
+    -fx-background-insets: 0.0;
+    -fx-background-radius: 2em;
+}
+
+/* Up- and Down-Button Padding */
+.scroll-bar:vertical > .increment-button, .scroll-bar:vertical > .decrement-button {
+    -fx-padding: 5 2 5 2;
+}
+
+/* Left- and Right-Button Padding */
+.scroll-bar:horizontal > .increment-button, .scroll-bar:horizontal > .decrement-button {
+    -fx-padding: 2 5 2 5;
+}
+
+.scroll-bar > .increment-button, .scroll-bar > .decrement-button, .scroll-bar:hover > .increment-button, .scroll-bar:hover > .decrement-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar > .increment-button > .increment-arrow, .scroll-bar > .decrement-button > .decrement-arrow {
+    -fx-background-color: rgb(150.0, 150.0, 150.0);
+}
+
+/* Up Arrow */
+.scroll-bar:vertical > .increment-button > .increment-arrow {
+    -fx-shape: "M298 426h428l-214 214z";
+}
+
+/* Down Arrow */
+.scroll-bar:vertical > .decrement-button > .decrement-arrow {
+    -fx-shape: "M298 598l214-214 214 214h-428z";
+}
+
+/* Right Arrow */
+.scroll-bar:horizontal > .increment-button > .increment-arrow {
+    -fx-shape: "M0 428l0 -428l214 214l-214 214z";
+}
+
+/* Left Arrow */
+.scroll-bar:horizontal > .decrement-button > .decrement-arrow {
+    -fx-shape: "M214 0l0 428l-214 -214l214 -214z";
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Scroll Pane			                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+
+.scroll-pane .corner {
+    -fx-background-insets: 0;
+}
+
+/* Extra / Misc */
+
+.tabless {
+    -fx-tab-max-height: 0 ;
+}
+.tabless .tab-header-area {
+    visibility: hidden;
 }
