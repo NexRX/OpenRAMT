@@ -18,6 +18,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class InitialController extends AnchorPane {
     private final Stage stage;
@@ -34,7 +36,7 @@ public class InitialController extends AnchorPane {
     private double xOffset = 0;
     private double yOffset = 0;
 
-    private UserData user = new UserData(null, 0, null,null);
+    private UserData user = new UserData(null, 0, null, null);
     private final LoginProgressibleService loginTask;
 
 
@@ -75,38 +77,58 @@ public class InitialController extends AnchorPane {
         });
 
         btnLogin.setOnMouseClicked(event -> {
+
             if (loginHost.getText().indexOf(':') > -1) { // <-- does it contain ":"?
                 String[] arr = loginHost.getText().split(":");
                 String host = arr[0];
                 try {
                     int port = Integer.parseInt(arr[1]);
-                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText());
+                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText()); //ToDo look into encrypting password to decrypt on other side (added security during traffic). (1)
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
             } else {
-                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText());
+                //Todo let user know port is no good and now trying default.
+
+                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText()); //ToDo same here . (1)
+
             }
+
             loginTask.updateUser(user);
             loginTask.restart();
+            /* loginTask.wait(); <- This MIGHT make it thread safe */ //Todo find out if this is true or is not needed.
         });
 
         loginTask.setOnSucceeded(event -> {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setAlertType(Alert.AlertType.ERROR);
+
             switch (loginTask.getValue()) {
-                case SUCCESS:
+                case SUCCESS -> {
                     MainStart.rootScene();
                     System.out.println("Switching");
-                    break;
-                case FAILED_CONNECTION:
+                }
+                case FAILED_CONNECTION -> {
                     a.setContentText("The connection to the host failed.");
                     a.show();
-                    break;
-                case FAILED_AUTHENTICATION:
-                    a.setContentText("Authentication failed. Please check user details.");
+                }
+                case FAILED_USERNAME -> {
+                    a.setContentText("Authentication failed. Username not found.");
                     a.show();
-                    break;
+                }
+                case FAILED_PASSWORD -> {
+                    a.setContentText("Authentication failed. Incorrect password given.");
+                    a.show();
+                }
+                case FAILED_SUSPENDED -> {
+                    a.setContentText("Authentication failed. The account is suspended.");
+                    a.show();
+                }
+                default -> {
+                    //Todo make this check redundant by producing only known errors.
+                    a.setContentText("A error has occurred while logging in within the application.");
+                    a.show();
+                }
             }
         });
     }

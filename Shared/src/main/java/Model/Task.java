@@ -1,6 +1,25 @@
 package Model;
 
 public enum Task {
-    DEFAULT,
-    //List of tasks.
-}
+    KILLPROCESS,
+    RESTARTPROCESS,
+    FETCHPROCESSES,
+    SHUTDOWN,
+    RESTART,
+    SLEEP,
+    ADDUSER,
+    EDITUSER,
+    DELETEUSER,
+    EDITSETTING,
+    GETSETTINGS,
+    STARTFTP,
+    STOPFTP,
+    RESTARTFTP,
+    CLEANDISK,
+    ENABLEWIFI,
+    DISABLEWIFI,
+    ENABLEBLUETOOTH,
+    DISABLEBLUETOOTH,
+    LOGIN,
+    TESTING
+    }

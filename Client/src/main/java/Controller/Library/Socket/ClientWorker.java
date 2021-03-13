@@ -1,6 +1,8 @@
 package Controller.Library.Socket;
 
+import Model.Response;
 import Model.TaskRequest;
+import Model.TaskResponse;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -10,7 +12,7 @@ import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-public class ClientWorker implements Callable {
+public class ClientWorker implements Callable<TaskResponse> {
     private SSLSocket socket;
     private final TaskRequest request;
     private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
@@ -20,6 +22,42 @@ public class ClientWorker implements Callable {
         System.setProperty("javax.net.ssl.trustStorePassword","jknm43c23C1EW342we");
 
         this.request = request;
+    }
+
+    @Override
+    public TaskResponse call() throws IOException {
+        try {
+            this.socket = (SSLSocket) Generation();
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+
+        TaskResponse result; // 1 for generic error because (if result hasn't changed) something hasn't gone as planned.
+        try {
+            result = work();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Server's TaskResponse invalid, returning custom response & printing stacktrace...");
+            e.printStackTrace();
+            result = new TaskResponse(request, Response.FAILED, null);
+        } finally {
+            try {socket.close(); } catch (IOException e) {e.printStackTrace(); }
+        }
+
+        return result;
+    }
+
+    private TaskResponse work() throws IOException, ClassNotFoundException {
+        ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
+
+        // Send request to the server.
+        socketOutput.writeObject(request);
+
+        // Get the response
+        TaskResponse response = (TaskResponse) socketInput.readObject();
+        System.out.println("Response received: " + response.getRequestID() +" | "+ response.getResponse());
+
+        return response;
     }
 
     private Socket Generation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
@@ -50,28 +88,5 @@ public class ClientWorker implements Callable {
 
         SSLSocketFactory ssf = sc.getSocketFactory();
         return ssf.createSocket(this.request.getUser().getHost(), this.request.getUser().getPort());
-    }
-
-    @Override
-    public Boolean call() throws Exception {
-        try {
-            this.socket = (SSLSocket) Generation();
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        try {
-            ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
-
-            System.out.println("Sending request to the ServerSocket");
-            socketOutput.writeObject(request);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {socket.close(); } catch (IOException e) {e.printStackTrace(); }
-        }
-        return true;
     }
 }

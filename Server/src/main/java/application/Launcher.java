@@ -1,5 +1,6 @@
 package application;
 
+import Controller.Database.DBManager;
 import Controller.ManagementController;
 import Controller.SetupController;
 import javafx.application.Application;
@@ -25,10 +26,14 @@ public class Launcher {
     public static class MainStart extends Application {
         private static Stage stage;
         @Override
-        public void start(Stage stage) throws Exception {
-            this.stage = stage;
+        public void start(Stage s) throws Exception {
+            stage = s;
 
-            initScene();
+            if (DBManager.isSetup()) {
+                mainScene();
+            } else {
+                initScene();
+            }
         }
 
         public static void initScene() {

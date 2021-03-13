@@ -14,8 +14,13 @@ import java.util.Objects;
 public class SecureServer implements Runnable {
     protected int port = 3069; // Default
     protected boolean isStopped = false;
+    private boolean isInitialised = false;
+
     protected Thread runningThread = null;
-    protected SSLServerSocket serverSocket = null;
+
+    protected File ksFile = new File("data/keystore.jks");
+
+    protected SSLServerSocket serverSocket;
 
     public SecureServer() { // default (use default port)
         try {
@@ -35,18 +40,28 @@ public class SecureServer implements Runnable {
         }
     }
 
+    public boolean isInitialised() {
+        return isInitialised;
+    }
+
     @Override
     public void run() {
-        synchronized(this){this.runningThread = Thread.currentThread();}
+        synchronized (this) {
+            this.runningThread = Thread.currentThread();
+        }
 
-        while(! isStopped()){
+        if (isInitialised) {
+            System.out.println("Server not initialised");
+        }
+
+        while (!isStopped()) {
             SSLSocket clientSocket;
 
             try {
                 clientSocket = (SSLSocket) this.serverSocket.accept();
             } catch (IOException e) {
-                if(isStopped()) {
-                    System.out.println("Server Stopped.") ;
+                if (isStopped()) {
+                    System.out.println("Server Stopped.");
                     return;
                 }
                 throw new RuntimeException("Error accepting client connection", e);
@@ -55,31 +70,43 @@ public class SecureServer implements Runnable {
             new Thread(new ServerWorker(clientSocket, "Multithreaded Server")).start();
         }
 
-        System.out.println("Server Stopped.") ;
+        System.out.println("Server Stopped.");
     }
 
     private synchronized boolean isStopped() {
         return this.isStopped;
     }
 
-    public synchronized void stop(){
+    public synchronized void stop() {
         this.isStopped = true;
         try {
-            this.serverSocket.close();
+            if (this.serverSocket != null) {
+                this.serverSocket.close();
+            }
         } catch (IOException e) {
             throw new RuntimeException("Error closing server", e);
+
         }
     }
 
+    /**
+     * Creates our keystore file which is used to create a certificate for our secure server connection.
+     *
+     * @throws IOException               If the file doesn't exist then this exception will be thrown.
+     * @throws KeyStoreException         If the KeyStore file most likely doesn't contain correct keys. Can also be thrown for generic errors.
+     * @throws NoSuchAlgorithmException  If the configured algorithm cannot be found then this exception is thrown.
+     * @throws UnrecoverableKeyException Thrown when the key cannot be extracted from the keystore.
+     * @throws CertificateException      This will only be thrown if the certificate is not valid.
+     * @throws KeyManagementException    If keystore fails generally in the processes here then this exception is thrown.
+     */
     private void initialisation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
-        File ksFile = new File("data/keystore.jks");
         char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
-        //if (!ksFile.isFile()) { //This was to support future implementation of replaceable cert.
+        if (!ksFile.isFile()) {
             Files.copy(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("Cert/keystore.jks")), Paths.get("data/keystore.jks"), StandardCopyOption.REPLACE_EXISTING);
-        //}
+        }
 
-        System.out.println(ksFile.exists() + " | " + ksFile.getAbsolutePath() + " | " +  ksFile.canRead()  + " | " +  ksFile.length());
+        System.out.println(ksFile.exists() + " | " + ksFile.getAbsolutePath() + " | " + ksFile.canRead() + " | " + ksFile.length());
 
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream(ksFile), ksPwd);
@@ -96,6 +123,8 @@ public class SecureServer implements Runnable {
 
         SSLServerSocketFactory ssf = sc.getServerSocketFactory();
         this.serverSocket = (SSLServerSocket) ssf.createServerSocket(this.port);
-    }
 
+        isInitialised = true;
+
+    }
 }

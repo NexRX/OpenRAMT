@@ -2,6 +2,8 @@ package Controller.Library.enums;
 
 public enum Login {
     SUCCESS,
-    FAILED_AUTHENTICATION,
-    FAILED_CONNECTION
+    FAILED_CONNECTION,
+    FAILED_USERNAME,
+    FAILED_PASSWORD,
+    FAILED_SUSPENDED
 }

@@ -41,6 +41,7 @@
     -fx-text-fill: white;
     -fx-border-color: rgba(24, 24, 24, 0.17);
     -fx-background-color: rgba(227, 0, 0, 0.1);
+    -fx-cursor:hand;
 }
 
 .btn-power {
@@ -48,16 +49,19 @@
     -fx-text-fill: white;
     -fx-border-color: rgba(24, 24, 24, 0.17);
     -fx-background-color: rgba(14, 5, 5, 0.2);
+    -fx-cursor:hand;
 }
 
 .btn-power#shutdown {
     -fx-background-color: rgba(184, 0, 0, 0.5);
+    -fx-cursor:hand;
 }
 
 .topBar-Buttons {
 	-fx-background-radius: 0;
     -fx-background-color: #474343;
     -fx-alignment: CENTER;
+    -fx-cursor:hand;
 }
 
 .topBar-Buttons:hover {
@@ -68,6 +72,7 @@
 	-fx-background-radius: 0;
     -fx-alignment: CENTER;
     -fx-background-color: #474343;
+    -fx-cursor:hand;
 }
 
 #btnClose:hover {
@@ -100,6 +105,8 @@
     -fx-border-color: white;
 
     -jfx-button-type: RAISED;
+
+    -fx-cursor:hand;
 }
 
 
@@ -170,6 +177,11 @@
     -fx-background-color: transparent;
 }
 
+/* Combo Box */
+
+.combobox-primary {
+    -fx-background-color: rgba(14, 5, 5, 0.2)
+}
 
 
 /*******************************************************************************
@@ -257,4 +269,42 @@
 }
 .tabless .tab-header-area {
     visibility: hidden;
+}
+
+/*Dialog/Alert Box*/
+
+.AlertBox{
+    -fx-background-color: #544F4F;
+}
+
+.AlertBox > *.button-bar > *.container{
+    -fx-background-color: #474343;
+}
+
+.AlertBox > *.label.content{
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.AlertBox:header *.header-panel{
+    -fx-background-color: #4c4747;
+}
+
+.AlertBox:header *.header-panel *.label{
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+    -fx-fill: #ffffff;
+}
+
+.AlertBox .button{
+    -fx-background-color: #a22222;
+    -fx-text-fill:white;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow( three-pass-box, #4a0d0d, 10.0, 0.0, 0.0, 0.0);
+    -fx-cursor:hand;
+}
+
+.dialog-pane .button:hover{
+    -fx-background-color: #ff0000;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight:bold;
 }

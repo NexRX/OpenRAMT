@@ -28,8 +28,8 @@ public class Launcher {
         public void start(Stage stage) throws Exception {
             this.stage = stage;
 
-            //initScene();
-            rootScene();
+            initScene();
+            //rootScene();
         }
 
         public static Stage getStage() {

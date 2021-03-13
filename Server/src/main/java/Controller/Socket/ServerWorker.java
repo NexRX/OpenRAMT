@@ -1,11 +1,19 @@
 package Controller.Socket;
 
-import Model.TaskRequest;
+import Controller.CryptographyToolbox;
+import Controller.Database.DBManager;
+import Controller.Socket.Task.RAMTTaskLibrary;
+import Model.*;
 
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.sql.SQLException;
+
+import static Model.Task.*;
 
 /**
 
@@ -20,33 +28,101 @@ public class ServerWorker implements Runnable{
     }
 
     public void run() {
-        System.out.println(clientSocket);
         try {
             // create a DataInputStream so we can read data from it.
             ObjectInputStream socketInput = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream socketOutput = new ObjectOutputStream(clientSocket.getOutputStream());
 
-            // read the list of messages from the socket
+            // Get the Task request from client then process.
             TaskRequest request = (TaskRequest) socketInput.readObject();
-            System.out.println("Received [" + request.getUser() + "] messages from: " + clientSocket);
+            System.out.println("Received [" + request.getRequestID() + " | " + request.getTask() +
+                    ", by " + request.getUser() + "] in socket: " + clientSocket);
 
-            //ToDo When completing, Start a new thread here with a new task
-            // (defined by switch statement) and then get that task to return
-            // the errors and attack a listener to the tasks onSucced to update
-            // the user on its success/failure. Update Progress of task to client.
-            // Idea on remote progress update. Only have 3 states in which client is
-            // updated. 33% starting, 66% started, 100% finished etc.
+            int responseCode = processTask(request);
+            System.out.println(responseCode);
+
+            // Create response with processing results then send to user.
+
+            Response responseState;
+            switch (responseCode) {
+                case 0:
+                    responseState = Response.SUCCESS;
+                    break;
+                case 10:
+                case 11:
+                case 12:
+                case 19:
+                    responseState = Response.FAILEDAUTHENTICATION;
+                    break;
+                default:
+                    responseState = Response.OTHER;
+            }
+
+            TaskResponse response = new TaskResponse(request, responseState, responseCode);
+
+            socketOutput.writeObject(response);
+
+            // Finished, so printing this as such.
+            System.out.println(request.getRequestID() + " closed without exception in socket: " + clientSocket);
 
         } catch (IOException | ClassNotFoundException e) {
-            //report exception somewhere.
+            System.out.println("Socket " + clientSocket + " closing because of an exception, printing stack trace...");
             e.printStackTrace();
         } finally {
             try {
                 clientSocket.close();
-                System.out.println("Socket close completed");
+                System.out.println("A Socket closure completed");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private int processTask(TaskRequest request) {
+        switch (request.getTask()) {
+            case LOGIN:
+                return RAMTTaskLibrary.login(request.getUser());
+            case KILLPROCESS:
+                break;
+            case RESTARTPROCESS:
+                break;
+            case FETCHPROCESSES:
+                break;
+            case SHUTDOWN:
+                break;
+            case RESTART:
+                break;
+            case SLEEP:
+                break;
+            case ADDUSER:
+                break;
+            case EDITUSER:
+                break;
+            case DELETEUSER:
+                break;
+            case EDITSETTING:
+                break;
+            case GETSETTINGS:
+                break;
+            case STARTFTP:
+                break;
+            case STOPFTP:
+                break;
+            case RESTARTFTP:
+                break;
+            case CLEANDISK:
+                break;
+            case ENABLEWIFI:
+                break;
+            case DISABLEWIFI:
+                break;
+            case ENABLEBLUETOOTH:
+                break;
+            case DISABLEBLUETOOTH:
+                break;
+            case TESTING:
+                break;
+        }
+        return 404; // Task not found.
     }
 }

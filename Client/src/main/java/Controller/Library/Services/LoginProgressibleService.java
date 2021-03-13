@@ -4,6 +4,7 @@ import Controller.Library.enums.Login;
 import Controller.Progressible;
 import Controller.Library.Socket.ClientWorker;
 import Model.TaskRequest;
+import Model.TaskResponse;
 import Model.UserData;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -31,44 +32,54 @@ public class LoginProgressibleService extends Service<Login> implements Progress
 
     @Override
     protected Task<Login> createTask() {
-        return new Task<Login>() {
+        return new Task<>() {
             @Override
             protected Login call() throws IOException {
                 setProgress(0d);
-                double inc = (1d/7d); // total progress per loop and increment amount.
-                for (double i = 0d; i < 1d; i+= inc) {
-                    if (isCancelled()) {break;}// Finish early (also return null works)
+                double inc = (1d / 7d); // total progress per loop and increment amount.
+                for (double i = 0d; i < 1d; i += inc) {
+                    if (isCancelled()) {
+                        break;
+                    }// Finish early (also return null works)
 
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
-                        System.out.println("InterruptedException Caught... Sleep Interrupted");
+                        System.out.println("InterruptedException. Sleep Interrupted!");
                     }
+
                     System.out.println("Starting client socket");
+                    TaskResponse result = null;
                     try {
-                        FutureTask<Boolean> futureTask = new FutureTask<>(new ClientWorker(new TaskRequest(Model.Task.DEFAULT, user)));
+                        FutureTask<TaskResponse> futureTask = new FutureTask<TaskResponse>(new ClientWorker(new TaskRequest(Model.Task.LOGIN, user)));
                         Thread thread = new Thread(futureTask);
                         thread.start();
-                        Boolean result = futureTask.get(); // will wait for the async completion
-                    } catch (UnrecoverableKeyException e) {
+                        result = futureTask.get(); // will wait for the async completion
+                    } catch (UnrecoverableKeyException | CertificateException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException | InterruptedException | ExecutionException e) {
                         e.printStackTrace();
-                    } catch (CertificateException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    } catch (KeyStoreException e) {
-                        e.printStackTrace();
-                    } catch (KeyManagementException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                        //Todo tell these errors to the user (in the switch statement) perhaps.
                     }
-                    addProgress(inc);
+
+                    switch ((result != null ? result.getResponseCode() : 99)) {
+                        case 0:
+                            setProgress(1d);
+                            return Login.SUCCESS;
+                        case 10:
+                            setProgress(0d);
+                            return Login.FAILED_USERNAME;
+                        case 11:
+                            setProgress(0d);
+                            return Login.FAILED_PASSWORD;
+                        case 12:
+                            setProgress(0d);
+                            return Login.FAILED_SUSPENDED;
+                        default: // Some error (probably not serious).
+                            addProgress(inc); // essentially retry and add progress
+                    }
                 }
-                return Login.SUCCESS;
+
+                return Login.FAILED_CONNECTION;
             }
         };
     }

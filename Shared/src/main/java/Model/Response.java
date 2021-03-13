@@ -1,7 +1,12 @@
 package Model;
 
-public enum Response {
+public enum Response { //ResponseName
     SUCCESS,
+    INTERRUPTED,
     FAILED,
+    FAILEDCONNECTION,
+    FAILEDSTART,
+    FAILEDAUTHENTICATION,
+    FAILEDVALIDATION,
     OTHER
 }
