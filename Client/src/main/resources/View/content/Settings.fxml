@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXTextField?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.control.Label?>
@@ -15,7 +16,7 @@
                <children>
                   <Label fx:id="lblSecurityHeader" layoutX="36.0" layoutY="14.0" prefHeight="27.0" prefWidth="517.0" styleClass="lbl-header" text="Security" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="48.0" AnchorPane.topAnchor="14.0" />
                   <Label fx:id="lblSSL" alignment="CENTER_RIGHT" layoutX="36.0" layoutY="62.0" prefHeight="25.0" prefWidth="141.0" styleClass="lbl-regular" text="SSL/TLS  Encryption:" AnchorPane.leftAnchor="36.0" />
-                  <JFXToggleButton fx:id="toggleBtnSSL" layoutX="188.0" layoutY="46.0" prefHeight="60.0" prefWidth="116.0" selected="true" text="Off/On" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="296.0" />
+                  <JFXToggleButton fx:id="toggleBtnSSL" layoutX="188.0" layoutY="46.0" prefHeight="60.0" prefWidth="122.0" selected="true" text="Off/On" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="276.0" />
                </children>
             </AnchorPane>
             <AnchorPane fx:id="containerMonitoring" prefHeight="104.0" prefWidth="601.0">
@@ -37,9 +38,17 @@
                   <Label fx:id="lblGuestPassword" alignment="CENTER_RIGHT" layoutX="36.0" layoutY="140.0" prefHeight="25.0" prefWidth="141.0" styleClass="lbl-regular" text="Guest Password:" AnchorPane.leftAnchor="36.0" />
                   <JFXTextField fx:id="txtGuestPassword" focusColor="RED" layoutX="188.0" layoutY="138.0" prefHeight="25.0" prefWidth="384.0" unFocusColor="#5e2121" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="28.0" />
                   <Label fx:id="lblFTPEnable" alignment="CENTER_RIGHT" layoutX="36.0" layoutY="165.0" prefHeight="25.0" prefWidth="141.0" styleClass="lbl-regular" text="Enabled:" AnchorPane.leftAnchor="36.0" />
-                  <JFXToggleButton fx:id="toggleBtnFTP" layoutX="188.0" layoutY="149.0" prefHeight="60.0" prefWidth="116.0" selected="true" text="Off/On" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="296.0" />
+                  <JFXToggleButton fx:id="toggleBtnFTP" layoutX="188.0" layoutY="149.0" prefHeight="60.0" prefWidth="125.0" selected="true" text="Off/On" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="273.0" />
                </children>
             </AnchorPane>
+            <AnchorPane fx:id="containerMonitoring1" prefHeight="104.0" prefWidth="601.0">
+               <children>
+                  <Label fx:id="lblMonitoringHeader1" layoutX="36.0" layoutY="14.0" prefHeight="27.0" prefWidth="517.0" styleClass="lbl-header" text="Monitoring" AnchorPane.leftAnchor="36.0" AnchorPane.rightAnchor="48.0" AnchorPane.topAnchor="14.0" />
+                  <Label fx:id="lblPollingRate1" alignment="CENTER_RIGHT" layoutX="28.0" layoutY="53.0" prefHeight="25.0" prefWidth="149.0" styleClass="lbl-regular" text="Polling Rate (Seconds):" AnchorPane.leftAnchor="28.0" />
+                  <JFXTextField fx:id="txtPollingRate1" focusColor="RED" layoutX="203.0" layoutY="53.0" prefHeight="25.0" prefWidth="384.0" unFocusColor="#5e2121" AnchorPane.leftAnchor="188.0" AnchorPane.rightAnchor="28.0" />
+               </children>
+            </AnchorPane>
+            <JFXButton fx:id="btnSubmit" buttonType="RAISED" prefHeight="29.0" prefWidth="67.0" ripplerFill="#680000" styleClass="btn-regular" text="Submit" />
          </children>
       </VBox>
    </content>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<fx:root id="initial" minHeight="209.0" minWidth="486.0" prefHeight="218.0" prefWidth="486.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane fx:id="topBar" layoutX="58.0" prefHeight="25.0" prefWidth="459.0" styleClass="secondary-background" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0" />
+      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="#bc0000" text="X" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <Label fx:id="lblAdmin" layoutX="51.0" layoutY="79.0" text="Admin" textFill="WHITE" AnchorPane.leftAnchor="51.0" AnchorPane.rightAnchor="382.0" />
+      <JFXToggleButton fx:id="toggleBtnAdmin" layoutX="114.0" layoutY="58.0" prefHeight="57.0" prefWidth="122.0" selected="true" text="No/Yes" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="114.0" AnchorPane.rightAnchor="250.0" />
+      <Label fx:id="lblHeaderPermissions" layoutX="22.0" layoutY="33.0" prefHeight="27.0" prefWidth="157.0" styleClass="lbl-header" text="Group Permissions:" textFill="WHITE" AnchorPane.leftAnchor="22.0" AnchorPane.rightAnchor="307.0" />
+      <Label fx:id="lblWarning" layoutX="236.0" layoutY="58.0" prefHeight="58.0" prefWidth="236.0" text="Please note that Administrators override all their other permissions due to the fact they create users at any perrmission level." textFill="#d0c5c5" wrapText="true" AnchorPane.leftAnchor="236.0" AnchorPane.rightAnchor="14.0">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblGeneral" layoutX="51.0" layoutY="117.0" text="General" textFill="WHITE" AnchorPane.leftAnchor="51.0" AnchorPane.rightAnchor="394.0" />
+      <JFXToggleButton fx:id="toggleBtnGeneral" layoutX="114.0" layoutY="96.0" prefHeight="57.0" prefWidth="122.0" selected="true" text="No/Yes" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="114.0" AnchorPane.rightAnchor="250.0" />
+      <Label fx:id="lblProcess" layoutX="236.0" layoutY="117.0" text="Process" textFill="WHITE" AnchorPane.leftAnchor="236.0" AnchorPane.rightAnchor="210.0" />
+      <JFXToggleButton fx:id="toggleBtnProcess" layoutX="299.0" layoutY="96.0" prefHeight="57.0" prefWidth="122.0" selected="true" text="No/Yes" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="65.0" />
+      <Label fx:id="lblMonitor" layoutX="51.0" layoutY="155.0" text="Monitor" textFill="WHITE" AnchorPane.leftAnchor="51.0" AnchorPane.rightAnchor="392.0" />
+      <JFXToggleButton fx:id="toggleBtnMonitor" layoutX="114.0" layoutY="134.0" prefHeight="57.0" prefWidth="122.0" selected="true" text="No/Yes" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="114.0" AnchorPane.rightAnchor="250.0" />
+      <Label fx:id="lblPower" layoutX="236.0" layoutY="155.0" text="Power" textFill="WHITE" AnchorPane.leftAnchor="236.0" AnchorPane.rightAnchor="217.0" />
+      <JFXToggleButton fx:id="toggleBtnPower" layoutX="299.0" layoutY="134.0" prefHeight="57.0" prefWidth="122.0" selected="true" text="No/Yes" toggleColor="#8f0000" toggleLineColor="#c27878" AnchorPane.leftAnchor="299.0" AnchorPane.rightAnchor="65.0" />
+      <JFXButton fx:id="btnSubmit" buttonType="RAISED" layoutX="210.0" layoutY="195.0" prefHeight="29.0" prefWidth="67.0" ripplerFill="#680000" styleClass="btn-regular" text="Submit" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="210.0" />
+      <Label fx:id="lblGroupValue" layoutX="182.0" layoutY="33.0" prefHeight="27.0" prefWidth="290.0" styleClass="lbl-header" textFill="WHITE" />
+   </children>
+</fx:root>
