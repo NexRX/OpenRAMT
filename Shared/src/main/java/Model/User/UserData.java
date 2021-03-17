@@ -1,4 +1,4 @@
-package Model;
+package Model.User;
 
 //import java.io.FileInputStream;
 
@@ -16,6 +16,7 @@ public class UserData implements Serializable {
 	private final String username;
 	private final String password;
 	private String group = null;
+	private boolean suspended = false; //Default Value in DB.
 
 	/**
 	 * The minimum construction for userdata. The port is assumed and updatable values are assigned as null. All other
@@ -97,6 +98,27 @@ public class UserData implements Serializable {
 		this.group = group;
 	}
 
+	/**
+	 * This is more for the server but essentially is the full constructo. constructs a UserData object with all the
+	 * information upfront.
+	 * @param host The OpenRAMT server's IP address.
+	 * @param port The port to connect to the OpenRAMT server.
+	 * @param id The ID assigned to the user within the server.
+	 * @param username The user's username.
+	 * @param password The user's hashed password. Please insure it is hashed before assigning.
+	 * @param group A group within the server that is also assigned to this user.
+	 * @param suspended Whether the user is suspended or not aka false.
+	 */
+	public UserData(String host, int port, String id, String username, String password, String group, boolean suspended) {
+		this.host = host;
+		this.port = port;
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.group = group;
+		this.suspended = suspended;
+	}
+
 	public boolean connectable() {
 		return this.host != null;
 	}
@@ -133,4 +155,7 @@ public class UserData implements Serializable {
 	public String getPassword() {
 		return password;
 	}
+
+	public Boolean isSuspended() { return suspended; }
+	public void setSuspended(boolean suspended) { this.suspended = suspended; }
 }

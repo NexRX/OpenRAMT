@@ -1,10 +1,10 @@
-package Model;
+package Model.General;
 
 public enum AppPermission {
-    GENERAL,
     ADMINISTRATOR,
+    GENERAL,
+    PROCESS,
     MONITORING,
     POWER,
-    PROCESS,
     NONE // For when permissions aren't needed.
 }

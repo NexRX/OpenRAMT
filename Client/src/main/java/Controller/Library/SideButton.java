@@ -1,6 +1,6 @@
 package Controller.Library;
 
-import Model.AppPermission;
+import Model.General.AppPermission;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXMLLoader;
 import java.io.IOException;

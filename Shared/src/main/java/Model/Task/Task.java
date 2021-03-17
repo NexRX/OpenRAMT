@@ -1,4 +1,4 @@
-package Model;
+package Model.Task;
 
 public enum Task {
     KILLPROCESS,

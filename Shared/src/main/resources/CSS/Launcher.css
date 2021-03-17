@@ -1,0 +1,37 @@
+/*Dialog/Alert Box*/
+
+.RAMTAlert {
+    -fx-background-color: #544F4F;
+}
+
+.RAMTAlert > *.button-bar > *.container{
+    -fx-background-color: #474343;
+}
+
+.RAMTAlert > *.label.content{
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.RAMTAlert:header *.header-panel{
+    -fx-background-color: #4c4747;
+}
+
+.RAMTAlert:header *.header-panel *.label{
+    -fx-font-size: 18px;
+    -fx-font-style: italic;
+    -fx-fill: #ffffff;
+}
+
+.RAMTAlert .button{
+    -fx-background-color: #a22222;
+    -fx-text-fill:white;
+    -fx-wrap-text: true;
+    -fx-effect: dropshadow( three-pass-box, #4a0d0d, 10.0, 0.0, 0.0, 0.0);
+    -fx-cursor:hand;
+}
+
+.dialog-pane .button:hover{
+    -fx-background-color: #ff0000;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-weight:bold;
+}

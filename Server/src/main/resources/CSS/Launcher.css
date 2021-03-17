@@ -273,29 +273,29 @@
 
 /*Dialog/Alert Box*/
 
-.AlertBox{
+.RAMTAlert {
     -fx-background-color: #544F4F;
 }
 
-.AlertBox > *.button-bar > *.container{
+.RAMTAlert > *.button-bar > *.container{
     -fx-background-color: #474343;
 }
 
-.AlertBox > *.label.content{
+.RAMTAlert > *.label.content{
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
-.AlertBox:header *.header-panel{
+.RAMTAlert:header *.header-panel{
     -fx-background-color: #4c4747;
 }
 
-.AlertBox:header *.header-panel *.label{
+.RAMTAlert:header *.header-panel *.label{
     -fx-font-size: 18px;
     -fx-font-style: italic;
     -fx-fill: #ffffff;
 }
 
-.AlertBox .button{
+.RAMTAlert .button{
     -fx-background-color: #a22222;
     -fx-text-fill:white;
     -fx-wrap-text: true;

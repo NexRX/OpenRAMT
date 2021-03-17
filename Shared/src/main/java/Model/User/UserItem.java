@@ -1,16 +1,18 @@
-package Model;
+package Model.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class UserItem {
     private String username;
+
     private String group;
     private String admin;
     private String general;
     private String process;
     private String monitoring;
     private String power;
+
+    private String suspended;
 
     private UserData userData;
     private UserGroup userGroup;
@@ -30,6 +32,8 @@ public class UserItem {
         this.process = group.getProcess();
         this.monitoring = group.getMonitoring();
         this.power = group.getPower();
+
+        this.suspended = user.isSuspended().toString();
     }
 
     /**
@@ -48,6 +52,8 @@ public class UserItem {
         this.process = group.getProcess();
         this.monitoring = group.getMonitoring();
         this.power = group.getPower();
+
+        this.suspended = user.isSuspended().toString();
     }
 
     public UserData getUserObj() {
@@ -112,6 +118,14 @@ public class UserItem {
 
     public void setPower(String power) {
         this.power = power;
+    }
+
+    public String getSuspended() {
+        return suspended;
+    }
+
+    public void setSuspended(String suspended) {
+        this.suspended = suspended;
     }
 
     public UserData getUserData() {

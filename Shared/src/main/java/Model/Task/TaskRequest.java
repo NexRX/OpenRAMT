@@ -1,4 +1,6 @@
-package Model;
+package Model.Task;
+
+import Model.User.UserData;
 
 import java.io.Serializable;
 import java.util.UUID;

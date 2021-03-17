@@ -1,11 +1,12 @@
 package Controller.Library.Socket;
 
-import Model.Response;
-import Model.TaskRequest;
-import Model.TaskResponse;
+import Model.Task.Response;
+import Model.Task.TaskRequest;
+import Model.Task.TaskResponse;
 
 import javax.net.ssl.*;
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -25,12 +26,9 @@ public class ClientWorker implements Callable<TaskResponse> {
     }
 
     @Override
-    public TaskResponse call() throws IOException {
-        try {
-            this.socket = (SSLSocket) Generation();
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
-            e.printStackTrace();
-        }
+    public TaskResponse call() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+
+        this.socket = (SSLSocket) Generation();
 
         TaskResponse result; // 1 for generic error because (if result hasn't changed) something hasn't gone as planned.
         try {
@@ -87,6 +85,8 @@ public class ClientWorker implements Callable<TaskResponse> {
         sc.init(kmf.getKeyManagers(), trustManagers, null);
 
         SSLSocketFactory ssf = sc.getSocketFactory();
+
         return ssf.createSocket(this.request.getUser().getHost(), this.request.getUser().getPort());
+
     }
 }

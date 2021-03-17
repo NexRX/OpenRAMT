@@ -7,6 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import sun.misc.Unsafe;
+
+import java.lang.reflect.Field;
 
 /**
  * Essentially the bootstrap to kickstart the main start class.
@@ -26,6 +29,7 @@ public class Launcher {
         static Stage stage;
         @Override
         public void start(Stage stage) throws Exception {
+            disableReflectionWarning();
             this.stage = stage;
 
             initScene();
@@ -62,6 +66,21 @@ public class Launcher {
             stage.setMinWidth(710);
             stage.setMinHeight(425);
             stage.show();
+        }
+
+        public static void disableReflectionWarning() {
+            try {
+                Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+                theUnsafe.setAccessible(true);
+                Unsafe unsafe = (Unsafe) theUnsafe.get(null);
+
+                Class clazz = Class.forName("jdk.internal.module.IllegalAccessLogger");
+                Field logger = clazz.getDeclaredField("logger");
+
+                unsafe.putObjectVolatile(clazz, unsafe.staticFieldOffset(logger), null);
+            } catch (Exception e) {
+                // Do nothing.
+            }
         }
 
         /**

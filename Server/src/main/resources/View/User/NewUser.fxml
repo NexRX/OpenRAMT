@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.JFXPasswordField?>
 
 <fx:root id="initial" minHeight="209.0" minWidth="486.0" prefHeight="230.0" prefWidth="486.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -16,7 +17,7 @@
       <Label layoutX="42.0" layoutY="90.0" text="Username:" textFill="WHITE" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="388.0" />
       <JFXTextField fx:id="txtUsername" focusColor="RED" layoutX="112.0" layoutY="83.0" prefHeight="25.0" prefWidth="331.0" unFocusColor="#5e2121" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="43.0" />
       <Label layoutX="45.0" layoutY="123.0" text="Password:" textFill="WHITE" AnchorPane.leftAnchor="45.0" AnchorPane.rightAnchor="388.0" />
-      <JFXTextField fx:id="txtPassword" focusColor="RED" layoutX="112.0" layoutY="116.0" prefHeight="25.0" prefWidth="331.0" unFocusColor="#5e2121" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="43.0" />
+      <JFXPasswordField fx:id="txtPassword" focusColor="RED" layoutX="112.0" layoutY="116.0" prefHeight="25.0" prefWidth="331.0" unFocusColor="#5e2121" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="43.0" />
       <Label layoutX="62.0" layoutY="168.0" text="Group:" textFill="WHITE" AnchorPane.leftAnchor="62.0" AnchorPane.rightAnchor="388.0" />
       <JFXButton fx:id="btnSubmit" buttonType="RAISED" layoutX="210.0" layoutY="195.0" prefHeight="29.0" prefWidth="67.0" ripplerFill="#680000" styleClass="btn-regular" text="Submit" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="210.0" AnchorPane.rightAnchor="209.0" />
       <ComboBox fx:id="comboGroup" layoutX="112.0" layoutY="164.0" prefHeight="25.0" prefWidth="331.0" promptText="Group Selection" styleClass="combobox-primary" />
@@ -25,5 +26,6 @@
             <Font size="10.0" />
          </font>
       </Label>
+      <Label fx:id="lblUserValue" layoutX="131.0" layoutY="35.0" prefHeight="27.0" prefWidth="344.0" styleClass="lbl-header" textFill="WHITE" AnchorPane.leftAnchor="130.0" AnchorPane.rightAnchor="10.0" />
    </children>
 </fx:root>

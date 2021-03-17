@@ -1,9 +1,13 @@
 package Controller.Socket;
 
+import Controller.RAMTAlert;
+import javafx.scene.control.Alert;
+
 import javax.net.ssl.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.BindException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -25,6 +29,15 @@ public class SecureServer implements Runnable {
     public SecureServer() { // default (use default port)
         try {
             initialisation();
+        } catch (BindException e) {
+            new RAMTAlert(Alert.AlertType.ERROR,
+                    "OpenRAMT Startup Error.",
+                    "The port assigned to the server is already taken.",
+                    "This can be because two servers are running at once (on the same port) so please " +
+                            "try closing the other program or wiping this application to choose a different port." +
+                            "\n\n This program will now be exiting.").showAndWait();
+            System.exit(0);
+            //TODO provide a way to change settings without a wipe in the future.
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
             e.printStackTrace();
         }
@@ -35,6 +48,15 @@ public class SecureServer implements Runnable {
 
         try {
             initialisation();
+        } catch (BindException e) {
+            new RAMTAlert(Alert.AlertType.ERROR,
+                    "OpenRAMT Startup Error.",
+                    "The port assigned to the server is already taken.",
+                    "This can be because two servers are running at once (on the same port) so please " +
+                            "try closing the other program or wiping this application to choose a different port." +
+                            "\n\n This program will now be exiting.").showAndWait();
+            System.exit(-1);
+            //TODO provide a way to change settings without a wipe in the future.
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
             e.printStackTrace();
         }

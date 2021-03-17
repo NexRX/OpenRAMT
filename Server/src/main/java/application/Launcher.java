@@ -8,8 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import sun.misc.Unsafe;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * Essentially the bootstrap to kickstart the main start class.
@@ -26,8 +28,9 @@ public class Launcher {
     public static class MainStart extends Application {
         private static Stage stage;
         @Override
-        public void start(Stage s) throws Exception {
-            stage = s;
+        public void start(Stage stage) throws Exception {
+            disableReflectionWarning();
+            this.stage = stage;
 
             if (DBManager.isSetup()) {
                 mainScene();
@@ -62,6 +65,21 @@ public class Launcher {
             stage.setMinHeight(410);
 
             stage.show();
+        }
+
+        public static void disableReflectionWarning() {
+            try {
+                Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+                theUnsafe.setAccessible(true);
+                Unsafe unsafe = (Unsafe) theUnsafe.get(null);
+
+                Class clazz = Class.forName("jdk.internal.module.IllegalAccessLogger");
+                Field logger = clazz.getDeclaredField("logger");
+
+                unsafe.putObjectVolatile(clazz, unsafe.staticFieldOffset(logger), null);
+            } catch (Exception e) {
+                // Do nothing.
+            }
         }
 
         /**

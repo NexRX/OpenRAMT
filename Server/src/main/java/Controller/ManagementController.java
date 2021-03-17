@@ -2,28 +2,33 @@ package Controller;
 
 import Controller.Database.DBManager;
 import Controller.Socket.SecureServer;
-import Model.UserData;
-import Model.UserGroup;
-import Model.UserItem;
+import Controller.group.MigrateGroupController;
+import Controller.group.NewGroupController;
+import Controller.group.NewGroupNameController;
+import Controller.group.NewGroupPermissionsController;
+import Controller.user.NewUserController;
+import Controller.user.NewUserGroupController;
+import Controller.user.NewUserPasswordController;
+import Controller.user.NewUsernameController;
+import Model.User.UserData;
+import Model.User.UserGroup;
+import Model.User.UserItem;
 import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Pair;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +54,7 @@ public class ManagementController extends AnchorPane {
     @FXML JFXButton btnGroupNew;
     @FXML JFXButton btnGroupName;
     @FXML JFXButton btnGroupPermission;
-    @FXML JFXButton btnGroupGroupMigrate;
+    @FXML JFXButton btnGroupMigrate;
     @FXML JFXButton btnGroupSuspendUsers;
     @FXML JFXButton btnGroupDeleteUsers;
     @FXML JFXButton btnGroupDelete;
@@ -65,6 +70,7 @@ public class ManagementController extends AnchorPane {
     @FXML TableColumn<UserItem, String> colProcess;
     @FXML TableColumn<UserItem, String> colMonitoring;
     @FXML TableColumn<UserItem, String> colPower;
+    @FXML TableColumn<UserItem, String> colSuspended;
 
 
     private double xOffset = 0;
@@ -92,6 +98,7 @@ public class ManagementController extends AnchorPane {
         colProcess.setCellValueFactory(new PropertyValueFactory<>("process"));
         colMonitoring.setCellValueFactory(new PropertyValueFactory<>("monitoring"));
         colPower.setCellValueFactory(new PropertyValueFactory<>("power"));
+        colSuspended.setCellValueFactory(new PropertyValueFactory<>("suspended"));
 
         applyEventHandlers();
         serverStart();
@@ -132,35 +139,184 @@ public class ManagementController extends AnchorPane {
         /* User */
         btnUserNew.setOnMouseClicked(event -> {
             // Show User Creation and wait. Then get results and create user with it.
-
-            Stage creation = new Stage();
-            NewUserController nuc = new NewUserController(creation, stage);
-            Scene userCreation = new Scene(nuc);
-
-            creation.setScene(userCreation);
-            creation.initStyle(StageStyle.UNDECORATED);
-            creation.show();
-
-            stage.hide();
+            try {
+                reflectiveFormStart(Class.forName("Controller.user.NewUserController"));
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
         });
+
+        btnUserName.setOnMouseClicked(event -> {
+            try {
+                reflectiveFormStart(Class.forName("Controller.user.NewUsernameController"), selectedUsername());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
+
+        btnUserPassword.setOnMouseClicked(event -> {
+            try {
+                reflectiveFormStart(Class.forName("Controller.user.NewUserPasswordController"), selectedUsername());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
+
+        btnUserGroup.setOnMouseClicked(event -> {
+            try {
+                reflectiveFormStart(Class.forName("Controller.user.NewUserGroupController"), selectedUsername());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
+
+        btnUserSuspend.setOnMouseClicked(event -> {
+            String user = this.selectedUsername();
+            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                    "User suspension Confirmation.",
+                    "Do you wish to suspend user " + user + "?",
+                    "Please note that users must be unsuspended manually!");
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                try {
+                    DBManager.suspendUser(user);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    sqlError();
+                }
+            }
+        });
+
+        btnUserDelete.setOnMouseClicked(event -> {
+            String user = this.selectedUsername();
+            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                    "User Deletion Confirmation.",
+                    "Do you wish to delete user " + user + "?",
+                    "This cannot be undone without a data backup! \n" +
+                            "Please double check and ensure your at least delete the correct user.");
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                try {
+                    DBManager.deleteUser(user);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    sqlError();
+                }
+            }
+        });
+
 
         /* Group */
         btnGroupNew.setOnMouseClicked(event -> {
-            // Show User Creation and wait. Then get results and create user with it.
-
-            Stage creation = new Stage();
-            NewGroupController ngc = new NewGroupController(creation, stage);
-            Scene userCreation = new Scene(ngc);
-
-            creation.setScene(userCreation);
-            creation.initStyle(StageStyle.UNDECORATED);
-            creation.show();
-
-            stage.hide();
+            try {
+                reflectiveFormStart(Class.forName("Controller.group.NewGroupController"));
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
         });
 
         btnGroupName.setOnMouseClicked(event -> {
+            try {
+                reflectiveFormStart(Class.forName("Controller.group.NewGroupNameController"), selectedGroupName());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
 
+        btnGroupPermission.setOnMouseClicked(event -> {
+            try {
+                reflectiveFormStart(Class.forName("Controller.group.NewGroupPermissionsController"), selectedGroupName());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
+
+        btnGroupMigrate.setOnMouseClicked(event -> {
+            try {
+                reflectiveFormStart(Class.forName("Controller.group.MigrateGroupController"), selectedGroupName());
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
+
+        btnGroupSuspendUsers.setOnMouseClicked(event -> {
+            String group = this.selectedGroupName();
+            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                    "Group suspension Confirmation.",
+                    "Do you wish to suspend users in " + group + "?",
+                    "Please note that users must be unsuspended manually! \n" +
+                            "This means that they cannot be 'all' unsuspended via a one click solution.");
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                try {
+                    DBManager.suspendGroupUsers(group);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    sqlError();
+                }
+            }
+        });
+
+        btnGroupDeleteUsers.setOnMouseClicked(event -> {
+            String group = this.selectedGroupName();
+            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                    "Group User Deletion Confirmation.",
+                    "Do you wish to delete all users in " + group + "?",
+                    "This cannot be undone without a data backup! \n" +
+                            "Please double check and ensure your at least delete users in the right group.");
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                try {
+                    DBManager.deleteGroupUsers(group);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    sqlError();
+                }
+            }
+        });
+
+        btnGroupDelete.setOnMouseClicked(event -> {
+            String group = this.selectedGroupName();
+            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                    "Group Deletion Confirmation.",
+                    "Do you wish to delete the following " + group + "?",
+                    "This cannot be undone without a data backup! \n" +
+                            "All users will be moved to the default group. So please make sure everything is correct!");
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                try {
+                    DBManager.deleteGroup(group);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    sqlError();
+                }
+            }
         });
 
         /* Table */
@@ -180,17 +336,83 @@ public class ManagementController extends AnchorPane {
                 }
 
             } catch (SQLException e) {
-                //ToDo Tell user about the error.
                 e.printStackTrace();
+                sqlError();
             }
         });
 
         tblUsers.setOnMouseClicked(event -> {
-            UserItem selected = tblUsers.getSelectionModel().getSelectedItem();
-
-            lblUserValue.setText(selected.getUsername());
-            lblGroupValue.setText(selected.getGroup());
+            lblUserValue.setText(selectedUsername());
+            lblGroupValue.setText(selectedGroupName());
         });
+    }
+
+    private void reflectiveFormStart(Class<?> clazz, String... name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        Stage creation = new Stage();
+
+        Constructor<?> ctor;
+        Object[] params;
+
+        try {
+            ctor = clazz.getConstructor(Stage.class, Stage.class);
+            params = new Object[] {creation, stage};
+        } catch (NoSuchMethodException e){
+            ctor = clazz.getConstructor(Stage.class, Stage.class, String.class);
+            params = new Object[] {creation, stage, name[0]};
+        }
+
+        Parent controller = (Parent) ctor.newInstance(params);
+
+        Scene userCreation = new Scene(controller);
+
+        creation.setScene(userCreation);
+        creation.initStyle(StageStyle.UNDECORATED);
+        creation.show();
+
+        stage.hide();
+    }
+
+    public void sqlError() {
+        Alert alertError = new RAMTAlert(Alert.AlertType.ERROR,
+                "Application Error.",
+                "The application ran into a error with that request.",
+                "Please notify an admin. The error was an 'SQLException' if an admin asks.");
+        stopServer();
+        alertError.showAndWait();
+        System.exit(1);
+    }
+
+    public UserItem selectedUserItem() {
+        return tblUsers.getSelectionModel().getSelectedItem();
+    }
+
+    public String selectedUsername() {
+        if (selectedUserItem() != null && !selectedUserItem().getUsername().isEmpty()) {
+            return selectedUserItem().getUsername();
+        } else if(lblUserValue != null && !lblUserValue.getText().isEmpty()) {
+            return lblUserValue.getText();
+        }
+
+        throw new IllegalStateException("Nothing has been selected yet.");
+    }
+
+    public String selectedGroupName() throws IllegalStateException {
+        if (selectedUserItem() != null && !selectedUserItem().getGroup().isEmpty()) {
+            return selectedUserItem().getGroup();
+        } else if(lblGroupValue != null && !lblGroupValue.getText().isEmpty()) {
+            return lblGroupValue.getText();
+        }
+
+        throw new IllegalStateException("Nothing has been selected yet.");
+    }
+
+    private void nothingSelectedAlert() {
+        new RAMTAlert(Alert.AlertType.INFORMATION,
+                "Application Information",
+                "No user (and therefore group) has been selected.",
+                "Please select a user in the list that you wish to edit. If you wish to edit a group" +
+                        "then select a user with that group. If there isn't one then you'll have to add one to the" +
+                        "desired group to edit it first.").showAndWait();
     }
 
 }

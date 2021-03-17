@@ -1,6 +1,6 @@
 package Controller.Library;
 
-import Model.AppPermission;
+import Model.General.AppPermission;
 
 public interface AppPermissionRestrictable {
     AppPermission getAppPermission();

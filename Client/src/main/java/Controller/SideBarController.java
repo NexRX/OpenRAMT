@@ -2,7 +2,7 @@ package Controller;
 
 import Controller.Library.SideButton;
 import Controller.Library.WizardPane;
-import Model.AppPermission;
+import Model.General.AppPermission;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;

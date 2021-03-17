@@ -11,12 +11,13 @@ repositories {
 dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    implementation group: 'com.profesorfalken', name: 'jPowerShell', version:'3.1.1'
     implementation project(':Shared')
 }
 
 javafx {
     modules = ['javafx.controls', 'javafx.fxml']
-    version = '14.0.2'
+    version = '15.0.1'
 }
 
 application {

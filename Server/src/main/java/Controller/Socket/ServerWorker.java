@@ -1,19 +1,14 @@
 package Controller.Socket;
 
-import Controller.CryptographyToolbox;
-import Controller.Database.DBManager;
 import Controller.Socket.Task.RAMTTaskLibrary;
-import Model.*;
+import Model.Task.Response;
+import Model.Task.TaskRequest;
+import Model.Task.TaskResponse;
 
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
-
-import static Model.Task.*;
 
 /**
 
@@ -43,20 +38,11 @@ public class ServerWorker implements Runnable{
 
             // Create response with processing results then send to user.
 
-            Response responseState;
-            switch (responseCode) {
-                case 0:
-                    responseState = Response.SUCCESS;
-                    break;
-                case 10:
-                case 11:
-                case 12:
-                case 19:
-                    responseState = Response.FAILEDAUTHENTICATION;
-                    break;
-                default:
-                    responseState = Response.OTHER;
-            }
+            Response responseState = switch (responseCode) {
+                case 0 -> Response.SUCCESS;
+                case 10, 11, 12, 19 -> Response.FAILEDAUTHENTICATION;
+                default -> Response.OTHER;
+            };
 
             TaskResponse response = new TaskResponse(request, responseState, responseCode);
 

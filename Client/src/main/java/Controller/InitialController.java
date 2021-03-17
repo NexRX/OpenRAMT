@@ -1,7 +1,7 @@
 package Controller;
 
 import Controller.Library.Services.LoginProgressibleService;
-import Model.UserData;
+import Model.User.UserData;
 import application.Launcher;
 import application.Launcher.MainStart;
 import com.jfoenix.controls.JFXButton;
@@ -18,8 +18,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class InitialController extends AnchorPane {
     private final Stage stage;
@@ -66,12 +64,12 @@ public class InitialController extends AnchorPane {
             System.exit(0);
         });
 
-        this.setOnMousePressed(event -> { // These next two control window movement
+        topBar.setOnMousePressed(event -> { // These next two control window movement
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
 
-        this.setOnMouseDragged(event -> {
+        topBar.setOnMouseDragged(event -> {
             stage.setX(event.getScreenX() - xOffset);
             stage.setY(event.getScreenY() - yOffset);
         });
@@ -79,24 +77,28 @@ public class InitialController extends AnchorPane {
         btnLogin.setOnMouseClicked(event -> {
 
             if (loginHost.getText().indexOf(':') > -1) { // <-- does it contain ":"?
+                System.out.println("Port found in " + loginHost.getText());
                 String[] arr = loginHost.getText().split(":");
                 String host = arr[0];
                 try {
                     int port = Integer.parseInt(arr[1]);
-                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText()); //ToDo look into encrypting password to decrypt on other side (added security during traffic). (1)
+                    System.out.print(port);
+                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText());
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    Alert alert = new RAMTAlert(Alert.AlertType.WARNING,
+                            "Settings Warning",
+                            "Incorrect port given",
+                            "Invalid port was given so default was attempted instead.\n" +
+                                    "The port should follow the ip address with semi-colon i.e. 127.0.0.1:1234");
+                    alert.showAndWait();
                 }
             } else {
-                //Todo let user know port is no good and now trying default.
-
-                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText()); //ToDo same here . (1)
-
+                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText());
             }
 
             loginTask.updateUser(user);
             loginTask.restart();
-            /* loginTask.wait(); <- This MIGHT make it thread safe */ //Todo find out if this is true or is not needed.
+            /* loginTask.wait(); <- This MIGHT make it thread safe if not already */
         });
 
         loginTask.setOnSucceeded(event -> {
@@ -125,7 +127,6 @@ public class InitialController extends AnchorPane {
                     a.show();
                 }
                 default -> {
-                    //Todo make this check redundant by producing only known errors.
                     a.setContentText("A error has occurred while logging in within the application.");
                     a.show();
                 }

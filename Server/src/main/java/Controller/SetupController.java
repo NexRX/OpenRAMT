@@ -10,7 +10,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
+//import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -21,10 +21,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 
-import static Controller.CryptographyToolbox.generatePBKDF2WithHmacSHA1;
+import static Controller.CryptographyToolbox.generatePBKDF2WithHmacSHA512;
 
 public class SetupController extends AnchorPane {
-    private Stage stage;
+    private final Stage stage;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -39,8 +39,8 @@ public class SetupController extends AnchorPane {
     @FXML JFXPasswordField txtPasswordConfirm;
 
     @FXML ToggleGroup socketToggle;
-    @FXML JFXRadioButton radioSecure;
-    @FXML JFXRadioButton radioInsecure;
+    /*@FXML JFXRadioButton radioSecure;*/
+    /*@FXML JFXRadioButton radioInsecure;*/
     @FXML JFXTextField txtPort;
 
     public SetupController(Stage stage) {
@@ -73,16 +73,11 @@ public class SetupController extends AnchorPane {
                         e.printStackTrace();
                     }
 
-                    DBManager.getSetting("Port");
                 } else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Invalid data.");
-                    alert.setHeaderText("Incorrect/Invalid information given.");
-                    alert.setContentText(state);
-
-                    DialogPane dialogPane = alert.getDialogPane();
-                    dialogPane.getStylesheets().add( getClass().getResource("/CSS/Launcher.css").toExternalForm());
-                    dialogPane.getStyleClass().add("AlertBox");
+                    Alert alert = new RAMTAlert(Alert.AlertType.ERROR,
+                            "Invalid data.",
+                            "Incorrect/Invalid information given.",
+                            state);
 
                     alert.showAndWait();
                 }
@@ -118,19 +113,16 @@ public class SetupController extends AnchorPane {
         String socketType = selectedRadioButton.getText();
 
         boolean socket;
-        if (socketType.equals("Insecure (No SSL)")) {
-            socket = false;
-        } else /* "Secure (SSL/TLS)" */ {
-            socket = true;
-        }
+        /* "Secure (SSL/TLS)" */
+        socket = !socketType.equals("Insecure (No SSL)");
 
-        //Port
-        int port = 0;
+        // (Default) Port
+        int port = 3069;
+
         try {
-            port = Integer.parseInt(txtPort.getText());
+            port = txtPort.getText().isEmpty() ? 3069 : Integer.parseInt(txtPort.getText());
         } catch (NumberFormatException e) {
-            System.out.println("failed parse.");
-            e.printStackTrace();
+            // do nothing.
         }
 
 
@@ -141,19 +133,28 @@ public class SetupController extends AnchorPane {
         //Password (most resource intensive here).
         String hashedPassword;
         if (txtPassword.getText().equals(txtPasswordConfirm.getText())) {
-            hashedPassword = generatePBKDF2WithHmacSHA1(txtPasswordConfirm.getText());
+            hashedPassword = generatePBKDF2WithHmacSHA512(txtPasswordConfirm.getText());
         } else {
             return "Passwords do not match";
         }
 
-        try {
-            if (DBManager.setup(txtUsername.getText(), hashedPassword, socket, port)) {
+        int setupCode = DBManager.setup(txtUsername.getText(), hashedPassword, socket, port);
+
+        System.out.println("Setup Code: " + setupCode);
+
+        switch (setupCode) {
+            case 0:
                 return "Success";
-            }
-        } catch (IllegalStateException e) {
-            return "Success"; //ToDo replace this with a prompt telling user old settings will be wiped (Then wipe them)
+            case 2:
+                return "One or more fields aren't valid, please check and try again.";
+            default:
+                System.out.println("Setup not 0. is: " + setupCode +
+                        "| params are: " +
+                        txtUsername.getText() +" "+
+                        hashedPassword +" "+
+                        socket+" "+
+                        port);
+                return "An error has occurred internally within the application.";
         }
-        
-        return "Failed, an internal error occurred.";
     }
 }

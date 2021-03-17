@@ -3,11 +3,14 @@ package Controller.Library.Services;
 import Controller.Library.enums.Login;
 import Controller.Progressible;
 import Controller.Library.Socket.ClientWorker;
-import Model.TaskRequest;
-import Model.TaskResponse;
-import Model.UserData;
+import Controller.RAMTAlert;
+import Model.Task.TaskRequest;
+import Model.Task.TaskResponse;
+import Model.User.UserData;
+import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Alert;
 
 import java.io.IOException;
 import java.security.KeyManagementException;
@@ -52,13 +55,36 @@ public class LoginProgressibleService extends Service<Login> implements Progress
                     System.out.println("Starting client socket");
                     TaskResponse result = null;
                     try {
-                        FutureTask<TaskResponse> futureTask = new FutureTask<TaskResponse>(new ClientWorker(new TaskRequest(Model.Task.LOGIN, user)));
+                        FutureTask<TaskResponse> futureTask = new FutureTask<TaskResponse>(new ClientWorker(new TaskRequest(Model.Task.Task.LOGIN, user)));
                         Thread thread = new Thread(futureTask);
                         thread.start();
                         result = futureTask.get(); // will wait for the async completion
-                    } catch (UnrecoverableKeyException | CertificateException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException | InterruptedException | ExecutionException e) {
+                    } catch (NoSuchAlgorithmException | InterruptedException | ExecutionException e) {
+                        Alert alert = new RAMTAlert(Alert.AlertType.ERROR,
+                                "Application Error",
+                                "An internal application error has occurred.",
+                                "Please report this to an Admin/Developer as the application "+
+                                        "has failed run properly. Proving information  as to what " +
+                                        "happened prior to this error may help fix the issue promptly." +
+                                        "\n\n The program will now shut down.");
+
                         e.printStackTrace();
-                        //Todo tell these errors to the user (in the switch statement) perhaps.
+                        alert.showAndWait();
+                        Platform.exit();
+                        System.exit(1);
+                    } catch (UnrecoverableKeyException | CertificateException | KeyStoreException | KeyManagementException e) {
+                        Alert alert = new RAMTAlert(Alert.AlertType.ERROR,
+                                "Connection Certificate Error",
+                                "An error occurred using the bundled certificate.",
+                                "Please report this to an Admin/Developer as the certificate "+
+                                        "has failed to be loaded. Please ensure it was compiled correctly and provide "+
+                                        "what happened prior to this error to help fix the issue promptly." +
+                                        "\n\n The program will now shut down.");
+
+                        e.printStackTrace();
+                        alert.showAndWait();
+                        Platform.exit();
+                        System.exit(1);
                     }
 
                     switch ((result != null ? result.getResponseCode() : 99)) {
