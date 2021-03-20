@@ -147,12 +147,12 @@ public class RAMTTaskLibrary {
                     System.out.println(response.getCommandOutput());
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
                 case WINDOWS:
-                    ProcessBuilder processBuilder = new ProcessBuilder();
+                    ProcessBuilder winCMD = new ProcessBuilder();
                     //TODO ALL UNTESTED AND UNFINISHED. None powershell is not fully supported maybe. alert user.
                     // Run this on Windows, cmd, /c = terminate after this run
-                    processBuilder.command("cmd.exe", "/c", "tasklist /V /fo CSV");
+                    winCMD.command("cmd.exe", "/c", "tasklist /V /fo CSV");
 
-                    Process process = processBuilder.start();
+                    Process process = winCMD.start();
                     BufferedReader reader =
                             new BufferedReader(new InputStreamReader(process.getInputStream()));
 
@@ -167,6 +167,19 @@ public class RAMTTaskLibrary {
                 case LINUX:
                     break;
                 case MAC:
+                    Process macCMD = new ProcessBuilder("/bash/zsh", "-c",
+                            ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh").toString()).start();
+
+                    BufferedReader macReader =
+                            new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
+
+                    String macLine;
+                    while ((macLine = macReader.readLine()) != null) {
+                        System.out.println(macLine);
+                    }
+
+                    int macCode = macCMD.waitFor();
+                    System.out.println("Exited with error code : " + macCode);
                     break;
                 default: //OTHER
             }
