@@ -147,7 +147,7 @@ public class RAMTTaskLibrary {
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
                 case WINDOWS:
                     ProcessBuilder winCMD = new ProcessBuilder();
-                    //TODO ALL UNTESTED AND UNFINISHED. None powershell is not fully supported maybe. alert user.
+                    //TODO ALL UNTESTED AND UNFINISHED. Only powershell is not fully supported maybe. alert user.
                     // Run this on Windows, cmd, /c = terminate after this run
                     winCMD.command("cmd.exe", "/c", "tasklist /V /fo CSV");
 
@@ -166,25 +166,8 @@ public class RAMTTaskLibrary {
                 case LINUX:
                     break;
                 case MAC:
-                    File macScript = new File(Objects.requireNonNull(
-                            ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh"))
-                            .getFile());
-
-
-                    String[] cmd = {"/bin/zsh",  macScript.getName(), macScript.getAbsolutePath()};
-
-                    System.out.println(cmd);
-
-                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", "ps -Ao pid,ucomm,%cpu,%mem,stat | awk '\n" +
-                            "BEGIN { ORS = \"\"; print \" [ \"}\n" +
-                            "{ printf \"%s{\\\"user\\\": \\\"%s\\\", \\\"pid\\\": \\\"%s\\\", \\\"cpu\\\": \\\"%s\\\"}\",\n" +
-                            "      separator, $1, $2, $3\n" +
-                            "  separator = \", \"\n" +
-                            "}\n" +
-                            "END { print \" ] \" }';").start();
-
-                    BufferedReader macReader =
-                            new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptUnixAllProcesses()).start();
+                    BufferedReader macReader = new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
 
                     String macLine;
                     while ((macLine = macReader.readLine()) != null) {
@@ -324,14 +307,30 @@ public class RAMTTaskLibrary {
             return true; // Because admins have access to all.
         } else {
             return switch (permission) {
-                case GENERAL -> group.getGeneral().toLowerCase().equals("true");
-                case PROCESS -> group.getProcess().toLowerCase().equals("true");
-                case MONITORING -> group.getMonitoring().toLowerCase().equals("true");
-                case POWER -> group.getPower().toLowerCase().equals("true");
+                case GENERAL -> group.getGeneral().equalsIgnoreCase("true");
+                case PROCESS -> group.getProcess().equalsIgnoreCase("true");
+                case MONITORING -> group.getMonitoring().equalsIgnoreCase("true");
+                case POWER -> group.getPower().equalsIgnoreCase("true");
                 case NONE -> true; // if none are needed.
                 default -> false; // In-case more are added in a future update.
             };
         }
     }
+
+    //
+    /**
+     * All Scripts as variables/methods go here to prevent clutter of the top of this class.
+     */
+    //
+    private static String scriptUnixAllProcesses() {
+        return  "ps -Ao pid,ucomm,%cpu,%mem,stat | awk '\n" +
+                "BEGIN { ORS = \"\"; print \" [ \"}\n" +
+                "{ printf \"%s{\\\"user\\\": \\\"%s\\\", \\\"pid\\\": \\\"%s\\\", \\\"cpu\\\": \\\"%s\\\"}\",\n" +
+                "      separator, $1, $2, $3\n" +
+                "  separator = \", \"\n" +
+                "}\n" +
+                "END { print \" ] \" }';";
+    }
+
 
 }
