@@ -171,9 +171,11 @@ public class RAMTTaskLibrary {
                             .getFile());
 
 
-                    System.out.println(macScript.getPath());
+                    String[] cmd = {"/bin/zsh",  macScript.getName(), macScript.getAbsolutePath()};
 
-                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript.getPath()).start();
+                    System.out.println(cmd);
+
+                    Process macCMD = new ProcessBuilder(cmd).start();
 
                     BufferedReader macReader =
                             new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
