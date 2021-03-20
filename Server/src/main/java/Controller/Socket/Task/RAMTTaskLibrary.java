@@ -173,7 +173,7 @@ public class RAMTTaskLibrary {
 
                     String[] cmd = {"/bin/zsh",  macScript.getName(), macScript.getAbsolutePath()};
 
-                    System.out.println(cmd);
+                    System.out.println(Arrays.toString(cmd));
 
                     Process macCMD = new ProcessBuilder(cmd).start();
 
