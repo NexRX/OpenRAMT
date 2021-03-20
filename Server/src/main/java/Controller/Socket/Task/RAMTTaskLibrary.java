@@ -169,7 +169,7 @@ public class RAMTTaskLibrary {
                     File macScriptFile = new File(Objects.requireNonNull(
                             ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh"))
                             .getFile());
-                    StringBuilder macScript = new StringBuilder();
+                    StringBuilder macScript = new StringBuilder(); //after, this will be our script.
 
                     try {
                         Scanner myReader = new Scanner(macScriptFile);
