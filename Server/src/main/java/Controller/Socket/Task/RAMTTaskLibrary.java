@@ -13,9 +13,8 @@ import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.json.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -142,7 +141,7 @@ public class RAMTTaskLibrary {
                                     ClassLoader.getSystemClassLoader().getResourceAsStream(script))));
 
                     PowerShellResponse response = shell.executeScript(srcReader); // Resource Hog. I've optimised the
-                                                                                  // script plenty already
+                    // script plenty already
 
                     System.out.println(response.getCommandOutput());
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
@@ -167,11 +166,26 @@ public class RAMTTaskLibrary {
                 case LINUX:
                     break;
                 case MAC:
-                    String macScript = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh")).toString();
+                    File macScriptFile = new File(Objects.requireNonNull(
+                            ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh"))
+                            .getFile());
+                    StringBuilder macScript = new StringBuilder();
+
+                    try {
+                        Scanner myReader = new Scanner(macScriptFile);
+                        while (myReader.hasNextLine()) {
+                            macScript.append(myReader.nextLine());
+                        }
+
+                        myReader.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
 
                     System.out.println(macScript);
 
-                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript.toString()).start();
 
                     BufferedReader macReader =
                             new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
