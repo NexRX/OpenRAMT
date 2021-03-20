@@ -166,26 +166,14 @@ public class RAMTTaskLibrary {
                 case LINUX:
                     break;
                 case MAC:
-                    File macScriptFile = new File(Objects.requireNonNull(
+                    File macScript = new File(Objects.requireNonNull(
                             ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh"))
                             .getFile());
-                    StringBuilder macScript = new StringBuilder(); //after, this will be our script.
-
-                    try {
-                        Scanner myReader = new Scanner(macScriptFile);
-                        while (myReader.hasNextLine()) {
-                            macScript.append(myReader.nextLine());
-                        }
-
-                        myReader.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
 
 
-                    System.out.println(macScript);
+                    System.out.println(macScript.getPath());
 
-                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript.toString()).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript.getPath()).start();
 
                     BufferedReader macReader =
                             new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
