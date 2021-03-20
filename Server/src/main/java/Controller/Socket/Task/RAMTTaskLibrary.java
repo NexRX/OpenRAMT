@@ -173,9 +173,15 @@ public class RAMTTaskLibrary {
 
                     String[] cmd = {"/bin/zsh",  macScript.getName(), macScript.getAbsolutePath()};
 
-                    System.out.println(Arrays.toString(cmd));
+                    System.out.println(cmd);
 
-                    Process macCMD = new ProcessBuilder(cmd).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", "ps -Ao pid,ucomm,%cpu,%mem,stat | awk '\n" +
+                            "BEGIN { ORS = \"\"; print \" [ \"}\n" +
+                            "{ printf \"%s{\\\"user\\\": \\\"%s\\\", \\\"pid\\\": \\\"%s\\\", \\\"cpu\\\": \\\"%s\\\"}\",\n" +
+                            "      separator, $1, $2, $3\n" +
+                            "  separator = \", \"\n" +
+                            "}\n" +
+                            "END { print \" ] \" }';").start();
 
                     BufferedReader macReader =
                             new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
