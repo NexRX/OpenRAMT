@@ -167,8 +167,8 @@ public class RAMTTaskLibrary {
                 case LINUX:
                     break;
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c",
-                            Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh")).toString()).start();
+                    String macScript = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh")).toString();
+                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript).start();
 
                     BufferedReader macReader =
                             new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
