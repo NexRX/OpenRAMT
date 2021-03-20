@@ -14,8 +14,10 @@ import com.profesorfalken.jpowershell.PowerShellResponse;
 import org.json.*;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -142,7 +144,7 @@ public class RAMTTaskLibrary {
                                     ClassLoader.getSystemClassLoader().getResourceAsStream(script))));
 
                     PowerShellResponse response = shell.executeScript(srcReader); // Resource Hog. I've optimised the
-                                                                                  // script plenty already
+                    // script plenty already
 
                     System.out.println(response.getCommandOutput());
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
@@ -167,7 +169,10 @@ public class RAMTTaskLibrary {
                 case LINUX:
                     break;
                 case MAC:
-                    String macScript = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh")).toString();
+                    String macScript = Arrays.toString(new FileInputStream(Objects.requireNonNull(
+                            ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh"))
+                            .getFile()).readAllBytes());
+
 
                     System.out.println(macScript);
 
