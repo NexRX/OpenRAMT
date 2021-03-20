@@ -22,10 +22,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 
-public class LoginProgressibleService extends Service<Login> implements Progressible {
+public class LoginProgressiveService extends Service<Login> implements Progressible {
     private UserData user;
 
-    public LoginProgressibleService(UserData user) {
+    public LoginProgressiveService(UserData user) {
         this.user = user;
     }
 
@@ -53,9 +53,9 @@ public class LoginProgressibleService extends Service<Login> implements Progress
                     }
 
                     System.out.println("Starting client socket");
-                    TaskResponse result = null;
+                    TaskResponse<Void> result = null;
                     try {
-                        FutureTask<TaskResponse> futureTask = new FutureTask<TaskResponse>(new ClientWorker(new TaskRequest(Model.Task.Task.LOGIN, user)));
+                        FutureTask<TaskResponse<Void>> futureTask = new FutureTask<>(new ClientWorker<>(new TaskRequest(Model.Task.Task.LOGIN, user)));
                         Thread thread = new Thread(futureTask);
                         thread.start();
                         result = futureTask.get(); // will wait for the async completion
@@ -88,20 +88,24 @@ public class LoginProgressibleService extends Service<Login> implements Progress
                     }
 
                     switch ((result != null ? result.getResponseCode() : 99)) {
-                        case 0:
+                        case 0 -> {
                             setProgress(1d);
                             return Login.SUCCESS;
-                        case 10:
+                        }
+                        case 10 -> {
                             setProgress(0d);
                             return Login.FAILED_USERNAME;
-                        case 11:
+                        }
+                        case 11 -> {
                             setProgress(0d);
                             return Login.FAILED_PASSWORD;
-                        case 12:
+                        }
+                        case 12 -> {
                             setProgress(0d);
                             return Login.FAILED_SUSPENDED;
-                        default: // Some error (probably not serious).
-                            addProgress(inc); // essentially retry and add progress
+                        }
+// Some error (probably not serious).
+                        default -> addProgress(inc); // essentially retry and add progress
                     }
                 }
 

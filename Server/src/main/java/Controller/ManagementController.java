@@ -2,6 +2,7 @@ package Controller;
 
 import Controller.Database.DBManager;
 import Controller.Socket.SecureServer;
+import Controller.Socket.Task.RAMTTaskLibrary;
 import Controller.group.MigrateGroupController;
 import Controller.group.NewGroupController;
 import Controller.group.NewGroupNameController;
@@ -99,6 +100,8 @@ public class ManagementController extends AnchorPane {
         colMonitoring.setCellValueFactory(new PropertyValueFactory<>("monitoring"));
         colPower.setCellValueFactory(new PropertyValueFactory<>("power"));
         colSuspended.setCellValueFactory(new PropertyValueFactory<>("suspended"));
+
+        RAMTTaskLibrary.getOS();
 
         applyEventHandlers();
         serverStart();

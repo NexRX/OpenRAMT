@@ -24,28 +24,17 @@ public class ServerWorker implements Runnable{
 
     public void run() {
         try {
-            // create a DataInputStream so we can read data from it.
+            // create DataStreams so we can read/write data from it.
             ObjectInputStream socketInput = new ObjectInputStream(clientSocket.getInputStream());
             ObjectOutputStream socketOutput = new ObjectOutputStream(clientSocket.getOutputStream());
 
             // Get the Task request from client then process.
             TaskRequest request = (TaskRequest) socketInput.readObject();
+
             System.out.println("Received [" + request.getRequestID() + " | " + request.getTask() +
-                    ", by " + request.getUser() + "] in socket: " + clientSocket);
+                    ", by " + request.getUser().getUsername() + "] in socket: " + clientSocket);
 
-            int responseCode = processTask(request);
-            System.out.println(responseCode);
-
-            // Create response with processing results then send to user.
-
-            Response responseState = switch (responseCode) {
-                case 0 -> Response.SUCCESS;
-                case 10, 11, 12, 19 -> Response.FAILEDAUTHENTICATION;
-                default -> Response.OTHER;
-            };
-
-            TaskResponse response = new TaskResponse(request, responseState, responseCode);
-
+            TaskResponse<?> response = processTask(request);
             socketOutput.writeObject(response);
 
             // Finished, so printing this as such.
@@ -64,16 +53,16 @@ public class ServerWorker implements Runnable{
         }
     }
 
-    private int processTask(TaskRequest request) {
+    private TaskResponse<?> processTask(TaskRequest request) {
         switch (request.getTask()) {
             case LOGIN:
-                return RAMTTaskLibrary.login(request.getUser());
+                return RAMTTaskLibrary.login(request);
             case KILLPROCESS:
                 break;
             case RESTARTPROCESS:
                 break;
             case FETCHPROCESSES:
-                break;
+                return RAMTTaskLibrary.fetchProcesses(request);
             case SHUTDOWN:
                 break;
             case RESTART:
@@ -109,6 +98,6 @@ public class ServerWorker implements Runnable{
             case TESTING:
                 break;
         }
-        return 404; // Task not found.
+        return new TaskResponse<Void>(request, Response.INTERRUPTED, 99);
     }
 }

@@ -1,8 +1,12 @@
 package Controller;
 
 import Controller.Content.*;
+import Controller.Library.Services.TaskProgressiveService;
 import Controller.Library.SideButton;
 import Model.General.AppPermission;
+import Model.Task.Task;
+import Model.Task.TaskRequest;
+import Model.User.UserData;
 import application.Launcher;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,21 +25,31 @@ public class RootController extends AnchorPane {
 	@FXML Pane resizeHelperR;
 	@FXML Pane resizeHelperB;
 
-	MainContentController mcc = new MainContentController(new WelcomeController());
-	SideBarController sbc = new SideBarController(mcc);
+	private final MainContentController mcc = new MainContentController(new WelcomeController());
+	private final SideBarController sbc = new SideBarController(mcc);
+
+	private static UserData loggedInUser;
+	private static final TaskProgressiveService taskService = new TaskProgressiveService(null);
 
 
 	/**
 	 * Constructs the AnchorPane and does a bulk of the post-initial tasks (First tasks after completing launch).
+	 * @param user The user defined as logged in by the LoginProgressiveService preferably. Check will not be
+	 *                     done by this class so it is expected you test the UserData before hand using the previous
+	 *                     class.
 	 */
-	public RootController() {
+	public RootController(UserData user) {
+		loggedInUser = user;
+
+		taskService.setRequest(new TaskRequest(Task.TESTING, loggedInUser));
+
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Root.fxml"));
 		this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
 		try {
-			fxmlLoader.load();            
+			fxmlLoader.load();
 		} catch (IOException exception) {
 			throw new RuntimeException(exception);
 		}
@@ -46,7 +60,7 @@ public class RootController extends AnchorPane {
 
 	private void addInitialChildren() {
 		// Top Bar
-		TopBarController tb = new TopBarController();
+		TopBarController tb = new TopBarController(taskService.progressProperty(),taskService.messageProperty());
 		this.getChildren().add(tb);
 
 		// Content Wizard
@@ -80,13 +94,20 @@ public class RootController extends AnchorPane {
 		tb.toFront(); // This one should be unneeded. But avoids some unexpected behavior found 'only' in testing.
 	}
 
-	private boolean addPaneButton(Node child, String btnName, AppPermission buttonPerm, int index) {
+	private void addPaneButton(Node child, String btnName, AppPermission buttonPerm, int index) {
 		mcc.getChildren().add(child);
 		sbc.addButton(new SideButton(btnName, buttonPerm), index);
-		return false;
 	}
 
 	private void applyEventHandlers() {
-	    UndecoratedResizable.addResizeListener(Launcher.MainStart.getStage(), this, true);
+		UndecoratedResizable.addResizeListener(Launcher.MainStart.getStage(), this, true);
+	}
+
+	public static TaskProgressiveService getTaskService() {
+		return taskService;
+	}
+
+	public static UserData getLoggedInUser() {
+		return loggedInUser;
 	}
 }

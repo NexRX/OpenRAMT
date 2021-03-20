@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
+    implementation 'org.json:json:20131018'
     implementation project(':Shared')
 }
 
@@ -28,6 +29,10 @@ run {
             "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
             "--illegal-access=permit"
     ]
+}
+
+compileJava {
+    options.compilerArgs << '-Xlint:unchecked'
 }
 
 runtime {

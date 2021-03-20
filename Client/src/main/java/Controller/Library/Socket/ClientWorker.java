@@ -13,38 +13,30 @@ import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-public class ClientWorker implements Callable<TaskResponse> {
+public class ClientWorker<T> implements Callable<TaskResponse<T>> {
     private SSLSocket socket;
     private final TaskRequest request;
     private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
     public ClientWorker(TaskRequest request) throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword","jknm43c23C1EW342we");
+        System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
 
         this.request = request;
     }
 
     @Override
-    public TaskResponse call() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+    public TaskResponse<T> call() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException, ClassNotFoundException {
+        this.socket = (SSLSocket) generation();
 
-        this.socket = (SSLSocket) Generation();
+        TaskResponse<T> result = work();
 
-        TaskResponse result; // 1 for generic error because (if result hasn't changed) something hasn't gone as planned.
-        try {
-            result = work();
-        } catch (ClassNotFoundException e) {
-            System.out.println("Server's TaskResponse invalid, returning custom response & printing stacktrace...");
-            e.printStackTrace();
-            result = new TaskResponse(request, Response.FAILED, null);
-        } finally {
-            try {socket.close(); } catch (IOException e) {e.printStackTrace(); }
-        }
+        try {socket.close(); } catch (IOException e) {e.printStackTrace();}
 
         return result;
     }
 
-    private TaskResponse work() throws IOException, ClassNotFoundException {
+    private TaskResponse<T> work() throws IOException, ClassNotFoundException {
         ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
 
@@ -52,19 +44,26 @@ public class ClientWorker implements Callable<TaskResponse> {
         socketOutput.writeObject(request);
 
         // Get the response
-        TaskResponse response = (TaskResponse) socketInput.readObject();
+        @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
+        TaskResponse<T> response = (TaskResponse<T>) socketInput.readObject();
         System.out.println("Response received: " + response.getRequestID() +" | "+ response.getResponse());
 
         return response;
     }
 
-    private Socket Generation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+    /**
+     * Generates a certificate at runtime if (parts of) one are missing. Then returns a SSLSocket for use.
+     * @return
+     */
+    private Socket generation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
         File ksFile = new File("data/keystore.jks");
 
         if(!ksFile.isFile()) {
             byte[] in = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream("Cert/keystore.jks")).readAllBytes();
+
             ksFile.getParentFile().mkdirs();
             ksFile.createNewFile();
+
             FileOutputStream out = new FileOutputStream("data/keystore.jks");
             out.write(in);
             out.close();

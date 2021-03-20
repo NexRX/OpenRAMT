@@ -9,9 +9,10 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
-    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
-    implementation group: 'com.profesorfalken', name: 'jPowerShell', version:'3.1.1'
+    implementation 'com.jfoenix:jfoenix:9.0.10'
+    implementation 'com.h2database:h2:1.4.200'
+    implementation 'com.profesorfalken:jPowerShell:3.1.1'
+    implementation 'org.json:json:20131018'
     implementation project(':Shared')
 }
 

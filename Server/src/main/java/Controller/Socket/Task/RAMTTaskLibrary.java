@@ -2,13 +2,16 @@ package Controller.Socket.Task;
 
 import Model.General.AppPermission;
 import Model.General.OSType;
-import Model.Task.Task;
+import Model.Task.Response;
+import Model.Task.TaskRequest;
+import Model.Task.TaskResponse;
 import Model.User.UserData;
 import Controller.Database.DBManager;
 import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.json.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +19,7 @@ import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
-import java.util.Locale;
+import java.util.*;
 
 import static Model.General.OSType.*;
 
@@ -40,31 +43,40 @@ import static Model.General.OSType.*;
  * - 99 - Catastrophic generic error. If this has returned, something has gone seriously wrong (i.e. unforeseen bugs).
  */
 public class RAMTTaskLibrary {
+    private static PowerShell shell;
 
     /**
+     * A semantic function that doesn't actually login a user but provides a response that lets a client know that their
+     * UserData (user details) are valid in the database. This in turn allows them to know if they can make requests and
+     * therefore what request can be made by reflecting on their provided UserData.
      *
-     * @param user
+     * This is all assuming the client is respecting the servers rules on TaskRequest processing i.e. client
+     * respectfully knows that FetchProcess task will not succeed if the logged in user's group does not contain process
+     * privileges.
+     *
+     * @param request The request sent from the client from login. Should contain the user details required to validate
+     *                a login attempt.
      * @return A (error) code referring to the success of the operation. For a list of the error codes, please refer to
-     * the classes JavaDoc.
+     *                the classes JavaDoc.
      */
-    public static int login(UserData user) {
+    public static TaskResponse<Void> login(TaskRequest request) {
         try {
-            UserData dbUser = DBManager.getUser(user.getUsername());
+            UserData dbUser = DBManager.getUser(request.getUser().getUsername());
 
             if (dbUser == null) {  //If no user.
-                return 12;
+                return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 10);
             } else {
 
-                if (DBManager.verifyPassword(user.getUsername(), user.getPassword())) { // details match.
+                if (DBManager.verifyPassword(request.getUser().getUsername(), request.getUser().getPassword())) {
 
                     if (dbUser.isSuspended()) {
-                        return 12;
+                        return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 12);
                     } else { // everything is corrected.
-                        return 0;
+                        return new TaskResponse<>(request, Response.SUCCESS, 0);
                     }
 
                 } else { //Password wrong.
-                    return 11;
+                    return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 11);
                 }
 
             }
@@ -72,7 +84,7 @@ public class RAMTTaskLibrary {
 
         } catch (NoSuchAlgorithmException | SQLException | InvalidKeySpecException e) {
             e.printStackTrace();
-            return 20;
+            return new TaskResponse<>(request, Response.INTERRUPTED, 20);
         }
     }
 
@@ -120,8 +132,49 @@ public class RAMTTaskLibrary {
         return 1;
     }
 
-    public static int fetchProcesses() {
-        return 1;
+    public static TaskResponse<String> fetchProcesses(TaskRequest request) {
+        try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    String script = "controller/windows/ps/AllProcessesToJson.ps1";
+                    BufferedReader srcReader = new BufferedReader(
+                            new InputStreamReader(Objects.requireNonNull(
+                                    ClassLoader.getSystemClassLoader().getResourceAsStream(script))));
+
+                    PowerShellResponse response = shell.executeScript(srcReader); // Resource Hog. I've optimised the
+                                                                                  // script plenty already
+
+                    System.out.println(response.getCommandOutput());
+                    return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
+                case WINDOWS:
+                    ProcessBuilder processBuilder = new ProcessBuilder();
+                    //TODO ALL UNTESTED AND UNFINISHED. None powershell is not fully supported maybe. alert user.
+                    // Run this on Windows, cmd, /c = terminate after this run
+                    processBuilder.command("cmd.exe", "/c", "tasklist /V /fo CSV");
+
+                    Process process = processBuilder.start();
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+
+                    int exitCode = process.waitFor();
+                    System.out.println("Exited with error code : " + exitCode);
+                    break;
+                case LINUX:
+                    break;
+                case MAC:
+                    break;
+                default: //OTHER
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
     public static int shutdown(int delay) {
@@ -192,17 +245,24 @@ public class RAMTTaskLibrary {
      * Gets the current OS at runtime from the JVM. The current OS is will be from a list from the Oracle JDK 14
      * Certified System Configurations spec sheet as of 15th of March 2021. Anything not in this list somehow will
      * most likely be reported as other or unsupported.
+     *
+     * Note: JPowerShell has some delayed start to powershell commands so it is a good idea to call getOS() at least
+     * once to warm up JPowerShell. This of course will only positively effect powershell environments.
      * @return The current OSType given from the JVM. If the OS type is unsupported or unrecognised then OSType OTHER
      * is returned.
      */
-    private static OSType getOS() {
+    public static OSType getOS() {
         String osName = System.getProperty("os.name").toLowerCase();
-
         // Windows
         if (osName.contains("windows")) {
             try {
-                PowerShell shell = PowerShell.openSession();
-                shell.executeCommand("Write-Host 'Powershell contact. Hello, World!");
+
+                if (shell == null) {
+                    Map<String, String> myConfig = new HashMap<>();
+                    myConfig.put("maxWait", "30000");
+                    shell = PowerShell.openSession().configuration(myConfig);
+                }
+
                 return WINDOWS_PS;
             } catch (PowerShellNotAvailableException e) {
                 return WINDOWS;

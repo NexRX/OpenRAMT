@@ -2,6 +2,7 @@ package application;
 
 import Controller.InitialController;
 import Controller.RootController;
+import Model.User.UserData;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -54,13 +55,13 @@ public class Launcher {
             stage.show();
         }
 
-        public static void rootScene() {
+        public static void rootScene(UserData user) {
             stage.close();
             stage = new Stage();
 
             stage.initStyle(StageStyle.UNDECORATED);
 
-            stage.setScene(new Scene(new RootController()));
+            stage.setScene(new Scene(new RootController(user)));
             stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
             stage.setTitle("OpenRAMT");
             stage.setMinWidth(710);

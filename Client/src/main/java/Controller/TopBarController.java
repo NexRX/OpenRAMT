@@ -4,6 +4,8 @@ import application.Launcher;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXProgressBar;
 import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,8 +40,9 @@ public class TopBarController extends AnchorPane {
     /**
      * Constructs the ButtonBar and loads its FXML file. Does a lot of the undecorated
      * window processing.
+     * @param progressProperty
      */
-    public TopBarController() {
+    public TopBarController(ReadOnlyDoubleProperty progressProperty, ReadOnlyStringProperty stateProperty) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/TopBar.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
         fxmlLoader.setRoot(this);
@@ -54,6 +57,8 @@ public class TopBarController extends AnchorPane {
         this.stage = Launcher.MainStart.getStage();
 
         applyEventHandlers();
+        progressBarState.progressProperty().bind(progressProperty);
+        lblState.textProperty().bind(stateProperty);
     }
 
     /**

@@ -1,6 +1,6 @@
 package Controller;
 
-import Controller.Library.Services.LoginProgressibleService;
+import Controller.Library.Services.LoginProgressiveService;
 import Model.User.UserData;
 import application.Launcher;
 import application.Launcher.MainStart;
@@ -35,7 +35,7 @@ public class InitialController extends AnchorPane {
     private double yOffset = 0;
 
     private UserData user = new UserData(null, 0, null, null);
-    private final LoginProgressibleService loginTask;
+    private final LoginProgressiveService loginTask;
 
 
     public InitialController() {
@@ -50,7 +50,7 @@ public class InitialController extends AnchorPane {
             throw new RuntimeException(exception);
         }
 
-        loginTask = new LoginProgressibleService(user);
+        loginTask = new LoginProgressiveService(user);
         jfxProgress.progressProperty().bind(loginTask.getProgressProperty());
 
         this.stage = Launcher.MainStart.getStage();
@@ -107,7 +107,7 @@ public class InitialController extends AnchorPane {
 
             switch (loginTask.getValue()) {
                 case SUCCESS -> {
-                    MainStart.rootScene();
+                    MainStart.rootScene(user);
                     System.out.println("Switching");
                 }
                 case FAILED_CONNECTION -> {
