@@ -168,6 +168,9 @@ public class RAMTTaskLibrary {
                     break;
                 case MAC:
                     String macScript = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource("Controller/Mac/AllProcessesToJson.sh")).toString();
+
+                    System.out.println(macScript);
+
                     Process macCMD = new ProcessBuilder("/bin/zsh", "-c", macScript).start();
 
                     BufferedReader macReader =
