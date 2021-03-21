@@ -163,7 +163,7 @@ public class RAMTTaskLibrary {
                     System.out.println("Exited with error code : " + exitCode);
                     break;
                 case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptUnixAllProcesses()).start();
+                    Process linuxCMD = new ProcessBuilder("/bin/bash",  "-c", scriptUnixAllProcesses()).start();
 
                     BufferedReader linuxReader = new BufferedReader(new InputStreamReader(linuxCMD.getInputStream()));
                     StringBuilder linuxResponse = new StringBuilder();
