@@ -11,10 +11,9 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
-import org.json.*;
+import org.json.JSONArray;
 
 import java.io.*;
-import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -167,16 +166,22 @@ public class RAMTTaskLibrary {
                     break;
                 case MAC:
                     Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptUnixAllProcesses()).start();
-                    BufferedReader macReader = new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
 
-                    String macLine;
-                    while ((macLine = macReader.readLine()) != null) {
-                        System.out.println(macLine);
+                    BufferedReader macReader = new BufferedReader(new InputStreamReader(macCMD.getInputStream()));
+                    StringBuilder macResponse = new StringBuilder();
+                    String strBuffer;
+                    while ((strBuffer = macReader.readLine()) != null) { macResponse.append(strBuffer); }
+
+                    macCMD.waitFor();
+
+                    JSONArray json = new JSONArray(macResponse);
+
+                    for (Iterator it = json.getJSONObject(0).keys(); it.hasNext(); ) {
+                        System.out.println(it.next());
                     }
 
-                    int macCode = macCMD.waitFor();
-                    System.out.println("Exited with error code : " + macCode);
                     break;
+                    //return new TaskResponse<>(request, Response.SUCCESS, 0, macResponse.toString());
                 default: //OTHER
             }
         } catch (IOException | InterruptedException e) {
@@ -303,7 +308,7 @@ public class RAMTTaskLibrary {
     private static boolean authorise(UserData user, AppPermission permission) throws SQLException {
         UserGroup group = DBManager.getGroup(user.getGroup());
 
-        if (group.getAdmin().toLowerCase().equals("true")) {
+        if (group.getAdmin().equalsIgnoreCase("true")) {
             return true; // Because admins have access to all.
         } else {
             return switch (permission) {
@@ -317,11 +322,10 @@ public class RAMTTaskLibrary {
         }
     }
 
-    //
-    /**
+    /*
      * All Scripts as variables/methods go here to prevent clutter of the top of this class.
-     */
-    //
+     * This is to lower
+    */
     private static String scriptUnixAllProcesses() {
         return  "ps -Ao pid,ucomm,%cpu,%mem,stat | awk '\n" +
                 "BEGIN { ORS = \"\"; print \" [ \"}\n" +

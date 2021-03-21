@@ -87,18 +87,19 @@ public class ProcessController extends AnchorPane {
             //JSONArray json = new JSONArray(response.getResponseData().substring(1, response.getResponseData().length()-1));
             JSONArray json = new JSONArray(response.getResponseData());
 
-            if (json.length() > 1) {
+            if (json.length() > 1) { // Check before clearing tbl.
+                //TODO alert
+            } else {
                 tblProcesses.getItems().clear();
-            }
 
-            for (int i = 0; i < json.length(); i++) {
-                tblProcesses.getItems().add(new ProcessItem(json.getJSONObject(i).get("Name").toString(),
-                        json.getJSONObject(i).get("IDProcess").toString(),
-                        json.getJSONObject(i).get("Status").toString(),
-                        json.getJSONObject(i).get("PercentProcessorTime").toString(),
-                        json.getJSONObject(i).get("WorkingSetPrivate").toString()));
+                for (int i = 0; i < json.length(); i++) {
+                    tblProcesses.getItems().add(new ProcessItem(json.getJSONObject(i).get("Name").toString(),
+                            json.getJSONObject(i).get("IDProcess").toString(),
+                            json.getJSONObject(i).get("Status").toString(),
+                            json.getJSONObject(i).get("PercentProcessorTime").toString(),
+                            json.getJSONObject(i).get("WorkingSetPrivate").toString()));
+                }
             }
-
         });
     }
 }
