@@ -172,7 +172,8 @@ public class RAMTTaskLibrary {
                     String strBuffer;
                     while ((strBuffer = macReader.readLine()) != null) { macResponse.append(strBuffer); }
 
-                    macCMD.waitFor();
+                    System.out.println(macCMD.waitFor());
+                    System.out.println(macResponse);
 
                     return new TaskResponse<>(request, Response.SUCCESS, 0, macResponse.toString());
                 default: //OTHER
