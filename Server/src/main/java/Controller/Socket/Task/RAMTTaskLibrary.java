@@ -174,16 +174,7 @@ public class RAMTTaskLibrary {
 
                     macCMD.waitFor();
 
-                    System.out.println(macResponse);
-
-                    JSONArray json = new JSONArray(macResponse);
-
-                    for (Iterator it = json.getJSONObject(0).keys(); it.hasNext(); ) {
-                        System.out.println(it.next());
-                    }
-
-                    break;
-                    //return new TaskResponse<>(request, Response.SUCCESS, 0, macResponse.toString());
+                    return new TaskResponse<>(request, Response.SUCCESS, 0, macResponse.toString());
                 default: //OTHER
             }
         } catch (IOException | InterruptedException e) {
@@ -329,10 +320,10 @@ public class RAMTTaskLibrary {
      * This is to lower
     */
     private static String scriptUnixAllProcesses() {
-        return  "ps -Ao pid,ucomm,%cpu,%mem,stat | awk '\n" +
+        return  "ps -Ao pid,%mem,%cpu,stat,ucomm | awk 'NR>1'| awk '\n" +
                 "BEGIN { ORS = \"\"; print \" [ \"}\n" +
-                "{ printf \"%s{\\\"user\\\": \\\"%s\\\", \\\"pid\\\": \\\"%s\\\", \\\"cpu\\\": \\\"%s\\\"}\",\n" +
-                "      separator, $1, $2, $3\n" +
+                "{ printf \"%s{\\\"IDProcess\\\": \\\"%s\\\", \\\"WorkingSetPrivate\\\": \\\"%s\\\", \\\"PercentProcessorTime\\\": \\\"%s\\\", \\\"Status\\\": \\\"%s\\\", \\\"Name\\\": \\\"%s %s %s %s\\\"}\",\n" +
+                "      separator, $1, $2, $3, $4, $5, $6, $7, $8\n" +
                 "  separator = \", \"\n" +
                 "}\n" +
                 "END { print \" ] \" }';";
