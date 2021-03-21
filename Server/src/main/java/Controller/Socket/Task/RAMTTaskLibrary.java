@@ -172,8 +172,7 @@ public class RAMTTaskLibrary {
                     String strBuffer;
                     while ((strBuffer = macReader.readLine()) != null) { macResponse.append(strBuffer); }
 
-                    System.out.println(macCMD.waitFor());
-                    System.out.println(macResponse);
+                    macCMD.waitFor();
 
                     return new TaskResponse<>(request, Response.SUCCESS, 0, macResponse.toString());
                 default: //OTHER
@@ -319,12 +318,12 @@ public class RAMTTaskLibrary {
     /*
      * All Scripts as variables/methods go here to prevent clutter of the top of this class.
      * This is to lower
-     */
+    */
     private static String scriptUnixAllProcesses() {
-        return  "ps -Ao pid,%mem,%cpu,stat,ucomm | awk 'NR>1'| awk '\n" +
+        return  "ps -Ao ucomm,pid,stat,%cpu,%mem | awk 'NR>1'| awk '\n" +
                 "BEGIN { ORS = \"\"; print \" [ \"}\n" +
-                "{ printf \"%s{\\\"IDProcess\\\": \\\"%s\\\", \\\"WorkingSetPrivate\\\": \\\"%s\\\", \\\"PercentProcessorTime\\\": \\\"%s\\\", \\\"Status\\\": \\\"%s\\\", \\\"Name\\\": \\\"%s %s %s %s\\\"}\",\n" +
-                "      separator, $1, $2, $3, $4, $5, $6, $7, $8\n" +
+                "{ printf \"%s{\\\"Name\\\": \\\"%s\\\", \\\"IDProcess\\\": \\\"%s\\\", \\\"Status\\\": \\\"%s\\\", \\\"PercentProcessorTime\\\": \\\"%s\\\", \\\"WorkingSetPrivate\\\": \\\"%s\\\"}\",\n" +
+                "      separator, $1, $2, $3, $4, $5\n" +
                 "  separator = \", \"\n" +
                 "}\n" +
                 "END { print \" ] \" }';";
