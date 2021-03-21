@@ -77,10 +77,8 @@ public class ProcessController extends AnchorPane {
         });
 
         RootController.getTaskService().setOnSucceeded(event -> {
-            //@SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
-                    System.out.println("Here f0");
+            @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
             TaskResponse<String> response = (TaskResponse<String>) event.getSource().getValue();
-            System.out.println("Here f");
             //JSONArray json = new JSONArray(response.getResponseData().substring(1, response.getResponseData().length()-1));
             JSONArray json = new JSONArray(response.getResponseData());
 
