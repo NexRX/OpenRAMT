@@ -163,7 +163,14 @@ public class RAMTTaskLibrary {
                     System.out.println("Exited with error code : " + exitCode);
                     break;
                 case LINUX:
-                    break;
+                    Process linuxCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptUnixAllProcesses()).start();
+
+                    BufferedReader linuxReader = new BufferedReader(new InputStreamReader(linuxCMD.getInputStream()));
+                    StringBuilder linuxResponse = new StringBuilder();
+                    String linuxBuffer;
+                    while ((linuxBuffer = linuxReader.readLine()) != null) { linuxResponse.append(linuxBuffer); }
+
+                    return new TaskResponse<>(request, Response.SUCCESS, 0, linuxResponse.toString());
                 case MAC:
                     Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptUnixAllProcesses()).start();
 
