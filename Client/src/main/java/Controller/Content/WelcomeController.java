@@ -22,6 +22,7 @@ public class WelcomeController extends VBox {
         try {
             fxmlLoader.load();
         } catch (IOException exception) {
+            exception.printStackTrace();
             throw new RuntimeException(exception);
         }
 
