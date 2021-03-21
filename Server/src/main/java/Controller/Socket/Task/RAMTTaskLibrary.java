@@ -174,6 +174,8 @@ public class RAMTTaskLibrary {
 
                     macCMD.waitFor();
 
+                    System.out.println(macResponse);
+
                     JSONArray json = new JSONArray(macResponse);
 
                     for (Iterator it = json.getJSONObject(0).keys(); it.hasNext(); ) {
