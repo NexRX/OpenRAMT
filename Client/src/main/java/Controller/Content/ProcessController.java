@@ -71,10 +71,8 @@ public class ProcessController extends AnchorPane {
 
                 }
             } else {
-                System.out.println("Here 1");
                 RootController.getTaskService().updateAndRestart(
                         new TaskRequest(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
-                System.out.println("Here 2");
             }
         });
 

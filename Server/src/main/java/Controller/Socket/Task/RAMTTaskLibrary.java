@@ -163,14 +163,12 @@ public class RAMTTaskLibrary {
                     System.out.println("Exited with error code : " + exitCode);
                     break;
                 case LINUX:
-                    System.out.println("Here fetch 1");
                     Process linuxCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptUnixAllProcesses()).start();
 
                     BufferedReader linuxReader = new BufferedReader(new InputStreamReader(linuxCMD.getInputStream()));
                     StringBuilder linuxResponse = new StringBuilder();
                     String linuxBuffer;
                     while ((linuxBuffer = linuxReader.readLine()) != null) { linuxResponse.append(linuxBuffer); }
-                    System.out.println("Here fetch 2");
 
                     return new TaskResponse<>(request, Response.SUCCESS, 0, linuxResponse.toString());
                 case MAC:
@@ -284,7 +282,7 @@ public class RAMTTaskLibrary {
         }
 
         // Linux
-        if (osName.contains("linux")) {
+        if (osName.contains("nix") || osName.contains("nux") || osName.contains("aix")) {
             return LINUX;
         }
 
