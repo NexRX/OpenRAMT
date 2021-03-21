@@ -71,15 +71,17 @@ public class ProcessController extends AnchorPane {
 
                 }
             } else {
+                System.out.println("Here 1");
                 RootController.getTaskService().updateAndRestart(
                         new TaskRequest(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
+                System.out.println("Here 2");
             }
         });
 
         RootController.getTaskService().setOnSucceeded(event -> {
             @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
             TaskResponse<String> response = (TaskResponse<String>) event.getSource().getValue();
-            System.out.println("Here");
+            System.out.println("Here f");
             //JSONArray json = new JSONArray(response.getResponseData().substring(1, response.getResponseData().length()-1));
             JSONArray json = new JSONArray(response.getResponseData());
 
