@@ -83,6 +83,8 @@ public class ProcessController extends AnchorPane {
             //JSONArray json = new JSONArray(response.getResponseData().substring(1, response.getResponseData().length()-1));
             JSONArray json = new JSONArray(response.getResponseData());
 
+            System.out.println(response.getResponseData());
+
             if (json.length() == 0) { // Check before clearing tbl.
                 //TODO alert
             } else {
