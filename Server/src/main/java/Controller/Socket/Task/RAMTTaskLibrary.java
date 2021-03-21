@@ -170,6 +170,7 @@ public class RAMTTaskLibrary {
                     StringBuilder linuxResponse = new StringBuilder();
                     String linuxBuffer;
                     while ((linuxBuffer = linuxReader.readLine()) != null) { linuxResponse.append(linuxBuffer); }
+                    System.out.println("Here fetch 2");
 
                     return new TaskResponse<>(request, Response.SUCCESS, 0, linuxResponse.toString());
                 case MAC:
