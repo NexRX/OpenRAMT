@@ -14,7 +14,7 @@ public class WelcomeController extends VBox {
      * Constructs the VBox and loads its FXML file.
      */
     public WelcomeController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Welcome.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Welcomee.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
