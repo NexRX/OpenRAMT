@@ -96,12 +96,9 @@ public class RAMTTaskLibrary {
                     Process process = processBuilder.start();
 
                     BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
                     StringBuilder winOutput = new StringBuilder();
                     String line;
-                    while ((line = reader.readLine()) != null) {
-                        winOutput.append(line);
-                    }
+                    while ((line = reader.readLine()) != null) { winOutput.append(line); }
 
                     int exitCode = process.waitFor(); // Debug this exit code.
                     System.out.println("\nExited with error code : " + exitCode);
@@ -113,6 +110,8 @@ public class RAMTTaskLibrary {
                     StringBuilder linuxResponse = new StringBuilder();
                     String linuxBuffer;
                     while ((linuxBuffer = linuxReader.readLine()) != null) { linuxResponse.append(linuxBuffer); }
+
+                    System.out.println(linuxResponse);
 
                     return new TaskResponse<>(request, Response.SUCCESS, 0);
                 case MAC:
