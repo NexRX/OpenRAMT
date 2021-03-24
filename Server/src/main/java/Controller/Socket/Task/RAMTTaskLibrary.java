@@ -31,6 +31,7 @@ import static Model.General.OSType.*;
  * - 1 - Generic error where the request failed normally i.e. no results found or can't add user.
  * - 2 - Parameters do not meet the require constraints of the database column, field or value.
  * - 3 - Parameter contained semantically immutable field such as root/default user in a delete query.
+ * - 4 - Parameters required are invalid. This could be because of a null value in request parameters.
  * - 10 - Username not found.
  * - 11 - Username found but incorrect password.
  * - 12 - User details verified but account is suspended
@@ -59,78 +60,77 @@ public class RAMTTaskLibrary {
      */
     public static TaskResponse<Void> login(TaskRequest request) {
         try {
-            UserData dbUser = DBManager.getUser(request.getUser().getUsername());
+            if (request.getUser() == null) {  return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 4); }
 
-            if (dbUser == null) {  //If no user.
+            if (DBManager.getUser(request.getUser().getUsername()) == null) {
                 return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 10);
-            } else {
-
-                if (DBManager.verifyPassword(request.getUser().getUsername(), request.getUser().getPassword())) {
-
-                    if (dbUser.isSuspended()) {
-                        return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 12);
-                    } else { // everything is corrected.
-                        return new TaskResponse<>(request, Response.SUCCESS, 0);
-                    }
-
-                } else { //Password wrong.
-                    return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 11);
-                }
-
             }
 
+            if (DBManager.verifyPassword(request.getUser().getUsername(), request.getUser().getPassword())) {
+                return request.getUser().isSuspended() ?
+                        new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 12) :
+                        new TaskResponse<>(request, Response.SUCCESS, 0);
+            }
 
+            return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 11);
         } catch (NoSuchAlgorithmException | SQLException | InvalidKeySpecException e) {
             e.printStackTrace();
             return new TaskResponse<>(request, Response.INTERRUPTED, 20);
         }
     }
 
-    public static int killProcess(int pid) {
+    public static TaskResponse<Void> killProcess(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShell shell = PowerShell.openSession();
-                    shell.close();
-                    break;
-                case WINDOWS:
-                    ProcessBuilder processBuilder = new ProcessBuilder();
+                    PowerShellResponse response = shell.executeCommand("Stop-Process -Id "+request.getParameter()+" -PassThru -Force");
 
-                    // Run this on Windows, cmd, /c = terminate after this run
-                    processBuilder.command("cmd.exe", "/c", "ping -n 3 google.com");
-
-                    Process process = processBuilder.start();
-
-                    // blocked :(
-                    BufferedReader reader =
-                            new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
+                    if (response.isError() || response.isTimeout()) {
+                        return new TaskResponse<>(request, Response.SUCCESS, 1);
                     }
 
-                    int exitCode = process.waitFor();
+                    return new TaskResponse<>(request, Response.SUCCESS, 0);
+                case WINDOWS:
+                    ProcessBuilder processBuilder = new ProcessBuilder();
+                    processBuilder.command("cmd.exe", "/c", "ping -n 3 google.com");
+                    Process process = processBuilder.start();
+
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+                    StringBuilder winOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        winOutput.append(line);
+                    }
+
+                    int exitCode = process.waitFor(); // Debug this exit code.
                     System.out.println("\nExited with error code : " + exitCode);
-                    break;
+                    return new TaskResponse<>(request, Response.SUCCESS, 0);
                 case LINUX:
-                    break;
+                    Process linuxCMD = new ProcessBuilder("/bin/bash",  "-c", "kill -9 " + request.getParameter()).start();
+
+                    BufferedReader linuxReader = new BufferedReader(new InputStreamReader(linuxCMD.getInputStream()));
+                    StringBuilder linuxResponse = new StringBuilder();
+                    String linuxBuffer;
+                    while ((linuxBuffer = linuxReader.readLine()) != null) { linuxResponse.append(linuxBuffer); }
+
+                    return new TaskResponse<>(request, Response.SUCCESS, 0);
                 case MAC:
                     break;
                 default: //OTHER
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            return 99;
+            return new TaskResponse<>(request, Response.SUCCESS, 99);
         }
-        return 1;
+        return new TaskResponse<>(request, Response.SUCCESS, 99);
     }
 
     public static int restartProcess(int pid) {
         return 1;
     }
 
-    public static TaskResponse<String> fetchProcesses(TaskRequest request) {
+    public static TaskResponse<String> fetchProcesses(TaskRequest<Void> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:

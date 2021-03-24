@@ -16,12 +16,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ProcessController extends AnchorPane {
-    @FXML
-    JFXButton btnRefresh;
+    @FXML JFXButton btnKill;
+    @FXML JFXButton btnRefresh;
 
     // Table
     @FXML TableView<ProcessItem> tblProcesses;
@@ -56,6 +58,26 @@ public class ProcessController extends AnchorPane {
     }
 
     private void applyEventHandlers() {
+        btnKill.setOnMouseClicked(event -> {
+            if (RootController.getTaskService().isRunning()) {
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "OpenRAMT Confirmation",
+                        "A task was already running, cancel that one and continue?",
+                        "If you select yes, the previous task will be canceled when possible and this one" +
+                                "will take over.");
+                alert.showAndWait();
+
+                if (alert.getResult() == ButtonType.OK) {
+                    RootController.getTaskService().updateAndRestart(
+                            new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID()));
+
+                }
+            } else {
+                RootController.getTaskService().updateAndRestart(
+                        new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID()));
+            }
+        });
+
         btnRefresh.setOnMouseClicked(event -> {
             if (RootController.getTaskService().isRunning()) {
                 Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
@@ -67,34 +89,56 @@ public class ProcessController extends AnchorPane {
 
                 if (alert.getResult() == ButtonType.OK) {
                     RootController.getTaskService().updateAndRestart(
-                            new TaskRequest(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
+                            new TaskRequest<Void>(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
 
                 }
             } else {
                 RootController.getTaskService().updateAndRestart(
-                        new TaskRequest(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
+                        new TaskRequest<Void>(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
             }
         });
 
         RootController.getTaskService().setOnSucceeded(event -> {
-            @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
-            TaskResponse<String> response = (TaskResponse<String>) event.getSource().getValue();
-            //JSONArray json = new JSONArray(response.getResponseData().substring(1, response.getResponseData().length()-1));
-            JSONArray json = new JSONArray(response.getResponseData());
+            switch (((TaskResponse<?>) event.getSource().getValue()).getRequest().getTask()) {
+                case FETCHPROCESSES:
+                    @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
+                    TaskResponse<String> fetchResponse = (TaskResponse<String>) event.getSource().getValue();
 
-            if (json.length() == 0) { // Check before clearing tbl.
-                //TODO alert
-            } else {
-                tblProcesses.getItems().clear();
+                    try {
+                        JSONArray json = new JSONArray(fetchResponse.getResponseData()); //TODO catch org.json.JSONException: A JSONArray text must start with '[' at 1 [character 2 line 1] and alert user of error.
 
-                for (int i = 0; i < json.length(); i++) {
-                    tblProcesses.getItems().add(new ProcessItem(json.getJSONObject(i).get("Name").toString(),
-                            json.getJSONObject(i).get("IDProcess").toString(),
-                            json.getJSONObject(i).get("Status").toString(),
-                            json.getJSONObject(i).get("PercentProcessorTime").toString(),
-                            json.getJSONObject(i).get("WorkingSetPrivate").toString()));
-                }
+                        tblProcesses.getItems().clear();
+
+                        for (int i = 0; i < json.length(); i++) {
+                            tblProcesses.getItems().add(new ProcessItem(json.getJSONObject(i).get("Name").toString(),
+                                    json.getJSONObject(i).get("IDProcess").toString(),
+                                    json.getJSONObject(i).get("Status").toString(),
+                                    json.getJSONObject(i).get("PercentProcessorTime").toString(),
+                                    json.getJSONObject(i).get("WorkingSetPrivate").toString()));
+                        }
+                    } catch (JSONException e) {
+                        System.out.println("Server JSON parsing failed, exception message: "+ e.getMessage());
+                        new RAMTAlert(Alert.AlertType.ERROR,
+                                "OpenRAMT Error",
+                                "Server sent a unread list of process for this client.\n\n",
+                                "The server sent a JSON response that couldn't be read." +
+                                        "Please report this bug to a developer or try to ensure client and server" +
+                                        "versions match support.\n JSON: " + fetchResponse.getResponseData()).show();
+                    }
+
+                case KILLPROCESS:
+                case RESTARTPROCESS:
+                    @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
+                    TaskResponse<Void> killResponse = (TaskResponse<Void>) event.getSource().getValue();
+                    System.out.println(killResponse.getResponseCode());
+                    break;
             }
+            //TODO alert user somethings gone wrong if we got here.
         });
+    }
+
+    private Integer selectedPID() {
+        //TODO detect not selected.
+        return Integer.valueOf(tblProcesses.getSelectionModel().getSelectedItem().getId());
     }
 }

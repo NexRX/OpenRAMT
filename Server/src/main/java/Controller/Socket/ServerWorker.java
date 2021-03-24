@@ -29,7 +29,7 @@ public class ServerWorker implements Runnable{
             ObjectOutputStream socketOutput = new ObjectOutputStream(clientSocket.getOutputStream());
 
             // Get the Task request from client then process.
-            TaskRequest request = (TaskRequest) socketInput.readObject();
+            TaskRequest<?> request = (TaskRequest<?>) socketInput.readObject();
 
             System.out.println("Received [" + request.getRequestID() + " | " + request.getTask() +
                     ", by " + request.getUser().getUsername() + "] in socket: " + clientSocket);
@@ -58,7 +58,7 @@ public class ServerWorker implements Runnable{
             case LOGIN:
                 return RAMTTaskLibrary.login(request);
             case KILLPROCESS:
-                break;
+                return RAMTTaskLibrary.killProcess(request);
             case RESTARTPROCESS:
                 break;
             case FETCHPROCESSES:

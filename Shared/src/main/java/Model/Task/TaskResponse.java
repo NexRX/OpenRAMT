@@ -27,6 +27,9 @@ public class TaskResponse<T> implements Serializable {
     public String getRequestID() {
         return request.getRequestID();
     }
+    public TaskRequest getRequest() {
+        return request;
+    }
 
     public Response getResponse() {
         return response;
