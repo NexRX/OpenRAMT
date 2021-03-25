@@ -60,7 +60,7 @@ public class ServerWorker implements Runnable{
             case KILLPROCESS:
                 return RAMTTaskLibrary.killProcess(request);
             case RESTARTPROCESS:
-                break;
+                return RAMTTaskLibrary.restartProcess(request);
             case FETCHPROCESSES:
                 return RAMTTaskLibrary.fetchProcesses(request);
             case SHUTDOWN:

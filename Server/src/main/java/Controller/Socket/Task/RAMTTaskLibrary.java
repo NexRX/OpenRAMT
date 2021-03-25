@@ -11,8 +11,6 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
-import org.json.JSONArray;
-
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -38,6 +36,7 @@ import static Model.General.OSType.*;
  * - 19 - User details verified but permissions are not satisfied (Unauthorised).
  * - 20 - An SQL exception was thrown that wasn't handled (correctly).
  * - 21 - Duplicate SQL error. When a value given would of violated a unique column for example.
+ * - 31 - Process task related error, process restart attempted, killed but couldn't start again.
  * - 44 - Data given couldn't be found within the request i.e. row not found when updating a line in the database.
  * - 99 - Catastrophic generic error. If this has returned, something has gone seriously wrong (i.e. unforeseen bugs).
  */
@@ -82,41 +81,30 @@ public class RAMTTaskLibrary {
     public static TaskResponse<Void> killProcess(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
-                case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("Stop-Process -Id "+request.getParameter()+" -PassThru -Force");
-
-                    if (response.isError() || response.isTimeout()) {
-                        return new TaskResponse<>(request, Response.SUCCESS, 1);
-                    }
-
-                    return new TaskResponse<>(request, Response.SUCCESS, 0);
-                case WINDOWS:
-                    ProcessBuilder processBuilder = new ProcessBuilder();
-                    processBuilder.command("cmd.exe", "/c", "ping -n 3 google.com");
-                    Process process = processBuilder.start();
-
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winOutput.append(line); }
-
-                    int exitCode = process.waitFor(); // Debug this exit code.
-                    System.out.println("\nExited with error code : " + exitCode);
-                    return new TaskResponse<>(request, Response.SUCCESS, 0);
-                case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash",  "-c", "kill -9 " + request.getParameter()).start();
-
-                    BufferedReader linuxReader = new BufferedReader(new InputStreamReader(linuxCMD.getInputStream()));
-                    StringBuilder linuxResponse = new StringBuilder();
-                    String linuxBuffer;
-                    while ((linuxBuffer = linuxReader.readLine()) != null) { linuxResponse.append(linuxBuffer); }
-
-                    System.out.println(linuxResponse);
-
-                    return new TaskResponse<>(request, Response.SUCCESS, 0);
-                case MAC:
-                    break;
-                default: //OTHER
+                case WINDOWS_PS -> {
+                    PowerShellResponse response = shell.executeCommand("Stop-Process -Id " + request.getParameter() + " -PassThru -Force");
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
+                case WINDOWS -> {
+                    Process winCMD = new ProcessBuilder("cmd.exe", "-c", "taskkill /PID" + request.getParameter() + "/F /T").start();
+                    return (winCMD.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
+                case LINUX -> {
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "kill -9 " + request.getParameter()).start();
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
+                case MAC -> {
+                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", "kill -9 " + request.getParameter()).start();
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -125,8 +113,71 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.SUCCESS, 99);
     }
 
-    public static int restartProcess(int pid) {
-        return 1;
+    public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request) {
+        try {
+            switch (getOS()) {
+                case WINDOWS_PS -> {
+                    PowerShellResponse response = shell.executeCommand("Get-WmiObject Win32_Process -Filter \"ProcessId='"
+                            + request.getParameter() + "'\" | Select-Object CommandLine | ft -HideTableHeaders | " +
+                            "Format-Table -AutoSize | Out-String -Width 10000");
+
+                    String reMsg = response.getCommandOutput();
+                    int pathEnd = reMsg.indexOf("\"",reMsg.indexOf("\"") + 1);
+
+                    String path = reMsg.substring(3, pathEnd); //Todo catch and handle java.lang.StringIndexOutOfBoundsException
+                    String args;
+                    try { args = reMsg.substring(pathEnd + 2); } catch (StringIndexOutOfBoundsException e) { args = ""; }
+
+                    System.out.println(path); // Just path
+                    System.out.println(args); // Just Args
+
+                    //todo kill to process now and start it with the path and args
+
+                    if (killProcess(request).getResponseCode() == 0) {
+                        PowerShellResponse responseStart;
+                        powershellShortTimeout();
+
+                        if (args.isEmpty()) {
+                            System.out.println("Starting a process without arguments");
+                            responseStart = shell.executeCommand("Start-Process -FilePath \"" + path + "\" -PassThru");
+                        } else {
+                            System.out.println("Starting a process with arguments: " + args);
+                            responseStart = shell.executeCommand("Start-Process -FilePath \"" + path + "\" -ArgumentList \"" + args + "\" -PassThru");
+                        }
+
+                        powershellDefaultTimeout();
+
+                        return (responseStart.isError() || responseStart.isTimeout()) ?
+                                new TaskResponse<>(request, Response.FAILED, 31) :
+                                new TaskResponse<>(request, Response.SUCCESS, 0);
+                    } else {
+                        return new TaskResponse<>(request, Response.FAILED, 1);
+                    }
+                }
+                case WINDOWS -> {
+                    Process winCMD = new ProcessBuilder("cmd.exe", "-c", "taskkill /PID" + request.getParameter() + "/F /T").start();
+                    return (winCMD.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
+                case LINUX -> {
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "kill -19 " + request.getParameter()).start();
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
+                case MAC -> {
+                    Process macCMD = new ProcessBuilder("/bin/zsh", "-c", "kill -19 " + request.getParameter()).start();
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.SUCCESS, 99);
+        }
+        return new TaskResponse<>(request, Response.SUCCESS, 99);
     }
 
     public static TaskResponse<String> fetchProcesses(TaskRequest<Void> request) {
@@ -145,8 +196,6 @@ public class RAMTTaskLibrary {
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
                 case WINDOWS:
                     ProcessBuilder winCMD = new ProcessBuilder();
-                    //TODO ALL UNTESTED AND UNFINISHED. Only powershell is not fully supported maybe. alert user.
-                    // Run this on Windows, cmd, /c = terminate after this run
                     winCMD.command("cmd.exe", "/c", "tasklist /V /fo CSV");
 
                     Process process = winCMD.start();
@@ -158,9 +207,10 @@ public class RAMTTaskLibrary {
                         System.out.println(line);
                     }
 
-                    int exitCode = process.waitFor();
-                    System.out.println("Exited with error code : " + exitCode);
-                    break;
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
                 case LINUX:
                     Process linuxCMD = new ProcessBuilder("/bin/bash",  "-c", scriptUnixAllProcesses()).start();
 
@@ -333,5 +383,31 @@ public class RAMTTaskLibrary {
                 "END { print \" ] \" }';";
     }
 
+    /**
+     * 5 Second timeout for the powershell.
+     */
+    private static void powershellShortTimeout() {
+        Map<String, String> myConfig = new HashMap<>();
+        myConfig.put("maxWait", "5000");
+        shell.configuration(myConfig);
+    }
+
+    /**
+     * 10 Second (default) timeout for the powershell.
+     */
+    private static void powershellDefaultTimeout() {
+        Map<String, String> myConfig = new HashMap<>();
+        myConfig.put("maxWait", "10000");
+        shell.configuration(myConfig);
+    }
+
+    /**
+     * 30 Second timeout for the powershell.
+     */
+    private static void powershellLongTimeout() {
+        Map<String, String> myConfig = new HashMap<>();
+        myConfig.put("maxWait", "30000");
+        shell.configuration(myConfig);
+    }
 
 }

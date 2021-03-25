@@ -19,10 +19,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ProcessController extends AnchorPane {
     @FXML JFXButton btnKill;
+    @FXML JFXButton btnRestart;
     @FXML JFXButton btnRefresh;
 
     // Table
@@ -60,11 +60,7 @@ public class ProcessController extends AnchorPane {
     private void applyEventHandlers() {
         btnKill.setOnMouseClicked(event -> {
             if (RootController.getTaskService().isRunning()) {
-                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                        "OpenRAMT Confirmation",
-                        "A task was already running, cancel that one and continue?",
-                        "If you select yes, the previous task will be canceled when possible and this one" +
-                                "will take over.");
+                Alert alert = midTaskWarning();
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.OK) {
@@ -78,13 +74,25 @@ public class ProcessController extends AnchorPane {
             }
         });
 
+        btnRestart.setOnMouseClicked(event -> {
+            if (RootController.getTaskService().isRunning()) {
+                Alert alert = midTaskWarning();
+                alert.showAndWait();
+
+                if (alert.getResult() == ButtonType.OK) {
+                    RootController.getTaskService().updateAndRestart(
+                            new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID()));
+
+                }
+            } else {
+                RootController.getTaskService().updateAndRestart(
+                        new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID()));
+            }
+        });
+
         btnRefresh.setOnMouseClicked(event -> {
             if (RootController.getTaskService().isRunning()) {
-                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                        "OpenRAMT Confirmation",
-                        "A task was already running, cancel that one and continue?",
-                        "If you select yes, the previous task will be canceled when possible and this one" +
-                                "will take over.");
+                Alert alert = midTaskWarning();
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.OK) {
@@ -105,7 +113,7 @@ public class ProcessController extends AnchorPane {
                     TaskResponse<String> fetchResponse = (TaskResponse<String>) event.getSource().getValue();
 
                     try {
-                        JSONArray json = new JSONArray(fetchResponse.getResponseData()); //TODO catch org.json.JSONException: A JSONArray text must start with '[' at 1 [character 2 line 1] and alert user of error.
+                        JSONArray json = new JSONArray(fetchResponse.getResponseData());
 
                         tblProcesses.getItems().clear();
 
@@ -123,7 +131,7 @@ public class ProcessController extends AnchorPane {
                                 "Server sent a unread list of process for this client.\n\n",
                                 "The server sent a JSON response that couldn't be read." +
                                         "Please report this bug to a developer or try to ensure client and server" +
-                                        "versions match support.\n JSON: " + fetchResponse.getResponseData()).show();
+                                        "versions match support.\n JSON: ["+fetchResponse.getResponseData()+"]").show();
                     }
 
                 case KILLPROCESS:
@@ -140,5 +148,13 @@ public class ProcessController extends AnchorPane {
     private Integer selectedPID() {
         //TODO detect not selected.
         return Integer.valueOf(tblProcesses.getSelectionModel().getSelectedItem().getId());
+    }
+
+    private RAMTAlert midTaskWarning() {
+        return new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                "OpenRAMT Confirmation",
+                "A task was already running, cancel that one and continue?",
+                "If you select yes, the previous task will be canceled when possible and this one" +
+                        "will take over.");
     }
 }
