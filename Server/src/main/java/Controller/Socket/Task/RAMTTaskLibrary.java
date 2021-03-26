@@ -330,25 +330,16 @@ public class RAMTTaskLibrary {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+                    String script = "controller/windows/ps/SleepSystem.ps1";
+                    BufferedReader srcReader = new BufferedReader(
+                            new InputStreamReader(Objects.requireNonNull(
+                                    ClassLoader.getSystemClassLoader().getResourceAsStream(script))));
+
+                    PowerShellResponse response = shell.executeScript(srcReader);
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
-
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
 
                 case LINUX:
                     Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "systemctl suspend").start();
@@ -364,7 +355,7 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
-                default:
+                default: // Can't do this without specific environment in windows CMD so windows ends here.
                     return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
             }
         } catch (IOException | InterruptedException e) {
@@ -373,7 +364,7 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<String> getSettings(TaskRequest<String> request) {
+    private static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -420,102 +411,8 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> editSetting(TaskRequest<String[]> request) {
-                try {
-            switch (getOS()) {
-                case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
-
-                    return (response.isError() || response.isTimeout()) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
-
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-
-                case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
-
-                    return linuxCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
-
-                    return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return new TaskResponse<>(request, Response.FAILED, 99);
-        }
-    }
-
-    private static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
-                try {
-            switch (getOS()) {
-                case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
-
-                    return (response.isError() || response.isTimeout()) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
-
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-
-                case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
-
-                    return linuxCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
-
-                    return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return new TaskResponse<>(request, Response.FAILED, 99);
-        }
-    }
-
     private static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
@@ -562,7 +459,7 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
@@ -609,7 +506,7 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> cleanDisk(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
@@ -656,7 +553,7 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> enableWifi(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
@@ -703,7 +600,7 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> disableWifi(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
@@ -750,7 +647,7 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> enableBluetooth(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
@@ -797,7 +694,7 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> disableBluetooth(TaskRequest<Void> request) {
-                try {
+        try {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("");
