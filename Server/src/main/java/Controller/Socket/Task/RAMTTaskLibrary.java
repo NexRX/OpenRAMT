@@ -11,6 +11,15 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.FtpServerFactory;
+import org.apache.ftpserver.ftplet.FtpException;
+import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.listener.ListenerFactory;
+import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
+import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
+import org.apache.ftpserver.usermanager.impl.BaseUser;
+
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -43,6 +52,7 @@ import static Model.General.OSType.*;
  */
 public class RAMTTaskLibrary {
     private static PowerShell shell;
+    private static FtpServer server;
 
     /**
      * A semantic function that doesn't actually login a user but provides a response that lets a client know that their
@@ -365,144 +375,53 @@ public class RAMTTaskLibrary {
     }
 
     private static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
-        try {
-            switch (getOS()) {
-                case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+        if (server != null) {
+            FtpServerFactory serverFactory = new FtpServerFactory();
+            ListenerFactory factory = new ListenerFactory();
 
-                    return (response.isError() || response.isTimeout()) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
+            // Setting listener port.
+            factory.setPort(2221); //ToDo setup a default and custom ftp port in setup and settings, then get it here.
+            serverFactory.addListener("default", factory.createListener());
 
-                case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+            // Server creation.
+            FtpServer server = serverFactory.createServer();
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+            // User Management
+            PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
+            userManagerFactory.setFile(new File("myusers.properties"));
+            userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor());
+            UserManager um = userManagerFactory.createUserManager();
+            BaseUser user = new BaseUser();
 
-                    return (process.waitFor() != 0) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
+            user.setName("myNewUser"); //TODO add FTP set details on setup and settings then get them here.
+            user.setPassword("secret");
+            user.setHomeDirectory("ftproot");
 
-
-                case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
-
-                    return linuxCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
-
-                    return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            // Server save users and start.
+            try {
+                um.save(user);
+                server.start();
+            } catch (FtpException e) {
+                e.printStackTrace();
+                return new TaskResponse<>(request, Response.FAILED, 99);
             }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return new TaskResponse<>(request, Response.FAILED, 99);
         }
+
+        return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
     private static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
-        try {
-            switch (getOS()) {
-                case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
-
-                    return (response.isError() || response.isTimeout()) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
-
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-
-                case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
-
-                    return linuxCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
-
-                    return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return new TaskResponse<>(request, Response.FAILED, 99);
+        if (server != null){
+            server.stop();
+            server = null;
         }
+
+        return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
     private static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
-        try {
-            switch (getOS()) {
-                case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
-
-                    return (response.isError() || response.isTimeout()) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
-
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-
-                case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
-
-                    return linuxCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
-
-                    return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
-
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return new TaskResponse<>(request, Response.FAILED, 99);
-        }
+        stopFTP(request);
+        return startFTP(request);
     }
 
     private static TaskResponse<Void> cleanDisk(TaskRequest<Void> request) {
