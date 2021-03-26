@@ -38,6 +38,7 @@ import static Model.General.OSType.*;
  * - 21 - Duplicate SQL error. When a value given would of violated a unique column for example.
  * - 31 - Process task related error, process restart attempted, killed but couldn't start again.
  * - 44 - Data given couldn't be found within the request i.e. row not found when updating a line in the database.
+ * - 98 - Server doesn't support this task.
  * - 99 - Catastrophic generic error. If this has returned, something has gone seriously wrong (i.e. unforeseen bugs).
  */
 public class RAMTTaskLibrary {
@@ -57,7 +58,7 @@ public class RAMTTaskLibrary {
      * @return A (error) code referring to the success of the operation. For a list of the error codes, please refer to
      *                the classes JavaDoc.
      */
-    public static TaskResponse<Void> login(TaskRequest request) {
+    public static TaskResponse<Void> login(TaskRequest<Void> request) {
         try {
             if (request.getUser() == null) {  return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 4); }
 
@@ -238,68 +239,608 @@ public class RAMTTaskLibrary {
         return null;
     }
 
-    public static int shutdown(int delay) {
-        return 1;
+    public static TaskResponse<Void> shutdown(TaskRequest<Void> request) {
+        try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("Stop-Computer -ComputerName localhost");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "shutdown /s").start();
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "poweroff" + request.getParameter()).start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "osascript -e 'tell app \"System Events\" to shut down'").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default: //OTHER
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
-    public static int restart(int delay) {
-        return 1;
+    private static TaskResponse<Void> restart(TaskRequest<Void> request) {
+        try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("Restart-Computer -ComputerName localhost");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "shutdown /r").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "reboot").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "osascript -e 'tell app \"System Events\" to restart'").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int sleep(int delay) {
-        return 1;
+    private static TaskResponse<Void> sleep(TaskRequest<Void> request) {
+        try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "systemctl suspend").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "osascript -e 'tell app \"System Events\" to sleep'").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int addUser(UserData user) {
-        return 1;
+    private static TaskResponse<String> getSettings(TaskRequest<String> request) {
+        try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int editUser(UserData newUser, UserData oldUser) {
-        return 1;
+    private static TaskResponse<Void> editSetting(TaskRequest<String[]> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int deleteUser(UserData user) {
-        return 1;
+    private static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int getSettings(String setting) {
-        return 1;
+    private static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int editSetting(String setting) {
-        return 1;
+    private static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int startFTP() {
-        return 1;
+    private static TaskResponse<Void> cleanDisk(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int stopFTP() {
-        return 1;
+    private static TaskResponse<Void> enableWifi(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int restartFTP() {
-        return 1;
+    private static TaskResponse<Void> disableWifi(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int cleanDisk() {
-        return 1;
+    private static TaskResponse<Void> enableBluetooth(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
+
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
-    public static int enableWifi() {
-        return 1;
-    }
+    private static TaskResponse<Void> disableBluetooth(TaskRequest<Void> request) {
+                try {
+            switch (getOS()) {
+                case WINDOWS_PS:
+                    PowerShellResponse response = shell.executeCommand("");
 
-    public static int disableWifi() {
-        return 1;
-    }
+                    return (response.isError() || response.isTimeout()) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
 
-    public static int enableBluetooth() {
-        return 1;
-    }
+                case WINDOWS:
+                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
 
-    public static int disableBluetooth() {
-        return 1;
+                    // Get the output of the command.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder winCMDOutput = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+
+                    return (process.waitFor() != 0) ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+
+                case LINUX:
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+
+                    return linuxCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                case MAC:
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
+
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 99);
+        }
     }
 
     /**
