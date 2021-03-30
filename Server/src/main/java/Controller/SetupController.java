@@ -34,14 +34,22 @@ public class SetupController extends AnchorPane {
     @FXML Pane topBar;
 
     // Form Children
+    // Root User Details
     @FXML JFXTextField txtUsername;
     @FXML JFXPasswordField txtPassword;
     @FXML JFXPasswordField txtPasswordConfirm;
 
+    // Socket Details
     @FXML ToggleGroup socketToggle;
     /*@FXML JFXRadioButton radioSecure;*/
     /*@FXML JFXRadioButton radioInsecure;*/
     @FXML JFXTextField txtPort;
+
+    // Misc
+    /*@FXML JFXButton btnCert;*/
+    @FXML JFXTextField txtFTPUsername;
+    @FXML JFXPasswordField txtFTPPassword;
+
 
     public SetupController(Stage stage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Setup.fxml"));
@@ -138,7 +146,24 @@ public class SetupController extends AnchorPane {
             return "Passwords do not match";
         }
 
-        int setupCode = DBManager.setup(txtUsername.getText(), hashedPassword, socket, port);
+        // Let user know one value in ftp details are empty.
+        String ftpUsername = txtFTPUsername.getText();
+        String ftpPassword = txtFTPPassword.getText();
+        if (ftpUsername.isEmpty() || ftpPassword.isEmpty()) {
+            new RAMTAlert(Alert.AlertType.INFORMATION,
+                    "OpenRAMT Information",
+                    "One or more FTP values are currently empty and will have default values!",
+                    "Since the some FTP details aren't given, we are assigning a default value for them. \n" +
+                            "It is recommended for security reasons that you change this especially for passwords.\n\n"+
+                            "FTP Username Default:" + ftpUsername.isEmpty() + "Default Value: RAMTUser\n" +
+                            "FTP Password Default:" + ftpPassword.isEmpty() + " | Default Value: $%^DFG543*z\n" +
+                            "These values (default or not) can be change later in the settings.").showAndWait();
+
+            ftpUsername = ftpUsername.isEmpty() ? "RAMTUser" : ftpUsername;
+            ftpPassword = ftpPassword.isEmpty() ? "$%^DFG543*z" : ftpPassword;
+        }
+
+        int setupCode = DBManager.setup(txtUsername.getText(), hashedPassword, socket, port, ftpUsername, ftpPassword);
 
         System.out.println("Setup Code: " + setupCode);
 

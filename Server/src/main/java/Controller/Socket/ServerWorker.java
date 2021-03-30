@@ -53,22 +53,22 @@ public class ServerWorker implements Runnable{
         }
     }
 
-    private TaskResponse<?> processTask(TaskRequest request) {
+    private TaskResponse<?> processTask(TaskRequest<?> request) {
         switch (request.getTask()) {
             case LOGIN:
-                return RAMTTaskLibrary.login(request);
+                return RAMTTaskLibrary.login((TaskRequest<Void>) request);
             case KILLPROCESS:
-                return RAMTTaskLibrary.killProcess(request);
+                return RAMTTaskLibrary.killProcess((TaskRequest<Integer>) request);
             case RESTARTPROCESS:
-                return RAMTTaskLibrary.restartProcess(request);
+                return RAMTTaskLibrary.restartProcess((TaskRequest<Integer>) request);
             case FETCHPROCESSES:
-                return RAMTTaskLibrary.fetchProcesses(request);
+                return RAMTTaskLibrary.fetchProcesses((TaskRequest<Void>) request);
             case SHUTDOWN:
-                break;
+                return RAMTTaskLibrary.shutdown((TaskRequest<Void>) request);
             case RESTART:
-                break;
+                return RAMTTaskLibrary.restart((TaskRequest<Void>) request);
             case SLEEP:
-                break;
+                return RAMTTaskLibrary.sleep((TaskRequest<Void>) request);
             case ADDUSER:
                 break;
             case EDITUSER:
@@ -80,11 +80,11 @@ public class ServerWorker implements Runnable{
             case GETSETTINGS:
                 break;
             case STARTFTP:
-                break;
+                return RAMTTaskLibrary.startFTP((TaskRequest<Void>) request);
             case STOPFTP:
-                break;
+                return RAMTTaskLibrary.stopFTP((TaskRequest<Void>) request);
             case RESTARTFTP:
-                break;
+                return RAMTTaskLibrary.restartFTP((TaskRequest<Void>) request);
             case CLEANDISK:
                 break;
             case ENABLEWIFI:

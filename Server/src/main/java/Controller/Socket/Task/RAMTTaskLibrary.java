@@ -1,5 +1,6 @@
 package Controller.Socket.Task;
 
+import Controller.RAMTAlert;
 import Model.General.AppPermission;
 import Model.General.OSType;
 import Model.Task.Response;
@@ -11,16 +12,20 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import javafx.scene.control.Alert;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
+import org.apache.ftpserver.ftplet.Authority;
 import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.ftpserver.usermanager.impl.WritePermission;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -289,7 +294,7 @@ public class RAMTTaskLibrary {
         return null;
     }
 
-    private static TaskResponse<Void> restart(TaskRequest<Void> request) {
+    public static TaskResponse<Void> restart(TaskRequest<Void> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -336,7 +341,7 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> sleep(TaskRequest<Void> request) {
+    public static TaskResponse<Void> sleep(TaskRequest<Void> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -374,33 +379,60 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
-        if (server != null) {
+    public static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
+        if (server == null) {
             FtpServerFactory serverFactory = new FtpServerFactory();
             ListenerFactory factory = new ListenerFactory();
 
             // Setting listener port.
-            factory.setPort(2221); //ToDo setup a default and custom ftp port in setup and settings, then get it here.
+            try {
+                factory.setPort(Integer.valueOf(DBManager.getSetting("FTP Port")));
+            } catch (SQLException throwables) {
+                factory.setPort(2221); // Default fallback.
+                //Todo alert user somehow.
+            }
             serverFactory.addListener("default", factory.createListener());
-
-            // Server creation.
-            FtpServer server = serverFactory.createServer();
 
             // User Management
             PropertiesUserManagerFactory userManagerFactory = new PropertiesUserManagerFactory();
-            userManagerFactory.setFile(new File("myusers.properties"));
+
+            File ftpPropFile = new File("data/ftp.properties");
+            if (!ftpPropFile.isFile()) {
+                try {Files.createFile(ftpPropFile.toPath());} catch (IOException e) {e.printStackTrace();}
+            }
+
+            userManagerFactory.setFile(ftpPropFile);
             userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor());
             UserManager um = userManagerFactory.createUserManager();
+
             BaseUser user = new BaseUser();
 
-            user.setName("myNewUser"); //TODO add FTP set details on setup and settings then get them here.
-            user.setPassword("secret");
-            user.setHomeDirectory("ftproot");
+            try {
+                user.setName(DBManager.getSetting("FTP Username"));
+                user.setPassword(DBManager.getSetting("FTP Password"));
+            } catch (SQLException throwables) {
+                user.setName("RAMTUser"); // Default fallbacks.
+                user.setPassword("$%^DFG543*z");
+            }
+            user.setEnabled(true);
+
+            List<Authority> authorities = new ArrayList<Authority>();
+            authorities.add(new WritePermission());
+            user.setAuthorities(authorities);
+
+            user.setMaxIdleTime(0);
+            user.setHomeDirectory("/");
+
+            //TODO add write permission for admin user and create a guest user (read only and locked to a home folder)
 
             // Server save users and start.
             try {
                 um.save(user);
+                serverFactory.setUserManager(um);
+                // Server creation.
+                FtpServer server = serverFactory.createServer();
                 server.start();
+                System.out.println("FTP Server started!");
             } catch (FtpException e) {
                 e.printStackTrace();
                 return new TaskResponse<>(request, Response.FAILED, 99);
@@ -410,16 +442,17 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
-    private static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
+    public static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
         if (server != null){
             server.stop();
             server = null;
+            System.out.println("FTP Server stopped!");
         }
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
-    private static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
+    public static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
         stopFTP(request);
         return startFTP(request);
     }
@@ -428,7 +461,7 @@ public class RAMTTaskLibrary {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+                    PowerShellResponse response = shell.executeCommand("cleanmgr /verylowdisk /sagerun:5");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :

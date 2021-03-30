@@ -60,7 +60,7 @@ public class ProcessController extends AnchorPane {
     private void applyEventHandlers() {
         btnKill.setOnMouseClicked(event -> {
             if (RootController.getTaskService().isRunning()) {
-                Alert alert = midTaskWarning();
+                Alert alert = RAMTAlert.getAlertMidTask();
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.OK) {
@@ -76,7 +76,7 @@ public class ProcessController extends AnchorPane {
 
         btnRestart.setOnMouseClicked(event -> {
             if (RootController.getTaskService().isRunning()) {
-                Alert alert = midTaskWarning();
+                Alert alert = RAMTAlert.getAlertMidTask();
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.OK) {
@@ -92,7 +92,7 @@ public class ProcessController extends AnchorPane {
 
         btnRefresh.setOnMouseClicked(event -> {
             if (RootController.getTaskService().isRunning()) {
-                Alert alert = midTaskWarning();
+                Alert alert = RAMTAlert.getAlertMidTask();
                 alert.showAndWait();
 
                 if (alert.getResult() == ButtonType.OK) {
@@ -148,13 +148,5 @@ public class ProcessController extends AnchorPane {
     private Integer selectedPID() {
         //TODO detect not selected.
         return Integer.valueOf(tblProcesses.getSelectionModel().getSelectedItem().getId());
-    }
-
-    private RAMTAlert midTaskWarning() {
-        return new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                "OpenRAMT Confirmation",
-                "A task was already running, cancel that one and continue?",
-                "If you select yes, the previous task will be canceled when possible and this one" +
-                        "will take over.");
     }
 }

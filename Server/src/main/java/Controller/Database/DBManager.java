@@ -61,7 +61,7 @@ public class DBManager {
      *
      * Possible Codes: 0, 2, 20
      */
-    public static int setup(String username, String password, Boolean secure, int port) {
+    public static int setup(String username, String password, Boolean secure, int port, String ftpUsername, String ftpPassword) {
         if (!isStringConstraint("username", username) ||
                 !isStringConstraint("password", password) ||
                 !isIntegerConstraint("port", port)) {
@@ -74,7 +74,7 @@ public class DBManager {
             if( !isSetup() ) {
                 System.out.println("No DB detected, starting setup.");
                 setupDB();
-                setupData = setupData(username, password, secure, port);
+                setupData = setupData(username, password, secure, port, ftpUsername, ftpPassword);
             } else  {
                 IllegalStateException e = new IllegalStateException("Database already exists. Please wipe before trying to setup again.");
                 e.printStackTrace();
@@ -998,7 +998,7 @@ public class DBManager {
         con.close();
     }
 
-    private static int setupData(String username, String password, Boolean secure, int port) throws SQLException {
+    private static int setupData(String username, String password, Boolean secure, int port, String ftpUsername, String ftpPassword) throws SQLException {
         if (!isStringConstraint("username", username) ||
                 !isStringConstraint("password", password) ||
                 !isIntegerConstraint("port", port)) { return 2;}
@@ -1008,15 +1008,24 @@ public class DBManager {
 
         stmt.executeUpdate( "INSERT INTO users(ID, username, password, user_group) VALUES ('0', '" + username +"', '" + password +"', 'Administrator');" );
 
+        // User Assigned
         int result1 = addSetting("Port", String.valueOf(port));
         int result2 = addSetting("Security",  secure.toString());
+        int result3 = addSetting("FTP Username", ftpUsername);
+        int result4 = addSetting("FTP Password",  ftpPassword);
+
+        // Non-User Assigned
+        int result5 = addSetting("FTP Port", String.valueOf(2221));
 
         stmt.close();
         if (con != null) {con.close();}
 
-        if (result1 != 0) { return result1;}
-        else if (result2 != 0) {return result2;}
-        return 0;
+        // Checking for errors adding settings.
+        if (result1 != 0) { return result1; }
+        else if (result2 != 0) { return result2; }
+        else if (result3 != 0) { return result3; }
+        else if (result4 != 0) { return result4; }
+        else return result5;
     }
 
     /**
