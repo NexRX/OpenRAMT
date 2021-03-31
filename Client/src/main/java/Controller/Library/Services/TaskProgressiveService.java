@@ -72,11 +72,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
 
                 // Get the response
                 jointUpdate(0.66f, "Server Processing");
-                @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
-                TaskResponse<?> response = switch (request.getTask()) {
-                    case FETCHPROCESSES ->  (TaskResponse<String>) socketInput.readObject();
-                    default -> (TaskResponse<Void>) socketInput.readObject();
-                };
+                TaskResponse<?> response = (TaskResponse<?>) socketInput.readObject();
 
                 System.out.println("Response received: " + response.getRequestID() +" | "+ response.getResponse());
 

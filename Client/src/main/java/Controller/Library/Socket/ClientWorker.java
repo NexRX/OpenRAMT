@@ -40,6 +40,7 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
         ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
 
+        System.out.println(request.getTask().toString());
         // Send request to the server.
         socketOutput.writeObject(request);
 
