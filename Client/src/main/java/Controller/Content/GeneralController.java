@@ -83,7 +83,6 @@ public class GeneralController extends ScrollPane {
 
             if (alert.getResult() == ButtonType.OK) {
                 RootController.getTaskService().updateAndRestart(taskRequest);
-
             }
         } else {
             RootController.getTaskService().updateAndRestart(taskRequest);
