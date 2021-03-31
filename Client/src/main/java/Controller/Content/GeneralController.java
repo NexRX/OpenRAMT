@@ -26,8 +26,8 @@ public class GeneralController extends ScrollPane {
     @FXML JFXButton btnCleanDiskAll;
     @FXML JFXButton btnCleanDiskBin;
 
-    @FXML JFXButton btnWIFIEnable;
-    @FXML JFXButton btnWIFIDisable;
+    @FXML JFXButton btnWiFiEnable;
+    @FXML JFXButton btnWiFiDisable;
     @FXML JFXButton btnWiFiReenable;
 
     @FXML JFXButton btnBluetoothEnable;
@@ -65,9 +65,9 @@ public class GeneralController extends ScrollPane {
         btnCleanDiskAll.setOnMouseClicked(requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 2)));
         btnCleanDiskBin.setOnMouseClicked(requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 3)));
 
-        // WIFI Section
-        btnWIFIEnable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 0)));
-        btnWIFIDisable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.DISABLEWIFI, RootController.getLoggedInUser())));
+        // WiFi Section
+        btnWiFiEnable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 0)));
+        btnWiFiDisable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.DISABLEWIFI, RootController.getLoggedInUser())));
         btnWiFiReenable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 1)));
 
         // Bluetooth Section
