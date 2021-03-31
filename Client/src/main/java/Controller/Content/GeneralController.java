@@ -5,13 +5,11 @@ import Controller.RootController;
 import Model.Task.Task;
 import Model.Task.TaskRequest;
 import com.jfoenix.controls.JFXButton;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
 
@@ -55,28 +53,28 @@ public class GeneralController extends ScrollPane {
 
     private void applyEventHandlers() {
         // FTP Section
-        btnFTPStart.setOnMouseClicked(requestStart(new TaskRequest<>(Task.STARTFTP, RootController.getLoggedInUser())));
-        btnFTPStop.setOnMouseClicked(requestStart(new TaskRequest<>(Task.STOPFTP, RootController.getLoggedInUser())));
-        btnFTPRestart.setOnMouseClicked(requestStart(new TaskRequest<>(Task.RESTARTFTP, RootController.getLoggedInUser())));
+        btnFTPStart.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.STARTFTP, RootController.getLoggedInUser())));
+        btnFTPStop.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.STOPFTP, RootController.getLoggedInUser())));
+        btnFTPRestart.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.RESTARTFTP, RootController.getLoggedInUser())));
 
         // General Section
-        btnCleanDiskSystem.setOnMouseClicked(requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 0)));
-        btnCleanDiskExtra.setOnMouseClicked(requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 1)));
-        btnCleanDiskAll.setOnMouseClicked(requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 2)));
-        btnCleanDiskBin.setOnMouseClicked(requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 3)));
+        btnCleanDiskSystem.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 0)));
+        btnCleanDiskExtra.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 1)));
+        btnCleanDiskAll.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 2)));
+        btnCleanDiskBin.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 3)));
 
         // WiFi Section
-        btnWiFiEnable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 0)));
-        btnWiFiDisable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.DISABLEWIFI, RootController.getLoggedInUser())));
-        btnWiFiReenable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 1)));
+        btnWiFiEnable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 0)));
+        btnWiFiDisable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.DISABLEWIFI, RootController.getLoggedInUser())));
+        btnWiFiReenable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 1)));
 
         // Bluetooth Section
-        btnBluetoothEnable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 0)));
-        btnBluetoothDisable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.DISABLEBLUETOOTH, RootController.getLoggedInUser())));
-        btnBluetoothReenable.setOnMouseClicked(requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 1)));
+        btnBluetoothEnable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 0)));
+        btnBluetoothDisable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.DISABLEBLUETOOTH, RootController.getLoggedInUser())));
+        btnBluetoothReenable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 1)));
     }
 
-    private EventHandler<? super MouseEvent> requestStart(TaskRequest<?> taskRequest) {
+    private void requestStart(TaskRequest<?> taskRequest) {
         if (RootController.getTaskService().isRunning()) {
             Alert alert = RAMTAlert.getAlertMidTask();
             alert.showAndWait();
@@ -87,6 +85,5 @@ public class GeneralController extends ScrollPane {
         } else {
             RootController.getTaskService().updateAndRestart(taskRequest);
         }
-        return null;
     }
 }

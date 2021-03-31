@@ -462,10 +462,12 @@ public class RAMTTaskLibrary {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
+                    powershellLongTimeout();
                     return switch (request.getParameter()) {
 
                         // System Drive Clean
-                        case 0 -> shell.executeCommand("cleanmgr /verylowdisk /d C").isError() ?
+                        case 0 -> shell.executeCommand("Start-Process -Wait \"$env:SystemRoot\\System32\\cleanmgr.exe\"" +
+                                " -ArgumentList \"/AUTOCLEAN /d C\"; Write-Host 0;").isError() ?
                                 new TaskResponse<>(request, Response.FAILED, 1) :
                                 new TaskResponse<>(request, Response.SUCCESS, 0);
 
@@ -473,30 +475,40 @@ public class RAMTTaskLibrary {
                         case 1,2 -> {
                             JSONArray json = new JSONArray(shell.executeCommand("Get-PSDrive | select name | ConvertTo-Json").getCommandOutput());
                             boolean excludeSystem = request.getParameter() == 1;
-
                             int errorCount = 0;
+                            powershellLongTimeout();
                             for (int i = 0; i < json.length(); i++) {
-                                // Is drive name a char?.
-                                if (String.valueOf(json.get(i)).length() == 1) {
-                                    char driveLetter = (Character) json.get(i);
 
-                                    //Check if its system drive and if we are wiping it.
-                                    if (excludeSystem && driveLetter == 'c') {
-                                        // do nothing
-                                    } else {
-                                        errorCount += shell.executeCommand("cleanmgr /verylowdisk /d " + driveLetter).isError() ? 1 : 0;
+                                // Is drive name a char?.
+                                if (((String) json.getJSONObject(i).get("Name")).length() == 1) {
+                                    char driveLetter = ((String) json.getJSONObject(i).get("Name")).charAt(0);
+
+                                    // Top 2 if statements do the same but this way is slightly faster,
+                                    // rather than check for drive letter C every time.
+                                    if (!excludeSystem) {
+                                        errorCount += shell.executeCommand("" +
+                                                "Start-Process -Wait \"$env:SystemRoot\\System32\\cleanmgr.exe\" " +
+                                                "-ArgumentList \"/AUTOCLEAN /d "+driveLetter+"\"").isError() ? 1 : 0;
+                                        System.out.println("Finished Cleaning Drive: " + driveLetter);
+                                    } else if (driveLetter != 'C') {
+                                        errorCount += shell.executeCommand("" +
+                                                "Start-Process -Wait \"$env:SystemRoot\\System32\\cleanmgr.exe\" " +
+                                                "-ArgumentList \"/AUTOCLEAN /d "+driveLetter+"\"").isError() ? 1 : 0;
+                                        System.out.println("Finished Cleaning Drive: " + driveLetter);
                                     }
                                 }
 
                             }
 
+                            powershellDefaultTimeout();
+                            System.out.println("Drive Cleaner PS: Error Count " + errorCount);
                             yield new TaskResponse<>(request,
                                     errorCount > 1 ? Response.FAILED : Response.SUCCESS,
                                     errorCount > 1 ? 1 : 0);
                         }
 
                         // Recycle bin clean
-                        default -> shell.executeCommand("Clear-RecycleBin").isError() ?
+                        default -> shell.executeCommand("Clear-RecycleBin -Force").isError() ?
                                 new TaskResponse<>(request, Response.FAILED, 1) :
                                 new TaskResponse<>(request, Response.SUCCESS, 0);
                     };
@@ -804,6 +816,16 @@ public class RAMTTaskLibrary {
                 "  separator = \", \"\n" +
                 "}\n" +
                 "END { print \" ] \" }';";
+    }
+
+    /**
+     * 1 Second timeout for the powershell.
+     * Note: Only use this where an output is not needed.
+     */
+    private static void powershellUltraTimeout() {
+        Map<String, String> myConfig = new HashMap<>();
+        myConfig.put("maxWait", "1000");
+        shell.configuration(myConfig);
     }
 
     /**
