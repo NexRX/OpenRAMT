@@ -16,7 +16,7 @@ public class TaskResponse<T> implements Serializable {
         this.responseData = null;
     }
 
-    public TaskResponse(TaskRequest request, Response response, Integer responseCode, T responseData) {
+    public TaskResponse(TaskRequest request, Response response, int responseCode, T responseData) {
         this.request = request;
         this.response = response;
         this.responseCode = responseCode;

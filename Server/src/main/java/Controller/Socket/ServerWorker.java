@@ -86,7 +86,7 @@ public class ServerWorker implements Runnable{
             case RESTARTFTP:
                 return RAMTTaskLibrary.restartFTP((TaskRequest<Void>) request);
             case CLEANDISK:
-                break;
+                return RAMTTaskLibrary.cleanDisk((TaskRequest<Integer>) request);
             case ENABLEWIFI:
                 break;
             case DISABLEWIFI:

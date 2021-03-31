@@ -23,6 +23,7 @@ import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
+import org.json.JSONArray;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -457,16 +458,48 @@ public class RAMTTaskLibrary {
         return startFTP(request);
     }
 
-    private static TaskResponse<Void> cleanDisk(TaskRequest<Void> request) {
+    public static TaskResponse<Void> cleanDisk(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("cleanmgr /verylowdisk /sagerun:5");
+                    return switch (request.getParameter()) {
 
-                    return (response.isError() || response.isTimeout()) ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
-                            new TaskResponse<>(request, Response.SUCCESS, 0);
+                        // System Drive Clean
+                        case 0 -> shell.executeCommand("cleanmgr /verylowdisk /d C").isError() ?
+                                new TaskResponse<>(request, Response.FAILED, 1) :
+                                new TaskResponse<>(request, Response.SUCCESS, 0);
 
+                        // Extra or All Drive(s) Clean
+                        case 1,2 -> {
+                            JSONArray json = new JSONArray(shell.executeCommand("Get-PSDrive | select name | ConvertTo-Json").getCommandOutput());
+                            boolean excludeSystem = request.getParameter() == 1;
+
+                            int errorCount = 0;
+                            for (int i = 0; i < json.length(); i++) {
+                                // Is drive name a char?.
+                                if (String.valueOf(json.get(i)).length() == 1) {
+                                    char driveLetter = (Character) json.get(i);
+
+                                    //Check if its system drive and if we are wiping it.
+                                    if (excludeSystem && driveLetter == 'c') {
+                                        // do nothing
+                                    } else {
+                                        errorCount += shell.executeCommand("cleanmgr /verylowdisk /d " + driveLetter).isError() ? 1 : 0;
+                                    }
+                                }
+
+                            }
+
+                            yield new TaskResponse<>(request,
+                                    errorCount > 1 ? Response.FAILED : Response.SUCCESS,
+                                    errorCount > 1 ? 1 : 0);
+                        }
+
+                        // Recycle bin clean
+                        default -> shell.executeCommand("Clear-RecycleBin").isError() ?
+                                new TaskResponse<>(request, Response.FAILED, 1) :
+                                new TaskResponse<>(request, Response.SUCCESS, 0);
+                    };
                 case WINDOWS:
                     Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
 
