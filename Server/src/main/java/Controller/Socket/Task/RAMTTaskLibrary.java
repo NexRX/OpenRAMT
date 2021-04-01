@@ -307,16 +307,9 @@ public class RAMTTaskLibrary {
                 case WINDOWS:
                     Process process = new ProcessBuilder("cmd.exe", "/c", "shutdown /r").start();
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
                     return (process.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
-
 
                 case LINUX:
                     Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "reboot").start();
@@ -390,7 +383,7 @@ public class RAMTTaskLibrary {
             System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
         }
 
-        InetAddress address = null;
+        InetAddress address;
         try {
             address = InetAddress.getByName(request.getParameter()[0]);
             DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, Integer.parseInt(request.getParameter()[2]));
@@ -442,7 +435,7 @@ public class RAMTTaskLibrary {
             }
             user.setEnabled(true);
 
-            List<Authority> authorities = new ArrayList<Authority>();
+            List<Authority> authorities = new ArrayList<>();
             authorities.add(new WritePermission());
             user.setAuthorities(authorities);
 
@@ -537,28 +530,50 @@ public class RAMTTaskLibrary {
                                 new TaskResponse<>(request, Response.SUCCESS, 0, -1);
                     };
                 case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+                   String cmdScript =  switch (request.getParameter()) {
+                        case 0 -> "cleanmgr.exe /AUTOCLEAN /d C";
+                        case 2 -> "cleanmgr.exe /AUTOCLEAN";
+                        case 3 ->  "rd /s /q %systemdrive%\\$Recycle.bin";
+                        default -> "";
+                    };
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
+                   Process process;
+                   if (!cmdScript.isEmpty()) {
+                       process = new ProcessBuilder("cmd.exe", "/c", cmdScript).start();
+                   } else {
+                       return new TaskResponse<>(request, Response.FAILED, 98);
+                   }
 
                     return (process.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
-
                 case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+                    String linuxScript =  switch (request.getParameter()) {
+                        case 0,1,2 -> "apt-get clean";
+                        case 3 -> "rm -rf ~/.local/share/Trash/*";
+                        default -> "";
+                    };
 
-                    return linuxCMD.waitFor() != 0 ?
+                    Process linuxCMD;
+                    if (!linuxScript.isEmpty()) {
+                        linuxCMD = new ProcessBuilder("cmd.exe", "/c", linuxScript).start();
+                    } else {
+                        return new TaskResponse<>(request, Response.FAILED, 98);
+                    }
+
+                    return (linuxCMD.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+                    String macScript =  switch (request.getParameter()) {
+                        case 0,1,2 -> "cd /private/var/tmp/; rm -rf TM*";
+                        case 3 -> "cd ~/Library/Caches/; rm -rf ~/Library/Caches/*";
+                        default -> "";
+                    };
+
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", macScript).start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -590,28 +605,25 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+                    if (request.getParameter() == 1) { disableWifi(request); } // Re-enable
+                    Process process1 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"Wireless Network Connection\" Enable").start();
+                    Process process2 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"WiFi\" Enable").start();
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
+                    return (process1.waitFor() != 0 || process2.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
-
                 case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+                    if (request.getParameter() == 1) { disableWifi(request); } // Re-enable
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "nmcli radio wifi on").start();
 
                     return linuxCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+                    if (request.getParameter() == 1) { disableWifi(request); } // Re-enable
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "networksetup -setairportpower en0 on").start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -641,28 +653,22 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+                    Process process1 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"Wireless Network Connection\" Disable").start();
+                    Process process2 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"WiFi\" Disable").start();
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
+                    return (process1.waitFor() != 0 || process2.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
-
                 case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "nmcli radio wifi off").start();
 
                     return linuxCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "networksetup -setairportpower en0 off").start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -692,28 +698,26 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+                    if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
+                    Process process1 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"Bluetooth Network Connection\" Enable").start();
+                    Process process2 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"Bluetooth\" Enable").start();
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
+                    return (process1.waitFor() != 0 || process2.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
 
                 case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+                    if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "rfkill unblock bluetooth").start();
 
                     return linuxCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+                    if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(true)).start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -741,28 +745,22 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case WINDOWS:
-                    Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
+                    Process process1 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"Bluetooth Network Connection\" Disable").start();
+                    Process process2 = new ProcessBuilder("cmd.exe", "/c", "netsh interface set interface \"Bluetooth\" Disable").start();
 
-                    // Get the output of the command.
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    StringBuilder winCMDOutput = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) { winCMDOutput.append(line); }
-
-                    return (process.waitFor() != 0) ?
+                    return (process1.waitFor() != 0 || process2.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
-
                 case LINUX:
-                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "").start();
+                    Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "rfkill block bluetooth").start();
 
                     return linuxCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "").start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(false)).start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -1014,6 +1012,30 @@ public class RAMTTaskLibrary {
                 "  separator = \", \"\n" +
                 "}\n" +
                 "END { print \" ] \" }';";
+    }
+
+    private static String scriptMacOSBluetooth(boolean on) {
+        if (on) {
+            return "tell application “System Events” to tell process “SystemUIServer”\n" +
+                    "set bt to (first menu bar item whose description is “bluetooth”) of menu bar 1\n" +
+                    "click bt\n" +
+                    "tell (first menu item whose title is “Turn Bluetooth On”) of menu of bt\n" +
+                    "click\n" +
+                    "click menu item “Turn Bluetooth On”\n" +
+                    "end tell\n" +
+                    "end tell\n" +
+                    "end tell";
+        } else {
+            return "tell application “System Events” to tell process “SystemUIServer”\n" +
+                    "set bt to (first menu bar item whose description is “bluetooth”) of menu bar 1\n" +
+                    "click bt\n" +
+                    "tell (first menu item whose title is “Turn Bluetooth Off”) of menu of bt\n" +
+                    "click\n" +
+                    "click menu item “Turn Bluetooth Off”\n" +
+                    "end tell\n" +
+                    "end tell\n" +
+                    "end tell";
+        }
     }
 
     private static byte[] getMacBytes(String macStr) throws IllegalArgumentException {
