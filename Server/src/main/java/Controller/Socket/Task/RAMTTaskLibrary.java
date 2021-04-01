@@ -840,16 +840,16 @@ public class RAMTTaskLibrary {
 
     public static TaskResponse<?> updateUser(TaskRequest<String[]> request) { //0,1,2 (what to change, what username, updated value)
         try {
-            switch (request.getParameter()[0].toLowerCase()) {
-                case "username":
-                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateUsername(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
-                case "password":
-                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updatePassword(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
-                case "group":
-                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.changeUserGroup(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 4); // Should make sure DB and RAMT codes are same.
-            }
+            return switch (request.getParameter()[0].toLowerCase()) {
+                // Should make sure DB and RAMT codes are same.
+                case "username" -> new TaskResponse<>(request, Response.SUCCESS, DBManager.updateUsername(request.getParameter()[1], request.getParameter()[2]));
+                // Should make sure DB and RAMT codes are same.
+                case "password" -> new TaskResponse<>(request, Response.SUCCESS, DBManager.updatePassword(request.getParameter()[1], request.getParameter()[2]));
+                // Should make sure DB and RAMT codes are same.
+                case "group" -> new TaskResponse<>(request, Response.SUCCESS, DBManager.changeUserGroup(request.getParameter()[1], request.getParameter()[2]));
+                // Should make sure DB and RAMT codes are same.
+                default -> new TaskResponse<>(request, Response.FAILED, 4);
+            };
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -912,21 +912,21 @@ public class RAMTTaskLibrary {
 
     public static TaskResponse<?> updateGroup(TaskRequest<String[]> request) { //0,1,2+ (what to change, what group name, updated value(s))
         try {
-            switch (request.getParameter()[0].toLowerCase()) {
-                case "name":
-                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateGroupName(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
-                case "permissions":
-                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updatePermissions(request.getParameter()[1],
-                            Boolean.parseBoolean(request.getParameter()[2]),
-                            Boolean.parseBoolean(request.getParameter()[3]),
-                            Boolean.parseBoolean(request.getParameter()[4]),
-                            Boolean.parseBoolean(request.getParameter()[5]),
-                            Boolean.parseBoolean(request.getParameter()[6]))); // Should make sure DB and RAMT codes are same.
-                case "migrate":
-                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.migrateGroup(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
-                default:
-                    return new TaskResponse<>(request, Response.FAILED, 4); // Should make sure DB and RAMT codes are same.
-            }
+            return switch (request.getParameter()[0].toLowerCase()) {
+                // Should make sure DB and RAMT codes are same.
+                case "name" -> new TaskResponse<>(request, Response.SUCCESS, DBManager.updateGroupName(request.getParameter()[1], request.getParameter()[2]));
+                // Should make sure DB and RAMT codes are same.
+                case "permissions" -> new TaskResponse<>(request, Response.SUCCESS, DBManager.updatePermissions(request.getParameter()[1],
+                        Boolean.parseBoolean(request.getParameter()[2]),
+                        Boolean.parseBoolean(request.getParameter()[3]),
+                        Boolean.parseBoolean(request.getParameter()[4]),
+                        Boolean.parseBoolean(request.getParameter()[5]),
+                        Boolean.parseBoolean(request.getParameter()[6])));
+                // Should make sure DB and RAMT codes are same.
+                case "migrate" -> new TaskResponse<>(request, Response.SUCCESS, DBManager.migrateGroup(request.getParameter()[1], request.getParameter()[2]));
+                // Should make sure DB and RAMT codes are same.
+                default -> new TaskResponse<>(request, Response.FAILED, 4);
+            };
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -1040,7 +1040,7 @@ public class RAMTTaskLibrary {
 
     private static byte[] getMacBytes(String macStr) throws IllegalArgumentException {
         byte[] bytes = new byte[6];
-        String[] hex = macStr.split("(\\:|\\-)");
+        String[] hex = macStr.split("([:\\-])");
         if (hex.length != 6) {
             throw new IllegalArgumentException("Invalid MAC address.");
         }
@@ -1055,15 +1055,7 @@ public class RAMTTaskLibrary {
         return bytes;
     }
 
-    /**
-     * 1 Second timeout for the powershell.
-     * Note: Only use this where an output is not needed.
-     */
-    private static void powershellUltraTimeout() {
-        Map<String, String> myConfig = new HashMap<>();
-        myConfig.put("maxWait", "1000");
-        shell.configuration(myConfig);
-    }
+
 
     /**
      * 5 Second timeout for the powershell.
@@ -1089,15 +1081,6 @@ public class RAMTTaskLibrary {
     private static void powershellLongTimeout() {
         Map<String, String> myConfig = new HashMap<>();
         myConfig.put("maxWait", "30000");
-        shell.configuration(myConfig);
-    }
-
-    /**
-     * 10 Minute timeout for the powershell.
-     */
-    private static void powershellExtraLongTimeout() {
-        Map<String, String> myConfig = new HashMap<>();
-        myConfig.put("maxWait", "600000");
         shell.configuration(myConfig);
     }
 }
