@@ -52,13 +52,15 @@ runtime {
         installerOptions += ['--vendor', 'Nex']
         if(currentOs.windows) {
             installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+            installerType = 'msi'
         }
         else if (currentOs.linux) {
             installerOptions += ['--linux-package-name', applicationName,'--linux-shortcut']
-            installerType = 'msi'
+            installerType = 'deb'
         }
         else if (currentOs.macOsX) {
             installerOptions += ['--mac-package-name', applicationName]
+            installerType = 'dmg'
         }
     }
 }
