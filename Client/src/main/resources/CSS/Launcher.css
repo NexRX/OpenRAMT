@@ -82,7 +82,7 @@
 
     -fx-shape:"M 25, 50 a 25,25 0 1,1 50,0 a 25,25 0 1,1 -50,0";
     /* Due to JavaFX CSS limitations the image must be the same size to fit. Cannot resize with CSS and Shape.*/
-    -fx-background-image: url("../IconPacks/pack1/SlightlyGalactic-default-70px.png");
+    -fx-background-image: url("../IconPacks/Pack1/SlightlyGalactic-default-70px.png");
     -fx-background-radius: 50%;
     -fx-border-radius: 50%;
 
