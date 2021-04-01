@@ -457,18 +457,18 @@ public class RAMTTaskLibrary {
                 e.printStackTrace();
                 return new TaskResponse<>(request, Response.FAILED, 99);
             }
+        } else {
+            server.stop();
         }
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
     public static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
-        if (server != null){
+        if (!server.isStopped()){
             server.stop();
             System.out.println("FTP Server stopped!");
         }
-
-        server = null;
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
