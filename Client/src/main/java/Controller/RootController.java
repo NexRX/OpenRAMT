@@ -11,6 +11,8 @@ import application.Launcher;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -109,5 +111,40 @@ public class RootController extends AnchorPane {
 
 	public static UserData getLoggedInUser() {
 		return loggedInUser;
+	}
+
+	/**
+	 * A static method that helps cut down on duplicate code by providing an easy way to use an instance of TaskService.
+	 * As long as this RootController specifies a way to get an instance of the task service then this method will
+	 * handle most aspects of starting a task request, including detection of client currently processing a request.
+	 * @param taskRequest The request to be made to the current server via the running service.
+	 * @return The request ID for convenience. Can be safely ignored.
+	 */
+	public static String requestStart(TaskRequest<?> taskRequest) {
+		if (RootController.getTaskService().isRunning()) {
+			Alert alert = RAMTAlert.getAlertMidTask();
+			alert.showAndWait();
+
+			if (alert.getResult() == ButtonType.OK) {
+				return RootController.getTaskService().updateAndRestart(taskRequest);
+			}
+		} else {
+			return RootController.getTaskService().updateAndRestart(taskRequest);
+		}
+		return null;
+	}
+
+	/**
+	 * Does the same gestured work of requestStart but is designed for automated work where the user didn't request at
+	 * least part of the task directly. Thus this version will skip any confirmation checks for the user.
+	 *
+	 * A static method that helps cut down on duplicate code by providing an easy way to use an instance of TaskService.
+	 * As long as this RootController specifies a way to get an instance of the task service then this method will
+	 * handle most aspects of starting a task request, including detection of client currently processing a request.
+	 * @param taskRequest The request to be made to the current server via the running service.
+	 * @return The request ID for convenience. Can be safely ignored.
+	 */
+	public static String requestAutomatedStart(TaskRequest<?> taskRequest) {
+		return RootController.getTaskService().updateAndRestart(taskRequest);
 	}
 }

@@ -1,6 +1,7 @@
 package Model.Task;
 
 public enum Task {
+    ADDGROUP,
     ADDUSER,
     CLEANDISK,
     DELETEGROUP,
@@ -12,7 +13,11 @@ public enum Task {
     ENABLEBLUETOOTH,
     ENABLEWIFI,
     FETCHPROCESSES,
+    GETGROUP,
+    GETGROUPS,
     GETSETTINGS,
+    GETUSER,
+    GETUSERS,
     KILLPROCESS,
     LOGIN,
     RESTART,
@@ -25,7 +30,9 @@ public enum Task {
     SUSPENDUSER,
     SUSPENDUSERS,
     TESTING,
-    UPDATEGROUPSETTING,
+    UPDATEGROUP,
     UPDATEUSER,
     WOL
+
+
 }

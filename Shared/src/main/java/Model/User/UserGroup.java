@@ -1,6 +1,8 @@
 package Model.User;
 
-public class UserGroup {
+import java.io.Serializable;
+
+public class UserGroup implements Serializable {
     private String name;
     private String admin;
     private String general;

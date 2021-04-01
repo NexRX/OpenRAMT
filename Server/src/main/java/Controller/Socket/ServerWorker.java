@@ -5,6 +5,7 @@ import Model.Task.Response;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
 import Model.User.UserData;
+import Model.User.UserGroup;
 
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
@@ -65,12 +66,17 @@ public class ServerWorker implements Runnable{
             case SHUTDOWN -> shutdown((TaskRequest<Void>) request);
             case RESTART -> restart((TaskRequest<Void>) request);
             case SLEEP -> sleep((TaskRequest<Void>) request);
+            case ADDGROUP -> addGroup((TaskRequest<UserGroup>) request);
             case ADDUSER -> addUser((TaskRequest<UserData>) request);
             case UPDATEUSER -> updateUser((TaskRequest<String[]>) request);
             case DELETEGROUP -> deleteGroup((TaskRequest<String>) request);
             case DELETEUSER -> deleteUser((TaskRequest<String>) request);
             case DELETEUSERS -> deleteUsers((TaskRequest<String>) request);
             case EDITSETTING -> setSetting((TaskRequest<String[]>) request);
+            case GETGROUP -> getGroup((TaskRequest<String>) request);
+            case GETGROUPS -> getGroups((TaskRequest<Void>) request);
+            case GETUSER -> getUser((TaskRequest<String>) request);
+            case GETUSERS -> getUsers((TaskRequest<Void>) request);
             case GETSETTINGS -> getSetting((TaskRequest<String>) request);
             case STARTFTP -> startFTP((TaskRequest<Void>) request);
             case STOPFTP -> stopFTP((TaskRequest<Void>) request);
@@ -82,7 +88,7 @@ public class ServerWorker implements Runnable{
             case DISABLEBLUETOOTH -> disableBluetooth((TaskRequest<Integer>) request);
             case SUSPENDUSER -> suspendUser((TaskRequest<String>) request);
             case SUSPENDUSERS -> suspendUsers((TaskRequest<String>) request);
-            case UPDATEGROUPSETTING -> updateGroup((TaskRequest<String[]>) request);
+            case UPDATEGROUP -> updateGroup((TaskRequest<String[]>) request);
             case WOL -> wakeOnLAN((TaskRequest<String[]>) request);
             case TESTING -> new TaskResponse<>(request, Response.OTHER, 0);
             default -> new TaskResponse<Void>(request, Response.INTERRUPTED, 99); // Lil' future proofing.

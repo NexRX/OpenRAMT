@@ -22,6 +22,7 @@ import java.util.concurrent.FutureTask;
 
 public class TaskProgressiveService extends Service<TaskResponse<?>> {
     private TaskRequest request;
+    private TaskResponse lastResponse;
 
     //private SSLSocket socket;
     private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
@@ -34,6 +35,9 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
     }
 
+    public TaskRequest getRequest() {
+        return this.request;
+    }
     public void setRequest(TaskRequest request) {
         this.request = request;
     }
@@ -42,10 +46,12 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
      * Updates the task and calls restart() in the service.
      *
      * @param request The new task to complete.
+     * @return The request ID for convenience. Can be safely ignored.
      */
-    public void updateAndRestart(TaskRequest request) {
+    public String updateAndRestart(TaskRequest request) {
         this.request = request;
         this.restart();
+        return request.getRequestID();
     }
 
     @Override
@@ -74,7 +80,8 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
                 jointUpdate(0.66f, "Server Processing");
                 TaskResponse<?> response = (TaskResponse<?>) socketInput.readObject();
 
-                System.out.println("Response received: " + response.getRequestID() +" | "+ response.getResponse());
+                System.out.println("Response received: " + response.getRequestID() + " | "+
+                        response.getRequest().getTask() + " - " +response.getResponse());
 
                 jointUpdate(0.85f, "Finalising");
                 //Stop Communications
@@ -83,6 +90,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
 
                 jointUpdate(1f, "Finished");
 
+                lastResponse = response;
                 return response;
             }
 
@@ -137,5 +145,9 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
                 updateMessage("State: " + message);
             }
         };
+    }
+
+    public TaskResponse getLastResponse() {
+        return lastResponse;
     }
 }

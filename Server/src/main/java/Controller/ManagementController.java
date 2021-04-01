@@ -3,14 +3,6 @@ package Controller;
 import Controller.Database.DBManager;
 import Controller.Socket.SecureServer;
 import Controller.Socket.Task.RAMTTaskLibrary;
-import Controller.group.MigrateGroupController;
-import Controller.group.NewGroupController;
-import Controller.group.NewGroupNameController;
-import Controller.group.NewGroupPermissionsController;
-import Controller.user.NewUserController;
-import Controller.user.NewUserGroupController;
-import Controller.user.NewUserPasswordController;
-import Controller.user.NewUsernameController;
 import Model.User.UserData;
 import Model.User.UserGroup;
 import Model.User.UserItem;
@@ -26,7 +18,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -101,8 +92,8 @@ public class ManagementController extends AnchorPane {
         colPower.setCellValueFactory(new PropertyValueFactory<>("power"));
         colSuspended.setCellValueFactory(new PropertyValueFactory<>("suspended"));
 
-        RAMTTaskLibrary.getOS();
-
+        RAMTTaskLibrary.getOS(); // Does introduce some startup time after login for PowerShell Environment.
+                                 // But also reduces time for first PowerShell task.
         applyEventHandlers();
         serverStart();
     }

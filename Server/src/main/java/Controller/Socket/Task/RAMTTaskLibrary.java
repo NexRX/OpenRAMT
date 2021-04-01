@@ -795,6 +795,24 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    public static TaskResponse<UserData> getUser(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<ArrayList<UserData>> getUsers(TaskRequest<Void> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, 0,DBManager.getAllUsers()); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
     public static TaskResponse<?> deleteUser(TaskRequest<String> request) {
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
@@ -840,7 +858,7 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
-    public static TaskResponse<?> addUser(TaskRequest<UserData> request) {
+    public static TaskResponse<Void> addUser(TaskRequest<UserData> request) {
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.addUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -849,6 +867,33 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    public static TaskResponse<Void> addGroup(TaskRequest<UserGroup> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.addGroup(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<UserGroup> getGroup(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getGroup(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<ArrayList<UserGroup>> getGroups(TaskRequest<Void> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getAllGroups()); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+    
     public static TaskResponse<?> suspendUser(TaskRequest<String> request) {
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.suspendUser(request.getParameter())); // Should make sure DB and RAMT codes are same.

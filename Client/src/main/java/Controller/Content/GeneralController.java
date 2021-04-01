@@ -14,6 +14,7 @@ import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 
 public class GeneralController extends ScrollPane {
+    private String lastRequestID = "";;
 
     @FXML JFXButton btnFTPStart;
     @FXML JFXButton btnFTPStop;
@@ -53,37 +54,24 @@ public class GeneralController extends ScrollPane {
 
     private void applyEventHandlers() {
         // FTP Section
-        btnFTPStart.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.STARTFTP, RootController.getLoggedInUser())));
-        btnFTPStop.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.STOPFTP, RootController.getLoggedInUser())));
-        btnFTPRestart.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.RESTARTFTP, RootController.getLoggedInUser())));
+        btnFTPStart.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.STARTFTP, RootController.getLoggedInUser())));
+        btnFTPStop.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.STOPFTP, RootController.getLoggedInUser())));
+        btnFTPRestart.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.RESTARTFTP, RootController.getLoggedInUser())));
 
         // General Section
-        btnCleanDiskSystem.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 0)));
-        btnCleanDiskExtra.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 1)));
-        btnCleanDiskAll.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 2)));
-        btnCleanDiskBin.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 3)));
+        btnCleanDiskSystem.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 0)));
+        btnCleanDiskExtra.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 1)));
+        btnCleanDiskAll.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 2)));
+        btnCleanDiskBin.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.CLEANDISK, RootController.getLoggedInUser(), 3)));
 
         // WiFi Section
-        btnWiFiEnable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 0)));
-        btnWiFiDisable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.DISABLEWIFI, RootController.getLoggedInUser())));
-        btnWiFiReenable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 1)));
+        btnWiFiEnable.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 0)));
+        btnWiFiDisable.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DISABLEWIFI, RootController.getLoggedInUser())));
+        btnWiFiReenable.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.ENABLEWIFI, RootController.getLoggedInUser(), 1)));
 
         // Bluetooth Section
-        btnBluetoothEnable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 0)));
-        btnBluetoothDisable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.DISABLEBLUETOOTH, RootController.getLoggedInUser())));
-        btnBluetoothReenable.setOnMouseClicked(event -> requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 1)));
-    }
-
-    private void requestStart(TaskRequest<?> taskRequest) {
-        if (RootController.getTaskService().isRunning()) {
-            Alert alert = RAMTAlert.getAlertMidTask();
-            alert.showAndWait();
-
-            if (alert.getResult() == ButtonType.OK) {
-                RootController.getTaskService().updateAndRestart(taskRequest);
-            }
-        } else {
-            RootController.getTaskService().updateAndRestart(taskRequest);
-        }
+        btnBluetoothEnable.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 0)));
+        btnBluetoothDisable.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DISABLEBLUETOOTH, RootController.getLoggedInUser())));
+        btnBluetoothReenable.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.ENABLEBLUETOOTH, RootController.getLoggedInUser(), 1)));
     }
 }

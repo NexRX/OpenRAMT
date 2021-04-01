@@ -7,6 +7,7 @@ import Model.Task.Task;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
 import com.jfoenix.controls.JFXButton;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -21,6 +22,8 @@ import org.json.JSONException;
 import java.io.IOException;
 
 public class ProcessController extends AnchorPane {
+    private String lastRequestID = "";
+
     @FXML JFXButton btnKill;
     @FXML JFXButton btnRestart;
     @FXML JFXButton btnRefresh;
@@ -58,90 +61,51 @@ public class ProcessController extends AnchorPane {
     }
 
     private void applyEventHandlers() {
-        btnKill.setOnMouseClicked(event -> {
-            if (RootController.getTaskService().isRunning()) {
-                Alert alert = RAMTAlert.getAlertMidTask();
-                alert.showAndWait();
+        btnKill.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID())));
+        btnRestart.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID())));
 
-                if (alert.getResult() == ButtonType.OK) {
-                    RootController.getTaskService().updateAndRestart(
-                            new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID()));
+        btnRefresh.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<Void>(Task.FETCHPROCESSES, RootController.getLoggedInUser())));
 
-                }
-            } else {
-                RootController.getTaskService().updateAndRestart(
-                        new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID()));
-            }
-        });
+        RootController.getTaskService().addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, event -> {
+            if (lastRequestID.equals(RootController.getTaskService().getRequest().getRequestID())){ // Our Request?
+                TaskResponse<?> response = ((TaskResponse<?>) event.getSource().getValue());
 
-        btnRestart.setOnMouseClicked(event -> {
-            if (RootController.getTaskService().isRunning()) {
-                Alert alert = RAMTAlert.getAlertMidTask();
-                alert.showAndWait();
+                switch (response.getRequest().getTask()) {
+                    case FETCHPROCESSES:
+                        @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
+                        TaskResponse<String> fetchResponse = (TaskResponse<String>) event.getSource().getValue();
 
-                if (alert.getResult() == ButtonType.OK) {
-                    RootController.getTaskService().updateAndRestart(
-                            new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID()));
+                        try {
+                            JSONArray json = new JSONArray(fetchResponse.getResponseData());
 
-                }
-            } else {
-                RootController.getTaskService().updateAndRestart(
-                        new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID()));
-            }
-        });
+                            tblProcesses.getItems().clear();
 
-        btnRefresh.setOnMouseClicked(event -> {
-            if (RootController.getTaskService().isRunning()) {
-                Alert alert = RAMTAlert.getAlertMidTask();
-                alert.showAndWait();
-
-                if (alert.getResult() == ButtonType.OK) {
-                    RootController.getTaskService().updateAndRestart(
-                            new TaskRequest<Void>(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
-
-                }
-            } else {
-                RootController.getTaskService().updateAndRestart(
-                        new TaskRequest<Void>(Task.FETCHPROCESSES, RootController.getLoggedInUser()));
-            }
-        });
-
-        RootController.getTaskService().setOnSucceeded(event -> {
-            switch (((TaskResponse<?>) event.getSource().getValue()).getRequest().getTask()) {
-                case FETCHPROCESSES:
-                    @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
-                    TaskResponse<String> fetchResponse = (TaskResponse<String>) event.getSource().getValue();
-
-                    try {
-                        JSONArray json = new JSONArray(fetchResponse.getResponseData());
-
-                        tblProcesses.getItems().clear();
-
-                        for (int i = 0; i < json.length(); i++) {
-                            tblProcesses.getItems().add(new ProcessItem(json.getJSONObject(i).get("Name").toString(),
-                                    json.getJSONObject(i).get("IDProcess").toString(),
-                                    json.getJSONObject(i).get("Status").toString(),
-                                    json.getJSONObject(i).get("PercentProcessorTime").toString(),
-                                    json.getJSONObject(i).get("WorkingSetPrivate").toString()));
+                            for (int i = 0; i < json.length(); i++) {
+                                tblProcesses.getItems().add(new ProcessItem(json.getJSONObject(i).get("Name").toString(),
+                                        json.getJSONObject(i).get("IDProcess").toString(),
+                                        json.getJSONObject(i).get("Status").toString(),
+                                        json.getJSONObject(i).get("PercentProcessorTime").toString(),
+                                        json.getJSONObject(i).get("WorkingSetPrivate").toString()));
+                            }
+                        } catch (JSONException e) {
+                            System.out.println("Server JSON parsing failed, exception message: "+ e.getMessage());
+                            new RAMTAlert(Alert.AlertType.ERROR,
+                                    "OpenRAMT Error",
+                                    "Server sent a unread list of process for this client.\n\n",
+                                    "The server sent a JSON response that couldn't be read." +
+                                            "Please report this bug to a developer or try to ensure client and server" +
+                                            "versions match support.\n JSON: ["+fetchResponse.getResponseData()+"]").show();
                         }
-                    } catch (JSONException e) {
-                        System.out.println("Server JSON parsing failed, exception message: "+ e.getMessage());
-                        new RAMTAlert(Alert.AlertType.ERROR,
-                                "OpenRAMT Error",
-                                "Server sent a unread list of process for this client.\n\n",
-                                "The server sent a JSON response that couldn't be read." +
-                                        "Please report this bug to a developer or try to ensure client and server" +
-                                        "versions match support.\n JSON: ["+fetchResponse.getResponseData()+"]").show();
-                    }
 
-                case KILLPROCESS:
-                case RESTARTPROCESS:
-                    @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
-                    TaskResponse<Void> killResponse = (TaskResponse<Void>) event.getSource().getValue();
-                    System.out.println(killResponse.getResponseCode());
-                    break;
+                    case KILLPROCESS:
+                    case RESTARTPROCESS:
+                        @SuppressWarnings("unchecked") // Safe when server & client respect request/response structure.
+                        TaskResponse<Void> killResponse = (TaskResponse<Void>) event.getSource().getValue();
+                        System.out.println(killResponse.getResponseCode());
+                        break;
+                }
+                //TODO alert user somethings gone wrong if we got here.
             }
-            //TODO alert user somethings gone wrong if we got here.
         });
     }
 

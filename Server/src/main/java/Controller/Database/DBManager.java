@@ -302,7 +302,7 @@ public class DBManager {
      * @param username A valid username.
      * @return A RAMT DBManager class result code
      *
-     * Possible Codes: 0, 1, 2, 3
+     * Possible Codes: 0, 1, 3
      * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
      */
     public static int suspendUser(String username) throws SQLException {
@@ -326,7 +326,7 @@ public class DBManager {
      * @param username A valid username.
      * @return A RAMT DBManager class result code
      *
-     * Possible Codes: 0, 1, 2, 3
+     * Possible Codes: 0, 1, 3
      * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
      */
     public static int unsuspendUser(String username) throws SQLException {
@@ -550,10 +550,13 @@ public class DBManager {
      * @param group The group name to suspend its users.
      * @return A RAMT DBManager class result code
      *
-     * Possible Codes: 0, 1
+     * Possible Codes: 0, 1, 2, 3
      * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
      */
     public static int suspendGroupUsers(String group) throws SQLException {
+        if (!isStringConstraint("user_group", group)) { return 2;}
+        else if (group.equals(defaultAdmin) || group.equals(defaultGroup)) {return 3; }
+
         startDB();
 
         Statement stmt = con.createStatement();
@@ -573,10 +576,13 @@ public class DBManager {
      * @param group The group name to unsuspend its users.
      * @return A RAMT DBManager class result code
      *
-     * Possible Codes: 0, 1
+     * Possible Codes: 0, 1, 2, 3
      * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
      */
     public static int unsuspendGroupUsers(String group) throws SQLException {
+        if (!isStringConstraint("user_group", group)) { return 2;}
+        else if (group.equals(defaultAdmin) || group.equals(defaultGroup)) {return 3; }
+
         startDB();
 
         Statement stmt = con.createStatement();
