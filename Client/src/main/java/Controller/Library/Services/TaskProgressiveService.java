@@ -1,44 +1,34 @@
 package Controller.Library.Services;
 
-import Controller.Progressible;
-import Controller.Library.Socket.ClientWorker;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
-import Model.User.UserData;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import org.json.JSONObject;
-
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 
 
 public class TaskProgressiveService extends Service<TaskResponse<?>> {
-    private TaskRequest request;
-    private TaskResponse lastResponse;
+    private TaskRequest<?> request;
+    private TaskResponse<?> lastResponse;
 
-    //private SSLSocket socket;
-    private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
-
-
-    public TaskProgressiveService(TaskRequest request) {
+    public TaskProgressiveService(TaskRequest<?> request) {
         this.request = request;
 
         System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
+        //private SSLSocket socket;
+        char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
     }
 
-    public TaskRequest getRequest() {
+    public TaskRequest<?> getRequest() {
         return this.request;
     }
-    public void setRequest(TaskRequest request) {
+    public void setRequest(TaskRequest<?> request) {
         this.request = request;
     }
 
@@ -65,11 +55,20 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
                 jointUpdate(0.1f, "Starting");
 
                 // Communications with server
-                SSLSocket socket = (SSLSocket) generation();
+                SSLSocket secureSocket = null;
+                Socket socket = null;
+                boolean secure = request.getUser().isSecure();
+
+                if (secure) {
+                    secureSocket = (SSLSocket) generation();
+                } else {
+                    socket = new Socket(request.getUser().getHost(), request.getUser().getPort());
+                }
+
                 jointUpdate(0.33f, "Connected");
 
-                ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
+                ObjectOutputStream socketOutput = new ObjectOutputStream((secure ? secureSocket : socket).getOutputStream());
+                ObjectInputStream socketInput = new ObjectInputStream((secure ? secureSocket : socket).getInputStream());
 
                 // Send request to the server.
                 jointUpdate(0.45f, "Sending Request");
@@ -85,8 +84,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
 
                 jointUpdate(0.85f, "Finalising");
                 //Stop Communications
-                try {
-                    socket.close(); } catch (IOException e) {e.printStackTrace();}
+                try { (secure ? secureSocket : socket).close(); }catch(IOException e){/*Do nothing, client un-reliant.*/}
 
                 jointUpdate(1f, "Finished");
 

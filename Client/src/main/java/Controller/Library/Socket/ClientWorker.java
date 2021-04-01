@@ -1,16 +1,9 @@
 package Controller.Library.Socket;
 
-import Controller.RAMTAlert;
-import Controller.RootController;
-import Model.Task.Response;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -18,31 +11,60 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class ClientWorker<T> implements Callable<TaskResponse<T>> {
-    private SSLSocket socket;
-    private final TaskRequest request;
+    private SSLSocket secureSocket;
+    private Socket socket;
+
+    private boolean secure;
+
+    private final TaskRequest<?> request;
     private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
-    public ClientWorker(TaskRequest request) throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    public ClientWorker(TaskRequest<?> request) throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
 
         this.request = request;
     }
 
+    public ClientWorker(TaskRequest<?> request, boolean secure) {
+        System.setProperty("javax.net.ssl.trustStore", "data/keystore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
+
+        this.secure = secure;
+        this.request = request;
+    }
+
     @Override
     public TaskResponse<T> call() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException, ClassNotFoundException {
-        this.socket = (SSLSocket) generation();
+        if (secure) {
+            this.secureSocket = secureGeneration();
+        } else {
+            this.socket = new Socket(this.request.getUser().getHost(), this.request.getUser().getPort());
+        }
+
+        System.out.println("Client Secure? " + secure);
 
         TaskResponse<T> result = work();
-
-        try {socket.close(); } catch (IOException e) {e.printStackTrace();}
+        if (secure) {
+            try {
+                secureSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         return result;
     }
 
     private TaskResponse<T> work() throws IOException, ClassNotFoundException {
-        ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
+        ObjectOutputStream socketOutput = new ObjectOutputStream((secure ? secureSocket : socket).getOutputStream());
+        ObjectInputStream socketInput = new ObjectInputStream((secure ? secureSocket : socket).getInputStream());
 
         System.out.println(request.getTask().toString());
         // Send request to the server.
@@ -58,9 +80,9 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
 
     /**
      * Generates a certificate at runtime if (parts of) one are missing. Then returns a SSLSocket for use.
-     * @return
+     * @return A secure socket reflecting the environment requested.
      */
-    private Socket generation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+    private SSLSocket secureGeneration() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
         File ksFile = new File("data/keystore.jks");
 
         if(!ksFile.isFile()) {
@@ -90,7 +112,7 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
 
         SSLSocketFactory ssf = sc.getSocketFactory();
 
-        return ssf.createSocket(this.request.getUser().getHost(), this.request.getUser().getPort());
+        return (SSLSocket) ssf.createSocket(this.request.getUser().getHost(), this.request.getUser().getPort());
 
     }
 }

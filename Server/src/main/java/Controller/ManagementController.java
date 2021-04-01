@@ -1,6 +1,7 @@
 package Controller;
 
 import Controller.Database.DBManager;
+import Controller.Socket.PlainServer;
 import Controller.Socket.SecureServer;
 import Controller.Socket.Task.RAMTTaskLibrary;
 import Model.User.UserData;
@@ -68,7 +69,10 @@ public class ManagementController extends AnchorPane {
     private double xOffset = 0;
     private double yOffset = 0;
 
-    SecureServer server;
+    private SecureServer secureServer;
+    private PlainServer plainServer;
+
+    private boolean secure;
 
     public ManagementController(Stage stage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Management.fxml"));
@@ -95,18 +99,48 @@ public class ManagementController extends AnchorPane {
         RAMTTaskLibrary.getOS(); // Does introduce some startup time after login for PowerShell Environment.
                                  // But also reduces time for first PowerShell task.
         applyEventHandlers();
+
+        try {
+            secure = Boolean.parseBoolean(DBManager.getSetting("Security"));
+        } catch (SQLException e) {
+            secure = true; // Safest fallback.
+        }
+        System.out.println("Server secure? " + secure);
+
         serverStart();
     }
 
     private void serverStart() {
-        server = new SecureServer(); // Pass port later and check it.
-        new Thread(server).start();
+        stopServer(); // Remove if causing ungraceful shutdown problems.
+
+        if (secure) {
+            try {
+                secureServer = new SecureServer(Integer.parseInt(DBManager.getSetting("Port")));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                portWarning();
+                secureServer = new SecureServer(); // Default port fall back.
+            }
+            new Thread(secureServer).start();
+        } else {
+            try {
+                plainServer = new PlainServer(Integer.parseInt(DBManager.getSetting("Port")));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                portWarning();
+                plainServer = new PlainServer(); // Default port fall back.
+            }
+            new Thread(plainServer).start();
+        }
     }
 
     private void stopServer() {
-        if (server != null) {
-            server.stop();
-            server = null;
+        if (secureServer != null) {
+            secureServer.stop();
+            secureServer = null;
+        } else if (plainServer != null) {
+            plainServer.stop();
+            plainServer = null;
         }
     }
 
@@ -407,6 +441,15 @@ public class ManagementController extends AnchorPane {
                 "Please select a user in the list that you wish to edit. If you wish to edit a group" +
                         "then select a user with that group. If there isn't one then you'll have to add one to the" +
                         "desired group to edit it first.").showAndWait();
+    }
+
+    private void portWarning() {
+        new RAMTAlert(Alert.AlertType.WARNING,
+                "Application Warning",
+                "A custom port couldn't be retrieved",
+                "If this is unexpected, you may need to change the port in settings or if that failed" +
+                        "then a reset of this application will be required.\n\n" +
+                        "A Default port will be used for now 3069.").show();
     }
 
 }

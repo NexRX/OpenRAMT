@@ -23,6 +23,7 @@ import java.util.HashMap;
 import static Controller.RootController.*;
 import static Controller.RootController.getTaskService;
 
+@SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewUserGroupController extends AnchorPane {
     Stage stage;
     Stage callingStage;
@@ -77,8 +78,8 @@ public class NewUserGroupController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> lastRequestID = requestStart(new TaskRequest<>(
                 Task.UPDATEUSER,

@@ -29,12 +29,15 @@ public class InitialController extends AnchorPane {
     @FXML JFXPasswordField loginPassword;
     @FXML JFXButton btnLogin;
     @FXML Label lblProgress;
+    @FXML Label lblSecure;
     @FXML Pane topBar;
 
     private double xOffset = 0;
     private double yOffset = 0;
 
-    private UserData user = new UserData(null, 0, null, null);
+    private boolean secure = true;
+
+    private UserData user = new UserData(null, 0, null, null, true);
     private final LoginProgressiveService loginTask;
 
 
@@ -74,6 +77,19 @@ public class InitialController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
+        lblSecure.setOnMouseClicked(event -> {
+            if (secure) {
+                lblSecure.setStyle("-fx-text-fill:red;");
+                lblSecure.setText("\uD83D\uDD13");
+            } else {
+                lblSecure.setStyle("-fx-text-fill:lime;");
+                lblSecure.setText("\uD83D\uDD12");
+            }
+
+            secure = !secure;
+            loginTask.setSecure(secure);
+        });
+
         btnLogin.setOnMouseClicked(event -> {
 
             if (loginHost.getText().indexOf(':') > -1) { // <-- does it contain ":"?
@@ -83,7 +99,7 @@ public class InitialController extends AnchorPane {
                 try {
                     int port = Integer.parseInt(arr[1]);
                     System.out.print(port);
-                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText());
+                    user = new UserData(host, port, loginUsername.getText(), loginPassword.getText(), secure);
                 } catch (NumberFormatException e) {
                     Alert alert = new RAMTAlert(Alert.AlertType.WARNING,
                             "Settings Warning",
@@ -93,7 +109,7 @@ public class InitialController extends AnchorPane {
                     alert.showAndWait();
                 }
             } else {
-                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText());
+                user = new UserData(loginHost.getText(), loginUsername.getText(), loginPassword.getText(), secure);
             }
 
             loginTask.updateUser(user);

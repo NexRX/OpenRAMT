@@ -1,16 +1,16 @@
 package Controller.Socket;
 
-import Controller.Socket.Task.RAMTTaskLibrary;
 import Model.Task.Response;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
 import Model.User.UserData;
 import Model.User.UserGroup;
-
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.util.HashMap;
 
 import static Controller.Socket.Task.RAMTTaskLibrary.*;
 
@@ -19,38 +19,50 @@ import static Controller.Socket.Task.RAMTTaskLibrary.*;
  */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class ServerWorker implements Runnable{
-    protected SSLSocket clientSocket = null;
-    protected String serverText = null;
+    protected SSLSocket clientSecureSocket;
+    protected Socket clientSocket;
 
-    public ServerWorker(SSLSocket clientSocket, String serverText) {
+    protected boolean secure;
+
+    protected String serverText;
+
+    public ServerWorker(SSLSocket clientSecureSocket, String serverText) {
+        this.clientSecureSocket = clientSecureSocket;
+        secure = true;
+        this.serverText   = serverText;
+    }
+
+    public ServerWorker(Socket clientSocket, String serverText) {
         this.clientSocket = clientSocket;
+        secure = false;
         this.serverText   = serverText;
     }
 
     public void run() {
         try {
             // create DataStreams so we can read/write data from it.
-            ObjectInputStream socketInput = new ObjectInputStream(clientSocket.getInputStream());
-            ObjectOutputStream socketOutput = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream socketInput = new ObjectInputStream((secure ? clientSecureSocket : clientSocket).getInputStream());
+            ObjectOutputStream socketOutput = new ObjectOutputStream((secure ? clientSecureSocket : clientSocket).getOutputStream());
 
             // Get the Task request from client then process.
             TaskRequest<?> request = (TaskRequest<?>) socketInput.readObject();
 
             System.out.println("Received [" + request.getRequestID() + " | " + request.getTask() +
-                    ", by " + request.getUser().getUsername() + "] in socket: " + clientSocket);
+                    ", by " + request.getUser().getUsername() + "] in socket: " + (secure ? clientSecureSocket : clientSocket));
 
             TaskResponse<?> response = processTask(request);
             socketOutput.writeObject(response);
 
             // Finished, so printing this as such.
-            System.out.println(request.getRequestID() + " closed without exception in socket: " + clientSocket);
+            System.out.println(request.getRequestID() + " closed without exception in socket: " + (secure ? clientSecureSocket : clientSocket));
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Socket " + clientSocket + " closing because of an exception, printing stack trace...");
+            System.out.println("Socket " + (secure ? clientSecureSocket : clientSocket) + " closing because of an exception," +
+                    " could be early wrong security/early disconnect from user. Printing Stack Trace...");
             e.printStackTrace();
         } finally {
             try {
-                clientSocket.close();
+                (secure ? clientSecureSocket : clientSocket).close();
                 System.out.println("A Socket closure completed");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -74,6 +86,7 @@ public class ServerWorker implements Runnable{
             case DELETEUSER -> deleteUser((TaskRequest<String>) request);
             case DELETEUSERS -> deleteUsers((TaskRequest<String>) request);
             case EDITSETTING -> setSetting((TaskRequest<String[]>) request);
+            case EDITSETTINGS -> setSettings((TaskRequest<HashMap<String, String>>) request);
             case GETGROUP -> getGroup((TaskRequest<String>) request);
             case GETGROUPS -> getGroups((TaskRequest<Void>) request);
             case GETUSER -> getUser((TaskRequest<String>) request);
@@ -92,7 +105,6 @@ public class ServerWorker implements Runnable{
             case SUSPENDUSERS -> suspendUsers((TaskRequest<String>) request);
             case UPDATEGROUP -> updateGroup((TaskRequest<String[]>) request);
             case WOL -> wakeOnLAN((TaskRequest<String[]>) request);
-            case TESTING -> new TaskResponse<>(request, Response.OTHER, 0);
             default -> new TaskResponse<Void>(request, Response.INTERRUPTED, 99); // Lil' future proofing.
         };
     }

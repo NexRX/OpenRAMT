@@ -26,6 +26,10 @@
     -fx-background-color: #cb0303;
 }
 
+.jfx-text-field {
+    -fx-prompt-text-fill: #8d7474;
+}
+
 .login-field {
     -fx-background-color: #696969;
     -fx-prompt-text-fill: white;

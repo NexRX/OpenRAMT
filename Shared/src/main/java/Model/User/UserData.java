@@ -12,6 +12,7 @@ public class UserData implements Serializable {
 	//None final values are values which aren't known immediately by the client and thus must be changeable.
 	private final String host;
 	private final int port;
+	private boolean secure;
 	private String id = null;
 	private final String username;
 	private final String password;
@@ -25,11 +26,12 @@ public class UserData implements Serializable {
 	 * @param username The user's username.
 	 * @param password The user's hashed password. Please insure it is hashed before assigning.
 	 */
-	public UserData(String host, String username, String password) {
+	public UserData(String host, String username, String password, boolean secure) {
 		this.host = host;
 		this.port = 3069; //default port
 		this.username = username;
 		this.password = password;
+		this.secure = secure;
 	}
 
 	/**
@@ -40,11 +42,12 @@ public class UserData implements Serializable {
 	 * @param username The user's username.
 	 * @param password The user's hashed password. Please insure it is hashed before assigning.
 	 */
-	public UserData(String host, int port, String username, String password) {
+	public UserData(String host, int port, String username, String password, boolean secure) {
 		this.host = host;
 		this.port = port;
 		this.username = username;
 		this.password = password;
+		this.secure = secure;
 	}
 
 	/**
@@ -158,4 +161,12 @@ public class UserData implements Serializable {
 
 	public Boolean isSuspended() { return suspended; }
 	public void setSuspended(boolean suspended) { this.suspended = suspended; }
+
+	public boolean isSecure() {
+		return secure;
+	}
+
+	public void setSecure(boolean secure) {
+		this.secure = secure;
+	}
 }

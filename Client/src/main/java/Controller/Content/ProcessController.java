@@ -94,7 +94,8 @@ public class ProcessController extends AnchorPane {
                                     "Server sent a unread list of process for this client.\n\n",
                                     "The server sent a JSON response that couldn't be read." +
                                             "Please report this bug to a developer or try to ensure client and server" +
-                                            "versions match support.\n JSON: ["+fetchResponse.getResponseData()+"]").show();
+                                            "versions match support.\n JSON: "+fetchResponse.getResponseData()+"\n" +
+                                            "Length: "+ fetchResponse.getResponseData().length()).show();
                         }
 
                     case KILLPROCESS:

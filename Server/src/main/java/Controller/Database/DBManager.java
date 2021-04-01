@@ -174,8 +174,6 @@ public class DBManager {
         stmt.close();
         stopDB();
 
-
-
         return users;
     }
 
@@ -728,7 +726,7 @@ public class DBManager {
      * Possible Codes: 0, 1, 2
      * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
      */
-    public static int updateSettings(String setting, String value) throws SQLException {
+    public static int updateSetting(String setting, String value) throws SQLException {
         if (!isStringConstraint("setting", setting) ||
                 !isStringConstraint("setting_value", value)) { return 2;}
 
@@ -744,6 +742,39 @@ public class DBManager {
         stopDB();
 
         return resultCode;
+    }
+    /**
+     * Updates the given setting's value via its key. If there is no key value then nothing will happen (i.e. error 1).
+     * @param settings The hashmap with the keys being equal to the setting to be changed and its key value being the
+     *                 new value of the setting itself.
+     * @return A RAMT DBManager class result code
+     *
+     * Possible Codes: 0, 1, 2
+     * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
+     */
+    public static int updateSettings(HashMap<String, String> settings) throws SQLException {
+        for (String key: settings.keySet()) {
+            if (!isStringConstraint("setting", key) ||
+                    !isStringConstraint("setting_value", settings.get(key))) { return 2;}
+        }
+
+        startDB();
+
+        int resultCode = 0;
+
+        for (String key: settings.keySet()) {
+            Statement stmt = con.createStatement();
+
+            resultCode += stmt.executeUpdate("UPDATE settings " +
+                    "SET value='" + settings.get(key) + "' " +
+                    "WHERE setting='" + key + "';")
+                    > 0 ? 0 : 1;// If result is more than 0 (Success), returning code 0!
+
+            stmt.close();
+        }
+        stopDB();
+
+        return resultCode > 0 ? 1 : 0;
     }
 
     /*--- Private and/or assisting functions ---*/
@@ -769,7 +800,7 @@ public class DBManager {
 
         return switch (constraint.toLowerCase()) {
             case "username", "user_group"    -> value.length() > 0 && value.length() <= 64;
-            case "password", "setting_value" -> value.length() > 0 && value.length() <= 512;
+            case "password", "setting_value" -> /* Zero and... */     value.length() <= 512;
             case "setting"                   -> value.length() > 0 && value.length() <= 128;
             default -> false; // No constraint found.
         };
@@ -1044,6 +1075,10 @@ public class DBManager {
 
         // Non-User Assigned
         int result5 = addSetting("FTP Port", String.valueOf(2221));
+        int result6 = addSetting("FTP Guest Enabled", "false");
+        int result7 = addSetting("FTP Guest Username", "Guest");
+        int result8 = addSetting("FTP Guest Password", "");
+        int result9 = addSetting("Monitoring Polling Rate", "1"); // ToDo enforce constraint float/int
 
         stmt.close();
         if (con != null) {con.close();}
@@ -1053,7 +1088,11 @@ public class DBManager {
         else if (result2 != 0) { return result2; }
         else if (result3 != 0) { return result3; }
         else if (result4 != 0) { return result4; }
-        else return result5;
+        else if (result5 != 0) { return result5; }
+        else if (result6 != 0) { return result6; }
+        else if (result7 != 0) { return result7; }
+        else if (result8 != 0) { return result8; }
+        else return result9;
     }
 
     /**

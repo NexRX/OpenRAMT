@@ -62,10 +62,17 @@ public class SecureServer implements Runnable {
         }
     }
 
+    /**
+     * If the server successfully initialised once then the return of this will be true.
+     * @return returns true for the state initialisation, false otherwise.
+     */
     public boolean isInitialised() {
         return isInitialised;
     }
 
+    /**
+     * Runs a server that will start a new thread per incoming client request.
+     */
     @Override
     public void run() {
         synchronized (this) {
@@ -114,7 +121,8 @@ public class SecureServer implements Runnable {
     /**
      * Creates our keystore file which is used to create a certificate for our secure server connection.
      *
-     * @throws IOException               If the file doesn't exist then this exception will be thrown.
+     * @throws IOException               If the file doesn't exist then this exception will be thrown or
+     * @throws BindException             If the port or server couldn't be opened when creating server.
      * @throws KeyStoreException         If the KeyStore file most likely doesn't contain correct keys. Can also be thrown for generic errors.
      * @throws NoSuchAlgorithmException  If the configured algorithm cannot be found then this exception is thrown.
      * @throws UnrecoverableKeyException Thrown when the key cannot be extracted from the keystore.

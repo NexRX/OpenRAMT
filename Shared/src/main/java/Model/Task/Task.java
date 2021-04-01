@@ -10,6 +10,7 @@ public enum Task {
     DISABLEBLUETOOTH,
     DISABLEWIFI,
     EDITSETTING,
+    EDITSETTINGS,
     ENABLEBLUETOOTH,
     ENABLEWIFI,
     FETCHPROCESSES,
@@ -34,6 +35,4 @@ public enum Task {
     UPDATEGROUP,
     UPDATEUSER,
     WOL
-
-
 }

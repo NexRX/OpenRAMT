@@ -2,7 +2,6 @@ package Controller.Content.user;
 
 import Controller.CryptographyToolbox;
 import Controller.RAMTAlert;
-import Controller.RootController;
 import Model.Task.Task;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
@@ -16,15 +15,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
 
 import static Controller.RootController.*;
 
-
+@SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewUserPasswordController extends AnchorPane {
     Stage stage;
     Stage callingStage;
@@ -75,8 +72,8 @@ public class NewUserPasswordController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> {
                     try {
