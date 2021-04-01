@@ -27,6 +27,5 @@ public enum Task {
     TESTING,
     UPDATEGROUPSETTING,
     UPDATEUSER,
-    UPDATEUSERSETTING,
     WOL
 }
