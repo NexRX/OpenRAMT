@@ -52,6 +52,7 @@ import static Model.General.OSType.*;
  * - 21 - Duplicate SQL error. When a value given would of violated a unique column for example.
  * - 31 - Process task related error, process restart attempted, killed but couldn't start again.
  * - 44 - Data given couldn't be found within the request i.e. row not found when updating a line in the database.
+ * - 97 - Server wasn't launched with permissions (i.e. sudo, as admin...).
  * - 98 - Server doesn't support this task.
  * - 99 - Catastrophic generic error. If this has returned, something has gone seriously wrong (i.e. unforeseen bugs).
  */
