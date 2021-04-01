@@ -3,7 +3,9 @@ package Model.Task;
 public enum Task {
     ADDUSER,
     CLEANDISK,
+    DELETEGROUP,
     DELETEUSER,
+    DELETEUSERS,
     DISABLEBLUETOOTH,
     DISABLEWIFI,
     EDITSETTING,
@@ -21,7 +23,10 @@ public enum Task {
     SLEEP,
     STARTFTP,
     STOPFTP,
+    SUSPENDUSER,
+    SUSPENDUSERS,
     TESTING,
+    UPDATEGROUPSETTING,
+    UPDATEUSERSETTING,
     WOL
-
 }
