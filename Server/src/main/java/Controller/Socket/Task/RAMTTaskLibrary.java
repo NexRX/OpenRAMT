@@ -558,6 +558,8 @@ public class RAMTTaskLibrary {
                             ".where({$psitem.name -like '*WiFi*'}) | " +
                             "Enable-NetAdapter -Confirm:$false -PassThru");
 
+                    System.out.println(response.getCommandOutput());
+
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
@@ -604,8 +606,10 @@ public class RAMTTaskLibrary {
             switch (getOS()) {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
-                            ".where({psitem.name -like '*WiFi*'}) | " +
+                            ".where({$psitem.name -like '*WiFi*'}) | " +
                             "Disable-NetAdapter -Confirm:$false -PassThru");
+
+                    System.out.println(response.getCommandOutput());
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
