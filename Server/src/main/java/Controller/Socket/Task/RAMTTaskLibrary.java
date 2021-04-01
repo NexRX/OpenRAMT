@@ -548,7 +548,7 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> enableWifi(TaskRequest<Integer> request) {
+    public static TaskResponse<Void> enableWifi(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -599,7 +599,7 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> disableWifi(TaskRequest<Integer> request) {
+    public static TaskResponse<Void> disableWifi(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -648,7 +648,7 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> enableBluetooth(TaskRequest<Integer> request) {
+    public static TaskResponse<Void> enableBluetooth(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -699,7 +699,7 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> disableBluetooth(TaskRequest<Integer> request) {
+    public static TaskResponse<Void> disableBluetooth(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:

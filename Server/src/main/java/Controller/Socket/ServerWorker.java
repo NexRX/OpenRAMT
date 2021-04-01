@@ -88,13 +88,13 @@ public class ServerWorker implements Runnable{
             case CLEANDISK:
                 return RAMTTaskLibrary.cleanDisk((TaskRequest<Integer>) request);
             case ENABLEWIFI:
-                break;
+                return RAMTTaskLibrary.enableWifi((TaskRequest<Integer>) request);
             case DISABLEWIFI:
-                break;
+                return RAMTTaskLibrary.disableWifi((TaskRequest<Integer>) request);
             case ENABLEBLUETOOTH:
-                break;
+                return RAMTTaskLibrary.enableBluetooth((TaskRequest<Integer>) request);
             case DISABLEBLUETOOTH:
-                break;
+                return RAMTTaskLibrary.disableBluetooth((TaskRequest<Integer>) request);
             case TESTING:
                 break;
         }
