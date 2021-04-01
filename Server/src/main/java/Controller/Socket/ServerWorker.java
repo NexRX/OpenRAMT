@@ -4,11 +4,14 @@ import Controller.Socket.Task.RAMTTaskLibrary;
 import Model.Task.Response;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
+import Model.User.UserData;
 
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import static Controller.Socket.Task.RAMTTaskLibrary.*;
 
 /**
 
@@ -54,50 +57,35 @@ public class ServerWorker implements Runnable{
     }
 
     private TaskResponse<?> processTask(TaskRequest<?> request) {
-        switch (request.getTask()) {
-            case LOGIN:
-                return RAMTTaskLibrary.login((TaskRequest<Void>) request);
-            case KILLPROCESS:
-                return RAMTTaskLibrary.killProcess((TaskRequest<Integer>) request);
-            case RESTARTPROCESS:
-                return RAMTTaskLibrary.restartProcess((TaskRequest<Integer>) request);
-            case FETCHPROCESSES:
-                return RAMTTaskLibrary.fetchProcesses((TaskRequest<Void>) request);
-            case SHUTDOWN:
-                return RAMTTaskLibrary.shutdown((TaskRequest<Void>) request);
-            case RESTART:
-                return RAMTTaskLibrary.restart((TaskRequest<Void>) request);
-            case SLEEP:
-                return RAMTTaskLibrary.sleep((TaskRequest<Void>) request);
-            case ADDUSER:
-                break;
-            case EDITUSER:
-                break;
-            case DELETEUSER:
-                break;
-            case EDITSETTING:
-                break;
-            case GETSETTINGS:
-                break;
-            case STARTFTP:
-                return RAMTTaskLibrary.startFTP((TaskRequest<Void>) request);
-            case STOPFTP:
-                return RAMTTaskLibrary.stopFTP((TaskRequest<Void>) request);
-            case RESTARTFTP:
-                return RAMTTaskLibrary.restartFTP((TaskRequest<Void>) request);
-            case CLEANDISK:
-                return RAMTTaskLibrary.cleanDisk((TaskRequest<Integer>) request);
-            case ENABLEWIFI:
-                return RAMTTaskLibrary.enableWifi((TaskRequest<Integer>) request);
-            case DISABLEWIFI:
-                return RAMTTaskLibrary.disableWifi((TaskRequest<Integer>) request);
-            case ENABLEBLUETOOTH:
-                return RAMTTaskLibrary.enableBluetooth((TaskRequest<Integer>) request);
-            case DISABLEBLUETOOTH:
-                return RAMTTaskLibrary.disableBluetooth((TaskRequest<Integer>) request);
-            case TESTING:
-                break;
-        }
-        return new TaskResponse<Void>(request, Response.INTERRUPTED, 99);
+        return switch (request.getTask()) {
+            case LOGIN -> login((TaskRequest<Void>) request);
+            case KILLPROCESS -> killProcess((TaskRequest<Integer>) request);
+            case RESTARTPROCESS -> restartProcess((TaskRequest<Integer>) request);
+            case FETCHPROCESSES -> fetchProcesses((TaskRequest<Void>) request);
+            case SHUTDOWN -> shutdown((TaskRequest<Void>) request);
+            case RESTART -> restart((TaskRequest<Void>) request);
+            case SLEEP -> sleep((TaskRequest<Void>) request);
+            case ADDUSER -> addUser((TaskRequest<UserData>) request);
+            case UPDATEUSER -> updateUser((TaskRequest<String[]>) request);
+            case DELETEGROUP -> deleteGroup((TaskRequest<String>) request);
+            case DELETEUSER -> deleteUser((TaskRequest<String>) request);
+            case DELETEUSERS -> deleteUsers((TaskRequest<String>) request);
+            case EDITSETTING -> setSetting((TaskRequest<String[]>) request);
+            case GETSETTINGS -> getSetting((TaskRequest<String>) request);
+            case STARTFTP -> startFTP((TaskRequest<Void>) request);
+            case STOPFTP -> stopFTP((TaskRequest<Void>) request);
+            case RESTARTFTP -> restartFTP((TaskRequest<Void>) request);
+            case CLEANDISK -> cleanDisk((TaskRequest<Integer>) request);
+            case ENABLEWIFI -> enableWifi((TaskRequest<Integer>) request);
+            case DISABLEWIFI -> disableWifi((TaskRequest<Integer>) request);
+            case ENABLEBLUETOOTH -> enableBluetooth((TaskRequest<Integer>) request);
+            case DISABLEBLUETOOTH -> disableBluetooth((TaskRequest<Integer>) request);
+            case SUSPENDUSER -> suspendUser((TaskRequest<String>) request);
+            case SUSPENDUSERS -> suspendUsers((TaskRequest<String>) request);
+            case UPDATEGROUPSETTING -> updateGroup((TaskRequest<String[]>) request);
+            case WOL -> wakeOnLAN((TaskRequest<String[]>) request);
+            case TESTING -> new TaskResponse<>(request, Response.OTHER, 0);
+            default -> new TaskResponse<Void>(request, Response.INTERRUPTED, 99); // Lil' future proofing.
+        };
     }
 }
