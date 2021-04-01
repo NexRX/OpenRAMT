@@ -1,6 +1,5 @@
 package Controller.Socket.Task;
 
-import Controller.RAMTAlert;
 import Model.General.AppPermission;
 import Model.General.OSType;
 import Model.Task.Response;
@@ -12,7 +11,6 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
-import javafx.scene.control.Alert;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.Authority;
@@ -26,6 +24,7 @@ import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.json.JSONArray;
 
 import java.io.*;
+import java.net.*;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -41,10 +40,10 @@ import static Model.General.OSType.*;
  *
  * A (error) code referring to the success of the operation. The codes are as follows:
  * - 0 - Success without issue.
- * - 1 - Generic error where the request failed normally i.e. no results found or can't add user.
+ * - 1 - Generic error where the request failed normally i.e. no results found or something *without* exception/fault.
  * - 2 - Parameters do not meet the require constraints of the database column, field or value.
  * - 3 - Parameter contained semantically immutable field such as root/default user in a delete query.
- * - 4 - Parameters required are invalid. This could be because of a null value in request parameters.
+ * - 4 - Parameters required are invalid. This could be because of a null//incorrect value in request parameters.
  * - 10 - Username not found.
  * - 11 - Username found but incorrect password.
  * - 12 - User details verified but account is suspended
@@ -380,6 +379,32 @@ public class RAMTTaskLibrary {
         }
     }
 
+    // Takes IP and MAC ADDRESS and finally port (indexes respectively 0, 1, 2)
+    public static TaskResponse<Void> wakeOnLAN(TaskRequest<String[]> request) {
+        byte[] macBytes = getMacBytes(request.getParameter()[1]);
+        byte[] bytes = new byte[6 + 16 * macBytes.length];
+        for (int i = 0; i < 6; i++) {
+            bytes[i] = (byte) 0xff;
+        }
+        for (int i = 6; i < bytes.length; i += macBytes.length) {
+            System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
+        }
+
+        InetAddress address = null;
+        try {
+            address = InetAddress.getByName(request.getParameter()[0]);
+            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, Integer.parseInt(request.getParameter()[2]));
+            DatagramSocket socket = new DatagramSocket();
+            socket.send(packet);
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new TaskResponse<>(request, Response.FAILED, 4);
+        }
+
+        return new TaskResponse<>(request, Response.SUCCESS, 0);
+    }
+
     public static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
         if (server == null) {
             FtpServerFactory serverFactory = new FtpServerFactory();
@@ -387,7 +412,7 @@ public class RAMTTaskLibrary {
 
             // Setting listener port.
             try {
-                factory.setPort(Integer.valueOf(DBManager.getSetting("FTP Port")));
+                factory.setPort(Integer.parseInt(DBManager.getSetting("FTP Port")));
             } catch (SQLException throwables) {
                 factory.setPort(2221); // Default fallback.
                 //Todo alert user somehow.
@@ -752,6 +777,119 @@ public class RAMTTaskLibrary {
         }
     }
 
+    public static TaskResponse<String> getSetting(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getSetting(request.getParameter()));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<String> setSetting(TaskRequest<String[]> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateSettings(request.getParameter()[0], request.getParameter()[1])); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> deleteUser(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> deleteUsers(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteGroupUsers(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> deleteGroup(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteGroup(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> updateUser(TaskRequest<String[]> request) { //0,1,2 (what to change, what username, updated value)
+        try {
+            switch (request.getParameter()[0].toLowerCase()) {
+                case "username":
+                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateUsername(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
+                case "password":
+                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updatePassword(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
+                case "group":
+                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.changeUserGroup(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 4); // Should make sure DB and RAMT codes are same.
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> addUser(TaskRequest<UserData> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.addUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> suspendUser(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.suspendUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> suspendUsers(TaskRequest<String> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.suspendGroupUsers(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<?> updateGroup(TaskRequest<String[]> request) { //0,1,2+ (what to change, what group name, updated value(s))
+        try {
+            switch (request.getParameter()[0].toLowerCase()) {
+                case "name":
+                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateGroupName(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
+                case "permissions":
+                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.updatePermissions(request.getParameter()[1],
+                            Boolean.parseBoolean(request.getParameter()[2]),
+                            Boolean.parseBoolean(request.getParameter()[3]),
+                            Boolean.parseBoolean(request.getParameter()[4]),
+                            Boolean.parseBoolean(request.getParameter()[5]),
+                            Boolean.parseBoolean(request.getParameter()[6]))); // Should make sure DB and RAMT codes are same.
+                case "migrate":
+                    return new TaskResponse<>(request, Response.SUCCESS, DBManager.migrateGroup(request.getParameter()[1], request.getParameter()[2])); // Should make sure DB and RAMT codes are same.
+                default:
+                    return new TaskResponse<>(request, Response.FAILED, 4); // Should make sure DB and RAMT codes are same.
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
     /**
      * Gets the current OS at runtime from the JVM. The current OS is will be from a list from the Oracle JDK 14
      * Certified System Configurations spec sheet as of 15th of March 2021. Anything not in this list somehow will
@@ -831,6 +969,23 @@ public class RAMTTaskLibrary {
                 "  separator = \", \"\n" +
                 "}\n" +
                 "END { print \" ] \" }';";
+    }
+
+    private static byte[] getMacBytes(String macStr) throws IllegalArgumentException {
+        byte[] bytes = new byte[6];
+        String[] hex = macStr.split("(\\:|\\-)");
+        if (hex.length != 6) {
+            throw new IllegalArgumentException("Invalid MAC address.");
+        }
+        try {
+            for (int i = 0; i < 6; i++) {
+                bytes[i] = (byte) Integer.parseInt(hex[i], 16);
+            }
+        }
+        catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid hex digit in MAC address.");
+        }
+        return bytes;
     }
 
     /**
