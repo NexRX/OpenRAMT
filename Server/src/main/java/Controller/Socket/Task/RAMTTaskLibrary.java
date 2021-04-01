@@ -465,9 +465,10 @@ public class RAMTTaskLibrary {
     public static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
         if (server != null){
             server.stop();
-            server = null;
             System.out.println("FTP Server stopped!");
         }
+
+        server = null;
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
