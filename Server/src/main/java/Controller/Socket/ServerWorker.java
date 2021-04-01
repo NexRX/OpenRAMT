@@ -17,6 +17,7 @@ import static Controller.Socket.Task.RAMTTaskLibrary.*;
 /**
 
  */
+@SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class ServerWorker implements Runnable{
     protected SSLSocket clientSocket = null;
     protected String serverText = null;
