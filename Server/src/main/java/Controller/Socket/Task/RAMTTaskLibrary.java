@@ -400,7 +400,10 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
-        if (server == null) {
+        if (server != null) {
+            System.out.println("FTP already started.");
+        } else {
+            System.out.println("server is null.");
             FtpServerFactory serverFactory = new FtpServerFactory();
             ListenerFactory factory = new ListenerFactory();
 
@@ -450,23 +453,22 @@ public class RAMTTaskLibrary {
                 um.save(user);
                 serverFactory.setUserManager(um);
                 // Server creation.
-                FtpServer server = serverFactory.createServer();
+                server = serverFactory.createServer();
                 server.start();
                 System.out.println("FTP Server started!");
             } catch (FtpException e) {
                 e.printStackTrace();
                 return new TaskResponse<>(request, Response.FAILED, 99);
             }
-        } else {
-            server.stop();
         }
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
     public static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
-        if (server != null && !server.isStopped()){
+        if (server != null){
             server.stop();
+            server = null;
             System.out.println("FTP Server stopped!");
         }
 
@@ -1018,22 +1020,22 @@ public class RAMTTaskLibrary {
 
     private static String scriptMacOSBluetooth(boolean on) {
         if (on) {
-            return "tell application “System Events” to tell process “SystemUIServer”\n" +
-                    "set bt to (first menu bar item whose description is “bluetooth”) of menu bar 1\n" +
+            return "tell application \"System Events\" to tell process \"SystemUIServer\"\n" +
+                    "set bt to (first menu bar item whose description is \"bluetooth\") of menu bar 1\n" +
                     "click bt\n" +
-                    "tell (first menu item whose title is “Turn Bluetooth On”) of menu of bt\n" +
+                    "tell (first menu item whose title is \"Turn Bluetooth On\") of menu of bt\n" +
                     "click\n" +
-                    "click menu item “Turn Bluetooth On”\n" +
+                    "click menu item \"Turn Bluetooth On\"\n" +
                     "end tell\n" +
                     "end tell\n" +
                     "end tell";
         } else {
-            return "tell application “System Events” to tell process “SystemUIServer”\n" +
-                    "set bt to (first menu bar item whose description is “bluetooth”) of menu bar 1\n" +
+            return "tell application \"System Events\" to tell process \"SystemUIServer\"\n" +
+                    "set bt to (first menu bar item whose description is \"bluetooth\") of menu bar 1\n" +
                     "click bt\n" +
-                    "tell (first menu item whose title is “Turn Bluetooth Off”) of menu of bt\n" +
+                    "tell (first menu item whose title is \"Turn Bluetooth Off\") of menu of bt\n" +
                     "click\n" +
-                    "click menu item “Turn Bluetooth Off”\n" +
+                    "click menu item \"Turn Bluetooth Off\"\n" +
                     "end tell\n" +
                     "end tell\n" +
                     "end tell";
