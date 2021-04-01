@@ -13,6 +13,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /** An (error) code referring to the success of the operation. The codes are as follows:
  * - 0 - Success without issue.
@@ -695,6 +696,27 @@ public class DBManager {
         stopDB();
 
         return result;
+    }
+
+    /**
+     * Gets all settings at once in a hashmap.
+     * @return The value of the settings in a hashmap.
+     * @throws SQLException Thrown when the SQL query couldn't be completed. Perhaps because of bad parameters.
+     */
+    public static HashMap<String, String> getSettings() throws SQLException {
+        startDB();
+
+        HashMap<String,String> results = new HashMap<>();
+
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM settings");
+
+        while (rs.next()) { results.put(rs.getString(1), rs.getString(2)); }
+
+        stmt.close();
+        stopDB();
+
+        return results;
     }
 
     /**

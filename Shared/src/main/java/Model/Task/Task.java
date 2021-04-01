@@ -15,6 +15,7 @@ public enum Task {
     FETCHPROCESSES,
     GETGROUP,
     GETGROUPS,
+    GETSETTING,
     GETSETTINGS,
     GETUSER,
     GETUSERS,

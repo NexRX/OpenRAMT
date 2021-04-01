@@ -77,7 +77,8 @@ public class ServerWorker implements Runnable{
             case GETGROUPS -> getGroups((TaskRequest<Void>) request);
             case GETUSER -> getUser((TaskRequest<String>) request);
             case GETUSERS -> getUsers((TaskRequest<Void>) request);
-            case GETSETTINGS -> getSetting((TaskRequest<String>) request);
+            case GETSETTING -> getSetting((TaskRequest<String>) request);
+            case GETSETTINGS -> getSettings((TaskRequest<Void>) request);
             case STARTFTP -> startFTP((TaskRequest<Void>) request);
             case STOPFTP -> stopFTP((TaskRequest<Void>) request);
             case RESTARTFTP -> restartFTP((TaskRequest<Void>) request);

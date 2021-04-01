@@ -788,6 +788,15 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    public static TaskResponse<HashMap<String, String>> getSettings(TaskRequest<Void> request) {
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getSettings());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
     public static TaskResponse<String> setSetting(TaskRequest<String[]> request) {
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateSettings(request.getParameter()[0], request.getParameter()[1])); // Should make sure DB and RAMT codes are same.
