@@ -458,59 +458,58 @@ public class RAMTTaskLibrary {
         return startFTP(request);
     }
 
-    public static TaskResponse<Void> cleanDisk(TaskRequest<Integer> request) {
+    public static TaskResponse<Integer> cleanDisk(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    powershellLongTimeout();
                     return switch (request.getParameter()) {
 
                         // System Drive Clean
                         case 0 -> shell.executeCommand("Start-Process -Wait \"$env:SystemRoot\\System32\\cleanmgr.exe\"" +
                                 " -ArgumentList \"/AUTOCLEAN /d C\"; Write-Host 0;").isError() ?
-                                new TaskResponse<>(request, Response.FAILED, 1) :
-                                new TaskResponse<>(request, Response.SUCCESS, 0);
+                                new TaskResponse<>(request, Response.FAILED, 1, -1) :
+                                new TaskResponse<>(request, Response.SUCCESS, 0, -1);
 
                         // Extra or All Drive(s) Clean
                         case 1,2 -> {
+                            // Pre Main PowerShell Setup and Parameter Handling
+                            System.out.println("Getting Drives...");
                             JSONArray json = new JSONArray(shell.executeCommand("Get-PSDrive | select name | ConvertTo-Json").getCommandOutput());
                             boolean excludeSystem = request.getParameter() == 1;
                             int errorCount = 0;
-                            powershellLongTimeout();
+
+                            // Builder PowerShell Char Array
+                            System.out.println("Building Char Array...");
+                            ArrayList<Character> charArray = new ArrayList<>();
+
                             for (int i = 0; i < json.length(); i++) {
-
-                                // Is drive name a char?.
-                                if (((String) json.getJSONObject(i).get("Name")).length() == 1) {
-                                    char driveLetter = ((String) json.getJSONObject(i).get("Name")).charAt(0);
-
-                                    // Top 2 if statements do the same but this way is slightly faster,
-                                    // rather than check for drive letter C every time.
-                                    if (!excludeSystem) {
-                                        errorCount += shell.executeCommand("" +
-                                                "Start-Process -Wait \"$env:SystemRoot\\System32\\cleanmgr.exe\" " +
-                                                "-ArgumentList \"/AUTOCLEAN /d "+driveLetter+"\"").isError() ? 1 : 0;
-                                        System.out.println("Finished Cleaning Drive: " + driveLetter);
-                                    } else if (driveLetter != 'C') {
-                                        errorCount += shell.executeCommand("" +
-                                                "Start-Process -Wait \"$env:SystemRoot\\System32\\cleanmgr.exe\" " +
-                                                "-ArgumentList \"/AUTOCLEAN /d "+driveLetter+"\"").isError() ? 1 : 0;
-                                        System.out.println("Finished Cleaning Drive: " + driveLetter);
-                                    }
+                                String current = (String) json.getJSONObject(i).get("Name");
+                                if (current.length() == 1 && !(excludeSystem && current.equals("C"))) {
+                                    charArray.add(current.charAt(0));
                                 }
-
                             }
 
+                            // Save CharArray to PS Session Then Process Main PowerShell Script.
+                            powershellLongTimeout();
+                            System.out.println("Main Shell Execution... Drives Detected " + charArray);
+                            for (char c :charArray) {
+                                errorCount += PowerShell.executeSingleCommand("cleanmgr /AUTOCLEAN /d " + c +
+                                        "; Write-Host").isError() ? 1 : 0; // Write-Host to avoid False-Positive errors
+                            }
+
+                            // Finish up and return result.
                             powershellDefaultTimeout();
                             System.out.println("Drive Cleaner PS: Error Count " + errorCount);
                             yield new TaskResponse<>(request,
-                                    errorCount > 1 ? Response.FAILED : Response.SUCCESS,
-                                    errorCount > 1 ? 1 : 0);
+                                    errorCount > 0 ? Response.FAILED : Response.SUCCESS,
+                                    errorCount > 0 ? 1 : 0,
+                                    errorCount);
                         }
 
                         // Recycle bin clean
                         default -> shell.executeCommand("Clear-RecycleBin -Force").isError() ?
-                                new TaskResponse<>(request, Response.FAILED, 1) :
-                                new TaskResponse<>(request, Response.SUCCESS, 0);
+                                new TaskResponse<>(request, Response.FAILED, 1, -1) :
+                                new TaskResponse<>(request, Response.SUCCESS, 0, -1);
                     };
                 case WINDOWS:
                     Process process = new ProcessBuilder("cmd.exe", "/c", "").start();
@@ -549,11 +548,15 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> enableWifi(TaskRequest<Void> request) {
+    private static TaskResponse<Void> enableWifi(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+                    if (request.getParameter() == 1) { disableWifi(request); } // Re-enable
+
+                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
+                            ".where({$psitem.name -like '*WiFi*'}) | " +
+                            "Enable-NetAdapter -Confirm:$false -PassThru");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -596,11 +599,13 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> disableWifi(TaskRequest<Void> request) {
+    private static TaskResponse<Void> disableWifi(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
+                            ".where({psitem.name -like '*WiFi*'}) | " +
+                            "Disable-NetAdapter -Confirm:$false -PassThru");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -643,11 +648,15 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> enableBluetooth(TaskRequest<Void> request) {
+    private static TaskResponse<Void> enableBluetooth(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+                    if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
+
+                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
+                            ".where({$psitem.name -like '*Bluetooth*'}) | " +
+                            "Enable-NetAdapter -Confirm:$false -PassThru");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -690,11 +699,13 @@ public class RAMTTaskLibrary {
         }
     }
 
-    private static TaskResponse<Void> disableBluetooth(TaskRequest<Void> request) {
+    private static TaskResponse<Void> disableBluetooth(TaskRequest<Integer> request) {
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
-                    PowerShellResponse response = shell.executeCommand("");
+                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
+                            ".where({$psitem.name -like '*Bluetooth*'}) | " +
+                            "Disable-NetAdapter -Confirm:$false -PassThru");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -855,4 +866,12 @@ public class RAMTTaskLibrary {
         shell.configuration(myConfig);
     }
 
+    /**
+     * 10 Minute timeout for the powershell.
+     */
+    private static void powershellExtraLongTimeout() {
+        Map<String, String> myConfig = new HashMap<>();
+        myConfig.put("maxWait", "600000");
+        shell.configuration(myConfig);
+    }
 }
