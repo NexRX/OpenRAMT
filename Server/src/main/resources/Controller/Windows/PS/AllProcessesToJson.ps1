@@ -1,4 +1,5 @@
-﻿$processes = Get-WmiObject Win32_PerfFormattedData_PerfProc_Process | Where-Object { $_.name -inotmatch '_total|idle' } | select IDProcess, Name, PercentProcessorTime, WorkingSetPrivate
+﻿$ErrorActionPreference = "SilentlyContinue"
+$processes = Get-WmiObject Win32_PerfFormattedData_PerfProc_Process | Where-Object { $_.name -inotmatch '_total|idle' } | select IDProcess, Name, PercentProcessorTime, WorkingSetPrivate
 
 foreach ($process in $processes) {
 
