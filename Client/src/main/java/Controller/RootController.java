@@ -89,7 +89,8 @@ public class RootController extends AnchorPane {
 		addPaneButton(new AdminController(), "Admin", AppPermission.ADMINISTRATOR, 2);
 		addPaneButton(new PowerController(), "Power", AppPermission.POWER, 3);
 		addPaneButton(new ProcessController(), "Process", AppPermission.PROCESS, 4);
-		addPaneButton(new SettingsController(), "Server Settings", AppPermission.ADMINISTRATOR, 5);
+		addPaneButton(new MonitorController(), "Monitoring", AppPermission.MONITORING, 5);
+		addPaneButton(new SettingsController(), "Server Settings", AppPermission.ADMINISTRATOR, 6);
 
 		resizeHelperR.toFront();
 		resizeHelperB.toFront();
