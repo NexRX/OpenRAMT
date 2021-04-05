@@ -1,6 +1,7 @@
 package Controller;
 
 import Controller.Database.DBManager;
+import Controller.Socket.PlainMonitoringServer;
 import Controller.Socket.PlainServer;
 import Controller.Socket.SecureServer;
 import Controller.Socket.Task.RAMTTaskLibrary;
@@ -107,10 +108,11 @@ public class ManagementController extends AnchorPane {
         }
         System.out.println("Server secure? " + secure);
 
-        serverStart();
+        startServer();
+        startMonitoring();
     }
 
-    private void serverStart() {
+    private void startServer() {
         stopServer(); // Remove if causing ungraceful shutdown problems.
 
         if (secure) {
@@ -142,6 +144,14 @@ public class ManagementController extends AnchorPane {
             plainServer.stop();
             plainServer = null;
         }
+    }
+
+    private void startMonitoring() {
+        new Thread(new PlainMonitoringServer()).start();
+    }
+
+    private void stopMonitoring() {
+
     }
 
     private void applyEventHandlers() {

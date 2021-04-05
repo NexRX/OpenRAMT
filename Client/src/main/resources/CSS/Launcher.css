@@ -132,8 +132,13 @@
     -fx-stroke: rgba(255, 0, 0, 0.5);
 }
 
-.chart-legend-item{
+.chart-legend {
+    -fx-background-color: #583535;
+}
+
+.chart-legend-item {
     -fx-text-fill: #ffffff;
+    -fx-background-color: #583535;
 }
 
 .axis {

@@ -2,28 +2,28 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.AreaChart?>
-<?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.StackedBarChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<fx:root hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background"  stylesheets="@../../CSS/Launcher.css" type="ScrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/14.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <content>
-      <FlowPane prefHeight="722.0" prefWidth="601.0" styleClass="default-background">
+      <FlowPane fx:id="container" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="default-background">
          <children>
-            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+            <VBox fx:id="containerCPUUsage" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                  <AreaChart id="innerchart" fx:id="acCPUUsage">
                     <xAxis>
-                      <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                      <CategoryAxis label="Time" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis label="Usage (%)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                      <NumberAxis label="Usage (%)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" />
                     </yAxis>
                      <VBox.margin>
                         <Insets />
@@ -35,9 +35,9 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </FlowPane.margin>
             </VBox>
-            <VBox fillWidth="false" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+            <VBox fx:id="containerRAMUsage" fillWidth="false" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <PieChart id="innerchart">
+                  <PieChart id="innerchart" fx:id="pieRAMUsage">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
@@ -48,25 +48,25 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </FlowPane.margin>
             </VBox>
-            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+            <VBox fx:id="containerDiskSpace" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <BarChart id="innerchart" alternativeColumnFillVisible="true" horizontalZeroLineVisible="false">
+                  <StackedBarChart id="innerchart" fx:id="barDiskSpace" alternativeColumnFillVisible="true" animated="false" horizontalZeroLineVisible="false">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                       <NumberAxis fx:id="axisDiskSize" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis side="LEFT" />
+                       <CategoryAxis fx:id="axisDiskName" side="LEFT" />
                     </yAxis>
-                  </BarChart>
+                  </StackedBarChart>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="252.0" text="Disk Space" textAlignment="CENTER" />
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </FlowPane.margin>
             </VBox>
-            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+            <VBox fx:id="containerDiskIO" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                  <AreaChart id="innerchart" fx:id="acDiskIO" alternativeRowFillVisible="false" legendSide="TOP">
                      <xAxis>
                         <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
                      </xAxis>
@@ -83,9 +83,9 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </FlowPane.margin>
             </VBox>
-            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+            <VBox fx:id="containerCPUTemp" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                  <AreaChart id="innerchart" fx:id="acCPUTemp">
                      <xAxis>
                         <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
                      </xAxis>
@@ -96,15 +96,15 @@
                         <Insets />
                      </VBox.margin>
                   </AreaChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Temps" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Temp" textAlignment="CENTER" />
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </FlowPane.margin>
             </VBox>
-            <VBox fillWidth="false" prefHeight="200.0" prefWidth="252.0" styleClass="vboxChart">
+            <VBox fx:id="containerSystemTemp" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <AreaChart id="innerchart" prefHeight="181.0" prefWidth="256.0">
+                  <AreaChart id="innerchart" fx:id="acSystemTemp">
                      <xAxis>
                         <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
                      </xAxis>
@@ -115,7 +115,7 @@
                         <Insets />
                      </VBox.margin>
                   </AreaChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="System Temps" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="System Temp" textAlignment="CENTER" />
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
