@@ -110,6 +110,8 @@ public class ManagementController extends AnchorPane {
 
         startServer();
         startMonitoring();
+
+        //TODO detect if elevated (oshi had a method) and alert user (just show) then update setting and alert user on connecting of that and consequences
     }
 
     private void startServer() {

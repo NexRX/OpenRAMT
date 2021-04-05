@@ -38,6 +38,7 @@ public class MonitoringTask implements Runnable {
     private final long ramCapacity;
 
     // Misc
+    long[] preCPUTick = new long[8];
     private AtomicInteger pollingRate = new AtomicInteger(); // Assign automatically from settings
 
     // TODO implement this!!! sysInfo.getOperatingSystem().isElevated()
@@ -52,6 +53,8 @@ public class MonitoringTask implements Runnable {
 
         // Other
         this.systemPower = hal.getPowerSources().get(0);
+
+        preCPUTick = cpu.getSystemCpuLoadTicks();
     }
 
 
@@ -69,7 +72,6 @@ public class MonitoringTask implements Runnable {
     @Override
     public void run() {
         // CPU Usage & IO
-        long[] preCPUTick = cpu.getSystemCpuLoadTicks();
 
         long[] preIOTick = new long[diskCount]; //disk stores probably different from os file stores.
         for (int i = 0; i < diskCount; i++) { //TODO Redo IO So HardWare Drive matches SoftwareDrive (by confirming hwdrives name = softdrive name) 1.
@@ -87,6 +89,7 @@ public class MonitoringTask implements Runnable {
         }
 
         cpuUsage.set((int)(cpu.getSystemCpuLoadBetweenTicks(preCPUTick) * 100));
+        preCPUTick = cpu.getSystemCpuLoadTicks(); // for next run
 
         for (int i = 0; i < diskCount; i++) { // Disk space & final Disk IO
             DiskItem thisDisk = new DiskItem(
