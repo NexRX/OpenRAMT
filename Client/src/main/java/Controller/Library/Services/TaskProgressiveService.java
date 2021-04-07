@@ -20,6 +20,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
         this.request = request;
 
         System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
+
         //private SSLSocket socket;
         char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
@@ -38,7 +39,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
      * @param request The new task to complete.
      * @return The request ID for convenience. Can be safely ignored.
      */
-    public String updateAndRestart(TaskRequest request) {
+    public String updateAndRestart(TaskRequest<?> request) {
         this.request = request;
         this.restart();
         return request.getRequestID();
@@ -52,41 +53,39 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
             @Override
             protected TaskResponse<?> call() throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException,  ClassNotFoundException {
                 System.out.println("Starting client socket");
-                jointUpdate(0.1f, "Starting");
+                progressUpdate(0.1f, "Starting");
 
                 // Communications with server
-                SSLSocket secureSocket = null; //TODO SSLSocket extends socket so store use base class for task.
-                Socket socket = null;
+                Socket socket;
                 boolean secure = request.getUser().isSecure();
 
                 if (secure) {
-                    secureSocket = (SSLSocket) generation();
+                    socket = sslGeneration();
                 } else {
                     socket = new Socket(request.getUser().getHost(), request.getUser().getPort());
                 }
 
-                jointUpdate(0.33f, "Connected");
-
-                ObjectOutputStream socketOutput = new ObjectOutputStream((secure ? secureSocket : socket).getOutputStream());
-                ObjectInputStream socketInput = new ObjectInputStream((secure ? secureSocket : socket).getInputStream());
+                // Create Data Streams.
+                progressUpdate(0.33f, "Connected");
+                ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
 
                 // Send request to the server.
-                jointUpdate(0.45f, "Sending Request");
+                progressUpdate(0.45f, "Sending Request");
                 socketOutput.writeObject(request);
 
-
                 // Get the response
-                jointUpdate(0.66f, "Server Processing");
+                progressUpdate(0.66f, "Server Processing");
                 TaskResponse<?> response = (TaskResponse<?>) socketInput.readObject();
 
                 System.out.println("Response received: " + response.getRequestID() + " | "+
                         response.getRequest().getTask() + " - " +response.getResponse());
 
-                jointUpdate(0.85f, "Finalising");
                 //Stop Communications
-                try { (secure ? secureSocket : socket).close(); }catch(IOException e){/*Do nothing, client un-reliant.*/}
+                progressUpdate(0.85f, "Finishing");
+                try { socket.close(); }catch(IOException ignored){}
 
-                jointUpdate(1f, "Finished");
+                progressUpdate(1f, response.getResponse().toString());
 
                 lastResponse = response;
                 return response;
@@ -95,25 +94,25 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
 
             /**
              * Generates a certificate at runtime if (parts of) one are missing. Then returns a SSLSocket for use.
-             * @return
+             * @return A Secure socket based upon either a generated keystore in the data folder or one imported there.
              */
-            private Socket generation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+            private Socket sslGeneration() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
                 File ksFile = new File("data/keystore.jks");
 
                 if(!ksFile.isFile()) {
-                    jointUpdate(0.125f, "Creating Cert");
+                    progressUpdate(0.125f, "Creating Cert");
                     byte[] in = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream("Cert/keystore.jks")).readAllBytes();
 
                     ksFile.getParentFile().mkdirs();
                     ksFile.createNewFile();
 
-                    jointUpdate(0.15f, "Saving Cert");
+                    progressUpdate(0.15f, "Saving Cert");
                     FileOutputStream out = new FileOutputStream("data/keystore.jks");
                     out.write(in);
                     out.close();
                 }
 
-                jointUpdate(0.2f, "Loading Cert");
+                progressUpdate(0.2f, "Loading Cert");
 
                 KeyStore ks = KeyStore.getInstance("JKS");
                 ks.load(new FileInputStream(ksFile), ksPwd);
@@ -125,7 +124,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
                 tmf.init(ks);
 
-                jointUpdate(0.3f, "Connecting");
+                progressUpdate(0.3f, "Connecting");
 
                 SSLContext sc = SSLContext.getInstance("TLS");
 
@@ -138,14 +137,14 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
 
             }
 
-            private void jointUpdate(float progress, String message) {
+            private void progressUpdate(float progress, String message) {
                 updateProgress(progress, 1f);
                 updateMessage("State: " + message);
             }
         };
     }
 
-    public TaskResponse getLastResponse() {
+    public TaskResponse<?> getLastResponse() {
         return lastResponse;
     }
 }
