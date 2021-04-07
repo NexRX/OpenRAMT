@@ -11,20 +11,12 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 
 public class ClientWorker<T> implements Callable<TaskResponse<T>> {
-    private SSLSocket secureSocket;
-    private Socket socket;
+    private static final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
-    private boolean secure;
+    private Socket socket;
+    private final boolean secure;
 
     private final TaskRequest<?> request;
-    private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
-
-    public ClientWorker(TaskRequest<?> request) throws UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
-        System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
-        System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
-
-        this.request = request;
-    }
 
     public ClientWorker(TaskRequest<?> request, boolean secure) {
         System.setProperty("javax.net.ssl.trustStore", "data/keystore.jks");
@@ -37,34 +29,19 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
     @Override
     public TaskResponse<T> call() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException, ClassNotFoundException {
         if (secure) {
-            this.secureSocket = secureGeneration();
+            this.socket = secureGeneration(request.getUser().getHost(), request.getUser().getPort());
         } else {
-            this.socket = new Socket(this.request.getUser().getHost(), this.request.getUser().getPort());
+            this.socket = new Socket(request.getUser().getHost(), request.getUser().getPort());
         }
 
-        System.out.println("Client Secure? " + secure);
+        try { socket.close(); } catch (IOException ignored){}
 
-        TaskResponse<T> result = work();
-        if (secure) {
-            try {
-                secureSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
+        return work();
     }
 
     private TaskResponse<T> work() throws IOException, ClassNotFoundException {
-        ObjectOutputStream socketOutput = new ObjectOutputStream((secure ? secureSocket : socket).getOutputStream());
-        ObjectInputStream socketInput = new ObjectInputStream((secure ? secureSocket : socket).getInputStream());
+        ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
 
         System.out.println(request.getTask().toString());
         // Send request to the server.
@@ -82,8 +59,8 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
      * Generates a certificate at runtime if (parts of) one are missing. Then returns a SSLSocket for use.
      * @return A secure socket reflecting the environment requested.
      */
-    private SSLSocket secureGeneration() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
-        File ksFile = new File("data/keystore.jks");
+    private static SSLSocket secureGeneration(String host, int port) throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+        final File ksFile = new File("data/keystore.jks");
 
         if(!ksFile.isFile()) {
             byte[] in = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream("Cert/keystore.jks")).readAllBytes();
@@ -112,7 +89,7 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
 
         SSLSocketFactory ssf = sc.getSocketFactory();
 
-        return (SSLSocket) ssf.createSocket(this.request.getUser().getHost(), this.request.getUser().getPort());
+        return (SSLSocket) ssf.createSocket(host, port);
 
     }
 }
