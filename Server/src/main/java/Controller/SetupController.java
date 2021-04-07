@@ -155,8 +155,8 @@ public class SetupController extends AnchorPane {
                     "One or more FTP values are currently empty and will have default values!",
                     "Since the some FTP details aren't given, we are assigning a default value for them. \n" +
                             "It is recommended for security reasons that you change this especially for passwords.\n\n"+
-                            "FTP Username Default:" + ftpUsername.isEmpty() + "Default Value: RAMTUser\n" +
-                            "FTP Password Default:" + ftpPassword.isEmpty() + " | Default Value: $%^DFG543*z\n" +
+                            "FTP Username Default:" + ftpUsername.isEmpty() + " | Default Value: RAMTUser\n" +
+                            "FTP Password Default:" + ftpPassword.isEmpty() + " | Default Value: $%^DFG543*z\n\n" +
                             "These values (default or not) can be change later in the settings.").showAndWait();
 
             ftpUsername = ftpUsername.isEmpty() ? "RAMTUser" : ftpUsername;

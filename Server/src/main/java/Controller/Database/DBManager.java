@@ -7,13 +7,12 @@ import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 import org.h2.jdbc.JdbcSQLNonTransientException;
 
 import java.io.File;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 /** An (error) code referring to the success of the operation. The codes are as follows:
  * - 0 - Success without issue.
@@ -31,7 +30,7 @@ import java.util.HashMap;
  */
 public class DBManager {
     private static Connection con;
-    private static final File dbPath = new File("data/");
+    public static final File dbPath = new File("data/");
     private static final File db = new File(dbPath+"/db.mv.db");
 
     private static final String dbName = "RAMT";
@@ -55,16 +54,16 @@ public class DBManager {
      * Attempts to setup database if it is found that no database file is found. Using this essentially completes the
      * installation of the application.
      * @param username A valid username of the root user.
-     * @param password A valid hashed password of the root user.
+     * @param hashedPassword A valid hashed password of the root user.
      * @param secure True if secure sockets should be used and false for plain sockets.
      * @param port The port in which the server should run on.
      * @return A RAMT DBManager class result code
      *
      * Possible Codes: 0, 2, 20
      */
-    public static int setup(String username, String password, Boolean secure, int port, String ftpUsername, String ftpPassword) {
+    public static int setup(String username, String hashedPassword, Boolean secure, int port, String ftpUsername, String ftpPassword) {
         if (!isStringConstraint("username", username) ||
-                !isStringConstraint("password", password) ||
+                !isStringConstraint("password", hashedPassword) ||
                 !isIntegerConstraint("port", port)) {
             return 2; // Invalid value(s).
         }
@@ -75,7 +74,7 @@ public class DBManager {
             if( !isSetup() ) {
                 System.out.println("No DB detected, starting setup.");
                 setupDB();
-                setupData = setupData(username, password, secure, port, ftpUsername, ftpPassword);
+                setupData = setupData(username, hashedPassword, secure, port, ftpUsername, ftpPassword);
             } else  {
                 IllegalStateException e = new IllegalStateException("Database already exists. Please wipe before trying to setup again.");
                 e.printStackTrace();
@@ -96,6 +95,7 @@ public class DBManager {
 
     /**
      * Adds a user to the database using a UserData Object. The object must have valid username, password & user_group.
+     * A suspension status must be set too. The password will be hashed according to the needs of the server.
      * @param user A UserData object with the aforementioned valid values.
      * @return A RAMT DBManager class result code
      *
@@ -114,12 +114,15 @@ public class DBManager {
         try {
             result = stmt.executeUpdate("INSERT INTO users(username, password, user_group, suspended) VALUES ('" +
                     user.getUsername() + "', '" +
-                    user.getPassword() + "', '" +
+                    CryptographyToolbox.generatePBKDF2WithHmacSHA512(user.getPassword()) + "', '" +
                     user.getGroup() + "', '" +
                     user.isSuspended() + "');")
                     > 0 ? 0 : 1; // 0 for success true for couldn't add.
         } catch (JdbcSQLIntegrityConstraintViolationException e) {
             result = 21;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+            result = 99;
         }
 
         stmt.close();
@@ -662,6 +665,15 @@ public class DBManager {
         if (!isStringConstraint("setting", setting) ||
                 !isStringConstraint("setting_value", value)) { return 2;}
 
+        // More specific contraints
+        try {
+            if (setting.equals("Monitoring Polling Rate") && !isIntegerConstraint(setting, Float.parseFloat(value))) {
+                return 2;
+            } else if (setting.contains("Port") && !isIntegerConstraint("Port", Integer.parseInt(value))) {
+                return 2;
+            }
+        } catch (NumberFormatException e) {return  2;} // Invalid setting for polling rate.
+
         startDB();
 
         Statement stmt = con.createStatement();
@@ -730,6 +742,15 @@ public class DBManager {
         if (!isStringConstraint("setting", setting) ||
                 !isStringConstraint("setting_value", value)) { return 2;}
 
+        // More specific contraints
+        try {
+            if (setting.equals("Monitoring Polling Rate") && !isIntegerConstraint(setting, Float.parseFloat(value))) {
+                return 2;
+            } else if (setting.contains("Port") && !isIntegerConstraint("Port", Integer.parseInt(value))) {
+                return 2;
+            }
+        } catch (NumberFormatException e) {return  2;} // Invalid setting for polling rate.
+
         startDB();
 
         Statement stmt = con.createStatement();
@@ -754,8 +775,16 @@ public class DBManager {
      */
     public static int updateSettings(HashMap<String, String> settings) throws SQLException {
         for (String key: settings.keySet()) {
+            System.out.println(key +"|"+settings.get(key));
             if (!isStringConstraint("setting", key) ||
                     !isStringConstraint("setting_value", settings.get(key))) { return 2;}
+            try {
+                if (key.equals("Monitoring Polling Rate") && !isIntegerConstraint(key, Float.parseFloat(settings.get(key)))) {
+                    return 2;
+                } else if (key.contains("Port") && !isIntegerConstraint("Port", Integer.parseInt(settings.get(key)))) {
+                    return 2;
+                }
+            } catch (NumberFormatException e) {return  2;}
         }
 
         startDB();
@@ -815,13 +844,14 @@ public class DBManager {
      * @param value The value to check against the constraint.
      * @return True if the value matches the given constraint false otherwise.
      */
-    private static boolean isIntegerConstraint(String constraint, Integer value) {
+    private static boolean isIntegerConstraint(String constraint, Number value) {
         if (constraint == null || value == null) {
             return false;
         }
 
         return switch (constraint.toLowerCase()) {
-            case "port" -> value > 0 && value <= 65535; //Only the one, but write as such for upgrade/maintainability.
+            case "port" -> value.intValue() > 0 && value.intValue() <= 65535; //Only the one, but write as such for upgrade/maintainability.
+            case "monitoring polling rate" -> value.floatValue() >= 1.5 && value.floatValue() <= 256;
             default -> false; // No constraint found.
         };
     }
@@ -847,10 +877,10 @@ public class DBManager {
 
     /**
      * This method will attempt to build the UserData object from the first result in the database and the server
-     * itself. For example, the host and port will be attempted to be filled by the server application but if there is
-     * an exception then this information should be null. To avoid running into problems by possible null values, it is
-     * recommended to not use this information in the clientside. Instead, stick to using the User's data portion of the
-     * UserData.
+     * itself. For example, the host could be the public ip or domain or a local host ip so that will remain null.
+     * To avoid running into problems by possible null values, it is recommended to not use this information on the
+     * client side in full. Instead, stick to using the User's data portion of the UserData and filling any blank's with
+     * an available info here only if needed.
      * @param rs The result to be converted to UserData.
      * @return The UserData object converted from the UserData with information missing being filled by the server where
      * possible. Read general description for more information.
@@ -866,24 +896,20 @@ public class DBManager {
         if (rowCount > 0) {
             rs.first();
 
-            String host = null;
-
-            try {
-                host = InetAddress.getLocalHost().toString();
-            } catch (UnknownHostException e) {
-                System.out.println("resultSetToUserData: Couldn't retrieving host so leaving value null.");
-            }
-
             int port = Integer.parseInt(getSetting("Port"));
 
             results = new UserData(
-                    host,
+                    null,
                     port,
                     rs.getString(1),
                     rs.getString(2),
                     null,
                     rs.getString(4),
-                    rs.getBoolean(5));
+                    rs.getBoolean(5),
+                    Boolean.parseBoolean(getSetting("Security")),
+                    getGroup(rs.getString(4)),
+                    Integer.parseInt(getSetting("Monitoring Port"))
+            );
         }
         return results;
     }
@@ -910,13 +936,6 @@ public class DBManager {
             rs.beforeFirst();
 
             while (rs.next()) {
-                String host = null;
-
-                try {
-                    host = InetAddress.getLocalHost().toString();
-                } catch (UnknownHostException e) {
-                    System.out.println("resultSetToUserData: Couldn't retrieving host so leaving value null.");
-                }
 
                 int port;
                 try {
@@ -926,13 +945,17 @@ public class DBManager {
                 }
 
                 results.add(new UserData(
-                        host,
+                       null,
                         port,
                         rs.getString(1),
                         rs.getString(2),
                         null,
                         rs.getString(4),
-                        rs.getBoolean(5)));
+                        rs.getBoolean(5),
+                        Boolean.parseBoolean(getSetting("Security")),
+                        getGroup(rs.getString(4)),
+                        Integer.parseInt(getSetting("Monitoring Port"))
+                ));
             }
         }
         return results;
@@ -954,13 +977,17 @@ public class DBManager {
 
         rs.next();
 
-        return new UserGroup(
-                rs.getString(1),
-                rs.getBoolean(2),
-                rs.getBoolean(3),
-                rs.getBoolean(4),
-                rs.getBoolean(5),
-                rs.getBoolean(6));
+        try {
+            return new UserGroup(
+                    rs.getString(1),
+                    rs.getBoolean(2),
+                    rs.getBoolean(3),
+                    rs.getBoolean(4),
+                    rs.getBoolean(5),
+                    rs.getBoolean(6));
+        } catch (JdbcSQLNonTransientException e) { // No data from result set.
+            return null;
+        }
     }
 
     /**
@@ -983,8 +1010,9 @@ public class DBManager {
 
         if (rowCount > 0) {
             rs.beforeFirst();
-
             while (rs.next()) {
+
+                System.out.println(rs.getString(1));
 
                 results.add(new UserGroup(
                         rs.getString(1),
@@ -1004,19 +1032,17 @@ public class DBManager {
      * do so. As it was last knowingly configured. The user data wasn't setup too. This must be done manually later
      * while prompting the user to enter the required data.
      */
-    private static boolean startDB() {
+    private static void startDB() {
         try
         {
             Class.forName("org.h2.Driver");
             con = DriverManager.getConnection("jdbc:h2:./data/db", dbName, dbPassword );
-            return true;
         }
         catch( Exception e )
         {
             e.printStackTrace();
         }
 
-        return false;
     }
 
     private static void stopDB() throws SQLException {
@@ -1057,15 +1083,15 @@ public class DBManager {
         con.close();
     }
 
-    private static int setupData(String username, String password, Boolean secure, int port, String ftpUsername, String ftpPassword) throws SQLException {
+    private static int setupData(String username, String hashedPassword, Boolean secure, int port, String ftpUsername, String ftpPassword) throws SQLException {
         if (!isStringConstraint("username", username) ||
-                !isStringConstraint("password", password) ||
+                !isStringConstraint("password", hashedPassword) ||
                 !isIntegerConstraint("port", port)) { return 2;}
 
         con = DriverManager.getConnection("jdbc:h2:./data/db",  dbName, dbPassword);
         Statement stmt = con.createStatement();
 
-        stmt.executeUpdate( "INSERT INTO users(ID, username, password, user_group) VALUES ('0', '" + username +"', '" + password +"', 'Administrator');" );
+        stmt.executeUpdate( "INSERT INTO users(ID, username, password, user_group) VALUES ('0', '" + username +"', '" + hashedPassword +"', 'Administrator');" );
 
         // User Assigned
         int result1 = addSetting("Port", String.valueOf(port));
@@ -1078,7 +1104,8 @@ public class DBManager {
         int result6 = addSetting("FTP Guest Enabled", "false");
         int result7 = addSetting("FTP Guest Username", "Guest");
         int result8 = addSetting("FTP Guest Password", "");
-        int result9 = addSetting("Monitoring Polling Rate", "1"); // ToDo enforce constraint float/int
+        int result9 = addSetting("Monitoring Polling Rate", "3");
+        int result10 = addSetting("Monitoring Port", String.valueOf(port-1));
 
         stmt.close();
         if (con != null) {con.close();}
@@ -1092,7 +1119,8 @@ public class DBManager {
         else if (result6 != 0) { return result6; }
         else if (result7 != 0) { return result7; }
         else if (result8 != 0) { return result8; }
-        else return result9;
+        else if (result9 != 0) { return result9; }
+        else return result10;
     }
 
     /**

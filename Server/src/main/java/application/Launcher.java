@@ -2,14 +2,18 @@ package application;
 
 import Controller.Database.DBManager;
 import Controller.ManagementController;
+import Controller.RAMTAlert;
 import Controller.SetupController;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import oshi.SystemInfo;
 import sun.misc.Unsafe;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
@@ -30,8 +34,30 @@ public class Launcher {
         @Override
         public void start(Stage stage) throws Exception {
             disableReflectionWarning();
-            this.stage = stage;
+            MainStart.stage = stage;
 
+            // Detect if elevated
+            boolean notElevated = !new SystemInfo().getOperatingSystem().isElevated();
+
+            if (notElevated) {
+                new RAMTAlert(Alert.AlertType.WARNING,
+                        "OpenRAMT Warning (Not Elevated)",
+                        "OpenRAMT is not elevated!!!",
+                        "OpenRAMT is designed to be ran as administrator, running without is unsupported.\n" +
+                                "You may continue but certain tasks will not work as warned here.\n\n" +
+                                "Otherwise, please restart as Administrator / with sudo.\n" +
+                                "(Extra Note: Clients won't detect his as a problem)").show();
+            }
+
+            // Detect wipe needed.
+            File markedForWipe = new File(DBManager.dbPath.getAbsolutePath()+".wipe");
+
+            if (markedForWipe.isFile()) {
+                DBManager.wipeDatabase();
+                markedForWipe.delete();
+            }
+
+            // Detect Setup or start
             if (DBManager.isSetup()) {
                 mainScene();
             } else {
@@ -73,7 +99,7 @@ public class Launcher {
                 theUnsafe.setAccessible(true);
                 Unsafe unsafe = (Unsafe) theUnsafe.get(null);
 
-                Class clazz = Class.forName("jdk.internal.module.IllegalAccessLogger");
+                Class<?> clazz = Class.forName("jdk.internal.module.IllegalAccessLogger");
                 Field logger = clazz.getDeclaredField("logger");
 
                 unsafe.putObjectVolatile(clazz, unsafe.staticFieldOffset(logger), null);

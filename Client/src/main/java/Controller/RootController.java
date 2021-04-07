@@ -4,12 +4,14 @@ import Controller.Content.*;
 
 import Controller.Library.Services.TaskProgressiveService;
 import Controller.Library.SideButton;
-import Controller.Library.Socket.ClientMonitorWorker;
 import Model.General.AppPermission;
 import Model.Task.Task;
 import Model.Task.TaskRequest;
+import Model.Task.TaskResponse;
 import Model.User.UserData;
+import Model.User.UserGroup;
 import application.Launcher;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,13 +22,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.lang.reflect.Executable;
+import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The root pains controller.
  * Handles most of the post-initial tasks as well as the many generic (non-specific pane) tasks.
  */
+@SuppressWarnings("unchecked")
 public class RootController extends AnchorPane {
 	@FXML Pane resizeHelperR;
 	@FXML Pane resizeHelperB;
@@ -88,13 +93,26 @@ public class RootController extends AnchorPane {
 		sbScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
 
+
 		this.getChildren().add(sbScroll);
-		addPaneButton(new GeneralController(), "General", AppPermission.GENERAL, 1);
-		addPaneButton(new AdminController(), "Admin", AppPermission.ADMINISTRATOR, 2);
-		addPaneButton(new PowerController(), "Power", AppPermission.POWER, 3);
-		addPaneButton(new ProcessController(), "Process", AppPermission.PROCESS, 4);
-		addPaneButton(new MonitorController(), "Monitoring", AppPermission.MONITORING, 5);
-		addPaneButton(new SettingsController(), "Server Settings", AppPermission.ADMINISTRATOR, 6);
+		if (loggedInUser.getObjGroup().isAdmin() || loggedInUser.getObjGroup().isGeneral()) {
+			addPaneButton(new GeneralController(), "General", AppPermission.GENERAL, sbc.getLastIndex()+1);
+		}
+		if (loggedInUser.getObjGroup().isAdmin()) {
+			addPaneButton(new AdminController(), "Admin", AppPermission.ADMINISTRATOR, sbc.getLastIndex()+1);
+		}
+		if (loggedInUser.getObjGroup().isAdmin() || loggedInUser.getObjGroup().isPower()) {
+			addPaneButton(new PowerController(), "Power", AppPermission.POWER, sbc.getLastIndex()+1);
+		}
+		if (loggedInUser.getObjGroup().isAdmin() || loggedInUser.getObjGroup().isProcess()) {
+			addPaneButton(new ProcessController(), "Process", AppPermission.PROCESS, sbc.getLastIndex()+1);
+		}
+		if (loggedInUser.getObjGroup().isAdmin() || loggedInUser.getObjGroup().isMonitoring()) {
+			addPaneButton(new MonitorController(), "Monitoring", AppPermission.MONITORING, sbc.getLastIndex()+1);
+		}
+		if (loggedInUser.getObjGroup().isAdmin()) {
+			addPaneButton(new SettingsController(), "Server Settings", AppPermission.ADMINISTRATOR, sbc.getLastIndex()+1);
+		}
 
 
 

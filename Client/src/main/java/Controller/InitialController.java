@@ -1,7 +1,9 @@
 package Controller;
 
 import Controller.Library.Services.LoginProgressiveService;
+import Model.Task.TaskResponse;
 import Model.User.UserData;
+import Model.User.UserGroup;
 import application.Launcher;
 import application.Launcher.MainStart;
 import com.jfoenix.controls.JFXButton;
@@ -120,32 +122,43 @@ public class InitialController extends AnchorPane {
         loginTask.setOnSucceeded(event -> {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setAlertType(Alert.AlertType.ERROR);
+            TaskResponse<UserData> loginResponse = loginTask.getValue();
 
-            switch (loginTask.getValue()) {
-                case SUCCESS -> {
-                    MainStart.rootScene(user);
-                    System.out.println("Switching");
+            switch (loginResponse.getResponseCode()) {
+                case 0 -> {
+                    MainStart.rootScene(new UserData(
+                                    user.getHost(),
+                                    user.getPort(),
+                                    loginResponse.getResponseData().getID(),
+                                    user.getUsername(),
+                                    user.getPassword(),
+                                    loginResponse.getResponseData().getGroup(),
+                                    loginResponse.getResponseData().isSuspended(),
+                                    user.isSecure(),
+                                    loginResponse.getResponseData().getObjGroup(),
+                                    loginResponse.getResponseData().getMonitoringPort()
+                            )
+                    );
+                    System.out.println("Logged in.");
                 }
-                case FAILED_CONNECTION -> {
-                    a.setContentText("The connection to the host failed.");
-                    a.show();
-                }
-                case FAILED_USERNAME -> {
+                case 10 -> {
                     a.setContentText("Authentication failed. Username not found.");
                     a.show();
                 }
-                case FAILED_PASSWORD -> {
+                case 11 -> {
                     a.setContentText("Authentication failed. Incorrect password given.");
                     a.show();
                 }
-                case FAILED_SUSPENDED -> {
+                case 12 -> {
                     a.setContentText("Authentication failed. The account is suspended.");
                     a.show();
                 }
+                // Some error (probably not serious). needs timeouts set (for retries here) tho.
                 default -> {
-                    a.setContentText("A error has occurred while logging in within the application.");
+                    a.setContentText("A error has occurred while logging in within the application. " +
+                            "Mostly a connection could not be made.");
                     a.show();
-                }
+                } // essentially retry and add progress
             }
         });
     }

@@ -22,14 +22,22 @@ public class CryptographyToolbox {
         return iterations + ":" + toHex(salt) + ":" + toHex(hash);
     }
 
-    public static boolean validatePBKDF2WithHmacSHA512(String newPassword, String hashedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
+    public static boolean validatePBKDF2WithHmacSHA512(String password, String hashedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException
     {
         String[] parts = hashedPassword.split(":");
         int iterations = Integer.parseInt(parts[0]);
-        byte[] salt = fromHex(parts[1]);
-        byte[] hash = fromHex(parts[2]);
 
-        PBEKeySpec spec = new PBEKeySpec(newPassword.toCharArray(), salt, iterations, hash.length * 8);
+        byte[] salt;
+        byte[] hash;
+        try {
+            salt = fromHex(parts[1]);
+            hash = fromHex(parts[2]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("The hashedPassword wasn't hashed and/or salted in validatePBKDF2WithHmacSHA512.");
+            return false; // safe fallback
+        }
+
+        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, hash.length * 8);
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
         byte[] testHash = skf.generateSecret(spec).getEncoded();
 

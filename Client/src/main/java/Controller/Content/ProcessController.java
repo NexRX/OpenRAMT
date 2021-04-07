@@ -11,7 +11,6 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -61,8 +60,26 @@ public class ProcessController extends AnchorPane {
     }
 
     private void applyEventHandlers() {
-        btnKill.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID())));
-        btnRestart.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID())));
+        btnKill.setOnMouseClicked(event -> {
+            try {
+                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.KILLPROCESS, RootController.getLoggedInUser(), selectedPID()));
+            } catch (IllegalStateException e) {
+                new RAMTAlert(Alert.AlertType.WARNING,
+                        "OpenRAMT Warning",
+                        "Select a process first!",
+                        "No process was selected, select a process from the table and then try again.").showAndWait();
+            }
+        });
+        btnRestart.setOnMouseClicked(event -> {
+            try{
+                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.RESTARTPROCESS, RootController.getLoggedInUser(), selectedPID()));
+            } catch (IllegalStateException e) {
+                new RAMTAlert(Alert.AlertType.WARNING,
+                        "OpenRAMT Warning",
+                        "Select a process first!",
+                        "No process was selected, select a process from the table and then try again.").showAndWait();
+            }
+        });
 
         btnRefresh.setOnMouseClicked(event -> lastRequestID = RootController.requestStart(new TaskRequest<Void>(Task.FETCHPROCESSES, RootController.getLoggedInUser())));
 
@@ -98,13 +115,14 @@ public class ProcessController extends AnchorPane {
                         System.out.println(killResponse.getResponseCode());
                         break;
                 }
-                //TODO alert user somethings gone wrong if we got here.
             }
         });
     }
 
-    private Integer selectedPID() {
-        //TODO detect not selected.
-        return Integer.valueOf(tblProcesses.getSelectionModel().getSelectedItem().getId());
+    private Integer selectedPID() throws IllegalStateException {
+        if (tblProcesses.getSelectionModel().getSelectedItem() != null) {
+            return Integer.valueOf(tblProcesses.getSelectionModel().getSelectedItem().getId());
+        }
+        throw new IllegalStateException("Nothing selected in the Model.");
     }
 }

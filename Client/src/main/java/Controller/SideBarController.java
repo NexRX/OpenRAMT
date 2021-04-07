@@ -45,7 +45,6 @@ public class SideBarController extends VBox {
             this.wizard.changePane(0);
         });
         sideButtons.put(0, sBtnDefault); // Make a constructor that can add a different default button.
-
         getChildren().add(sBtnDefault); // Add our default button.
 
     }
@@ -115,6 +114,10 @@ public class SideBarController extends VBox {
             return false;
         }
         return true;
+    }
+
+    public int getLastIndex() {
+        return getChildren().size()-1;
     }
 
 

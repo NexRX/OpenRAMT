@@ -2,7 +2,8 @@ package Controller.Socket.Task;
 
 
 import Model.General.MonitoringData;
-import Model.Misc.DiskItem;
+import Model.Misc.HardDiskItem;
+import Model.Misc.SoftDiskItem;
 import oshi.SystemInfo;
 import oshi.hardware.*;
 import oshi.software.os.OSFileStore;
@@ -13,19 +14,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 public class MonitoringTask implements Runnable {
     // Atomic Monitoring Data.
-    private final AtomicInteger cpuUsage = new AtomicInteger();
-    private final AtomicLong ramUsage = new AtomicLong();
-    private ArrayList<DiskItem> diskItems = new ArrayList<>();
-    private final AtomicInteger cpuTemp = new AtomicInteger();
-    private final AtomicInteger systemTemp = new AtomicInteger();
+    private int cpuUsage = 0;
+    private long ramUsage = 0;
+    private final ArrayList<SoftDiskItem> softDiskItems = new ArrayList<>();
+    private final ArrayList<HardDiskItem> hardDiskItems = new ArrayList<>();
+    private int cpuTemp = 0;
+    private int systemTemp = 0;
 
-    public final AtomicReference<MonitoringData> output = new AtomicReference<>();
+    private final AtomicReference<MonitoringData> output = new AtomicReference<>();
 
-    // OSHI / System Information
+    // Hardware Abstractions
     private final SystemInfo sysInfo = new SystemInfo();
     private final HardwareAbstractionLayer hal = sysInfo.getHardware();
     private final CentralProcessor cpu = hal.getProcessor();
@@ -41,7 +42,10 @@ public class MonitoringTask implements Runnable {
     long[] preCPUTick = new long[8];
     private AtomicInteger pollingRate = new AtomicInteger(); // Assign automatically from settings
 
-    // TODO implement this!!! sysInfo.getOperatingSystem().isElevated()
+    public MonitoringData getMonitoringData() {
+        return output.get();
+    }
+
     public MonitoringTask() {
         // Disks
         this.disks = sysInfo.getOperatingSystem().getFileSystem().getFileStores(true);
@@ -57,73 +61,92 @@ public class MonitoringTask implements Runnable {
         preCPUTick = cpu.getSystemCpuLoadTicks();
     }
 
-
-
-    private MonitoringData parseMonitoringData() {
-
-        return new MonitoringData(
-                cpuUsage.get(),
-                ramUsage.get(),
-                getDiskItemsPrimativeArray(),
-                cpuTemp.get(),
-                systemTemp.get(), diskCount, ramCapacity);
-    }
-
     @Override
     public void run() {
         // CPU Usage & IO
 
         long[] preIOTick = new long[diskCount]; //disk stores probably different from os file stores.
-        for (int i = 0; i < diskCount; i++) { //TODO Redo IO So HardWare Drive matches SoftwareDrive (by confirming hwdrives name = softdrive name) 1.
+        for (int i = 0; i < diskCount; i++) {
             preIOTick[i] = sysInfo.getHardware().getDiskStores().get(i).getReads() +
                     sysInfo.getHardware().getDiskStores().get(i).getWrites();
 
+            //System.out.println(sysInfo.getHardware().getDiskStores().get(i).getName() + " | " + sysInfo.getHardware().getDiskStores().get(i).getModel());
         }
 
         try {
-            System.out.println("sleeping");
-            TimeUnit.MILLISECONDS.sleep(100); //TODO configure this with settings
-            System.out.println("not sleeping");
+            TimeUnit.MILLISECONDS.sleep(150);
         } catch (InterruptedException e) {
-            System.out.println("Thread failed to wait 0.1 seconds so getting CPU tick early");
+            System.out.println("Thread failed to wait 0.15 seconds. Getting tick data early");
         }
 
-        cpuUsage.set((int)(cpu.getSystemCpuLoadBetweenTicks(preCPUTick) * 100));
+        cpuUsage = (int)(cpu.getSystemCpuLoadBetweenTicks(preCPUTick) * 100);
         preCPUTick = cpu.getSystemCpuLoadTicks(); // for next run
 
         for (int i = 0; i < diskCount; i++) { // Disk space & final Disk IO
-            DiskItem thisDisk = new DiskItem(
+            SoftDiskItem softDisk = new SoftDiskItem(
                     disks.get(i).getLabel(),
                     disks.get(i).getFreeSpace(),
-                    disks.get(i).getTotalSpace(),
-                    (sysInfo.getHardware().getDiskStores().get(i).getReads() +   //TODO Redo IO So HardWare Drive matches SoftwareDrive (by confirming hwdrives name = softdrive name) 2.
-                            sysInfo.getHardware().getDiskStores().get(i).getWrites()) - preIOTick[i]
+                    disks.get(i).getTotalSpace()
             );
 
+            HardDiskItem hardDisk = new HardDiskItem(sysInfo.getHardware().getDiskStores().get(i).getModel(),
+                    (sysInfo.getHardware().getDiskStores().get(i).getReads() +
+                            sysInfo.getHardware().getDiskStores().get(i).getWrites()) - preIOTick[i]);
+
             try {
-                diskItems.set(i, thisDisk);
+                softDiskItems.set(i, softDisk);
             } catch (IndexOutOfBoundsException e) {
-                diskItems.add(i, thisDisk);
+                softDiskItems.add(i, softDisk);
+            }
+
+            try {
+                hardDiskItems.set(i, hardDisk);
+            } catch (IndexOutOfBoundsException e) {
+                hardDiskItems.add(i, hardDisk);
             }
         }
 
         // RAM Usage
-        ramUsage.set(memory.getAvailable());
+        ramUsage = memory.getAvailable();
 
         // Temps
-        cpuTemp.set((int) sysInfo.getHardware().getSensors().getCpuTemperature());
-        systemTemp.set((int) systemPower.getTemperature()); // Actually battery temp, so 0 on desktop.
+        cpuTemp = (int) sysInfo.getHardware().getSensors().getCpuTemperature();
+        systemTemp = (int) systemPower.getTemperature(); // Actually battery temp, so 0 on desktop.
+        // NEW NOTE: actually, on my laptop it was 0 too? maybe debug
+        //further to see if multiple power sources (i.e. because charger is a power source)
+        //If i cant be helped, new idea get any temps (cpu, gpu, etc) that arent 0 and use the average instead
 
         // Alerts all bindings to output of new data.
         output.set(parseMonitoringData());
     }
 
-    private DiskItem[] getDiskItemsPrimativeArray() {
-        DiskItem[] primative = new DiskItem[diskItems.size()];
+    private SoftDiskItem[] getSoftDiskPrimativeArray() {
+        SoftDiskItem[] primative = new SoftDiskItem[softDiskItems.size()];
         for (int i=0; i < primative.length; i++)
         {
-            primative[i] = diskItems.get(i);
+            primative[i] = softDiskItems.get(i);
         }
         return primative;
+    }
+
+    private HardDiskItem[] getHardDiskPrimativeArray() {
+        HardDiskItem[] primative = new HardDiskItem[hardDiskItems.size()];
+        for (int i=0; i < primative.length; i++)
+        {
+            primative[i] = hardDiskItems.get(i);
+        }
+        return primative;
+    }
+
+    private MonitoringData parseMonitoringData() {
+        return new MonitoringData(
+                cpuUsage,
+                ramUsage,
+                getSoftDiskPrimativeArray(),
+                getHardDiskPrimativeArray(),
+                cpuTemp,
+                systemTemp,
+                diskCount,
+                ramCapacity);
     }
 }

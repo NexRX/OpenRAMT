@@ -1,22 +1,20 @@
 package Controller.Socket;
 
+import Controller.Database.DBManager;
 import Controller.RAMTAlert;
 import Controller.Socket.Task.MonitoringTask;
-import Model.User.UserData;
 import javafx.scene.control.Alert;
-
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PlainMonitoringServer implements Runnable {
-    protected int port = 3068; // Default
+    protected int port; // Default
     protected boolean stop = false;
     protected boolean isStopped = false;
     private boolean isInitialised = false;
@@ -27,20 +25,11 @@ public class PlainMonitoringServer implements Runnable {
 
     public PlainMonitoringServer() {
         try {
+            port = Integer.parseInt(DBManager.getSetting("Monitoring Port"));
             initialisation();
         } catch (BindException e) {
             failedServerBind();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public PlainMonitoringServer(int port) {
-        try {
-            initialisation();
-        } catch (BindException e) {
-            failedServerBind();
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -110,6 +99,7 @@ public class PlainMonitoringServer implements Runnable {
             if (this.serverSocket != null) {
                 this.serverSocket.close();
             }
+            stop = true;
         } catch (IOException e) {
             throw new RuntimeException("Error closing server", e);
 

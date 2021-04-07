@@ -18,7 +18,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-public class LoginProgressiveService extends Service<Login> implements Progressible {
+public class LoginProgressiveService extends Service<TaskResponse<UserData>> implements Progressible {
     private UserData user;
 
     private final AtomicBoolean secure = new AtomicBoolean(true);
@@ -32,10 +32,11 @@ public class LoginProgressiveService extends Service<Login> implements Progressi
     }
 
     @Override
-    protected Task<Login> createTask() {
+    protected Task<TaskResponse<UserData>> createTask() {
         return new Task<>() {
+            TaskResponse<UserData> result;
             @Override
-            protected Login call() throws IOException {
+            protected TaskResponse<UserData> call() throws IOException {
                 setProgress(0d);
                 double inc = (1d / 7d); // total progress per loop and increment amount.
                 for (double i = 0d; i < 1d; i += inc) {
@@ -51,9 +52,8 @@ public class LoginProgressiveService extends Service<Login> implements Progressi
                     }
 
                     System.out.println("Starting client socket");
-                    TaskResponse<Void> result = null;
                     try {
-                        FutureTask<TaskResponse<Void>> futureTask = new FutureTask<>(new ClientWorker<>(new TaskRequest<>(Model.Task.Task.LOGIN, user), secure.get()));
+                        FutureTask<TaskResponse<UserData>> futureTask = new FutureTask<>(new ClientWorker<>(new TaskRequest<>(Model.Task.Task.LOGIN, user), secure.get()));
                         Thread thread = new Thread(futureTask);
                         thread.start();
                         result = futureTask.get(); // will wait for the async completion
@@ -75,26 +75,16 @@ public class LoginProgressiveService extends Service<Login> implements Progressi
                     switch ((result != null ? result.getResponseCode() : 99)) {
                         case 0 -> {
                             setProgress(1d);
-                            return Login.SUCCESS;
-                        }
-                        case 10 -> {
-                            setProgress(0d);
-                            return Login.FAILED_USERNAME;
-                        }
-                        case 11 -> {
-                            setProgress(0d);
-                            return Login.FAILED_PASSWORD;
-                        }
-                        case 12 -> {
-                            setProgress(0d);
-                            return Login.FAILED_SUSPENDED;
+                            return result;
                         }
                         // Some error (probably not serious). needs timeouts set (for retries here) tho.
-                        default -> addProgress(inc); // essentially retry and add progress
+                        default -> {
+                            addProgress(inc);
+                        }
                     }
                 }
 
-                return Login.FAILED_CONNECTION;
+                return result;
             }
         };
     }

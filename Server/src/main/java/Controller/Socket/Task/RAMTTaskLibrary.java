@@ -11,6 +11,7 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
+import javafx.application.Platform;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.Authority;
@@ -20,6 +21,8 @@ import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.ftpserver.usermanager.SaltedPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
+import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
+import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.json.JSONArray;
 
@@ -30,6 +33,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static Model.General.OSType.*;
 
@@ -56,6 +63,7 @@ import static Model.General.OSType.*;
  * - 98 - Server doesn't support this task.
  * - 99 - Catastrophic generic error. If this has returned, something has gone seriously wrong (i.e. unforeseen bugs).
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class RAMTTaskLibrary {
     private static PowerShell shell;
     private static FtpServer server;
@@ -71,21 +79,29 @@ public class RAMTTaskLibrary {
      *
      * @param request The request sent from the client from login. Should contain the user details required to validate
      *                a login attempt.
-     * @return A (error) code referring to the success of the operation. For a list of the error codes, please refer to
-     *                the classes JavaDoc.
+     * @return A Response with further information in an (error) code referring to the success of the operation. For a
+     * list of the error codes, please refer to the classes JavaDoc. If the response is successful their will be userdata
+     * attached. Otherwise UserData will be null when the response is returned.
      */
-    public static TaskResponse<Void> login(TaskRequest<Void> request) {
+    public static TaskResponse<UserData> login(TaskRequest<Void> request) {
         try {
-            if (request.getUser() == null) {  return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 4); }
+            if (request.getUser() == null) {                                                         // Parameter null?
+                return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 4);
 
-            if (DBManager.getUser(request.getUser().getUsername()) == null) {
+            } else if (DBManager.getUser(request.getUser().getUsername()) == null) {                 // User(name) doesn't exist?
                 return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 10);
-            }
 
-            if (DBManager.verifyPassword(request.getUser().getUsername(), request.getUser().getPassword())) {
-                return request.getUser().isSuspended() ?
-                        new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 12) :
-                        new TaskResponse<>(request, Response.SUCCESS, 0);
+            } else if (DBManager.verifyPassword(request.getUser().getUsername(), request.getUser().getPassword())) { // Right Password?
+                if (request.getUser().isSuspended()) {  // Suspended
+                    return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 12);
+
+                } else {                                // User Checks out!
+                    UserData loggedInUser = DBManager.getUser(request.getUser().getUsername());
+                    loggedInUser.setObjGroup(DBManager.getGroup(loggedInUser.getGroup())); // adding UserGroup
+
+                    return new TaskResponse<>(request, Response.SUCCESS, 0, loggedInUser);
+
+                }
             }
 
             return new TaskResponse<>(request, Response.FAILEDAUTHENTICATION, 11);
@@ -96,6 +112,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> killProcess(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.PROCESS);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS -> {
@@ -131,6 +152,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.PROCESS);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS -> {
@@ -141,14 +167,12 @@ public class RAMTTaskLibrary {
                     String reMsg = response.getCommandOutput();
                     int pathEnd = reMsg.indexOf("\"",reMsg.indexOf("\"") + 1);
 
-                    String path = reMsg.substring(3, pathEnd); //Todo catch and handle java.lang.StringIndexOutOfBoundsException
+                    String path = reMsg.substring(3, pathEnd);
                     String args;
                     try { args = reMsg.substring(pathEnd + 2); } catch (StringIndexOutOfBoundsException e) { args = ""; }
 
                     System.out.println(path); // Just path
                     System.out.println(args); // Just Args
-
-                    //todo kill to process now and start it with the path and args
 
                     if (killProcess(request).getResponseCode() == 0) {
                         PowerShellResponse responseStart;
@@ -198,6 +222,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<String> fetchProcesses(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.PROCESS);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -256,6 +285,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> shutdown(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.POWER);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -296,6 +330,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> restart(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.POWER);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -336,6 +375,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> sleep(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.POWER);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -375,6 +419,11 @@ public class RAMTTaskLibrary {
 
     // Takes IP and MAC ADDRESS and finally port (indexes respectively 0, 1, 2)
     public static TaskResponse<Void> wakeOnLAN(TaskRequest<String[]> request) {
+        TaskResponse auth = authorise(request, AppPermission.POWER);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         byte[] macBytes = getMacBytes(request.getParameter()[1]);
         byte[] bytes = new byte[6 + 16 * macBytes.length];
         for (int i = 0; i < 6; i++) {
@@ -400,6 +449,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         if (server != null) {
             System.out.println("FTP already started.");
         } else {
@@ -410,9 +464,8 @@ public class RAMTTaskLibrary {
             // Setting listener port.
             try {
                 factory.setPort(Integer.parseInt(DBManager.getSetting("FTP Port")));
-            } catch (SQLException throwables) {
-                factory.setPort(2221); // Default fallback.
-                //Todo alert user somehow.
+            } catch (SQLException e) {
+                return new TaskResponse<>(request, Response.FAILEDSTART, 99);
             }
             serverFactory.addListener("default", factory.createListener());
 
@@ -428,29 +481,63 @@ public class RAMTTaskLibrary {
             userManagerFactory.setPasswordEncryptor(new SaltedPasswordEncryptor());
             UserManager um = userManagerFactory.createUserManager();
 
-            BaseUser user = new BaseUser();
+            // Adding root user
+            BaseUser rootUser = new BaseUser();
 
             try {
-                user.setName(DBManager.getSetting("FTP Username"));
-                user.setPassword(DBManager.getSetting("FTP Password"));
-            } catch (SQLException throwables) {
-                user.setName("RAMTUser"); // Default fallbacks.
-                user.setPassword("$%^DFG543*z");
+                rootUser.setName(DBManager.getSetting("FTP Username"));
+                rootUser.setPassword(DBManager.getSetting("FTP Password"));
+            } catch (SQLException e) {
+                rootUser.setName("RAMTUser"); // Default fallbacks.
+                rootUser.setPassword("$%^DFG543*z");
             }
-            user.setEnabled(true);
 
-            List<Authority> authorities = new ArrayList<>();
-            authorities.add(new WritePermission());
-            user.setAuthorities(authorities);
+            rootUser.setEnabled(true);
 
-            user.setMaxIdleTime(0);
-            user.setHomeDirectory("/");
+            List<Authority> rootAuthorities = new ArrayList<>();
+            rootAuthorities.add(new WritePermission());
+            rootAuthorities.add(new ConcurrentLoginPermission(0, 0));
+            rootAuthorities.add(new TransferRatePermission(0, 0));
+            rootUser.setAuthorities(rootAuthorities);
 
-            //TODO add write permission for admin user and create a guest user (read only and locked to a home folder)
+            rootUser.setMaxIdleTime(120);
+            rootUser.setHomeDirectory("/");
 
+            boolean guestEnabled;
+            try {
+                guestEnabled = Boolean.parseBoolean(DBManager.getSetting("FTP Guest Enabled"));
+            } catch (SQLException e) {
+                e.printStackTrace();
+                guestEnabled = false;
+            }
+
+            if (guestEnabled) {
+                // Adding Guest user.
+
+                BaseUser guestUser = new BaseUser();
+
+                try {
+                    guestUser.setName(DBManager.getSetting("FTP Guest Username"));
+                    guestUser.setPassword(DBManager.getSetting("FTP Guest Password"));
+                } catch (SQLException e) {
+                    guestUser.setName("RAMTGuestUser"); // Default fallbacks.
+                    guestUser.setPassword("$%^DFG543*z");
+                }
+
+                guestUser.setEnabled(true);
+
+                guestUser.setMaxIdleTime(60);
+                guestUser.setHomeDirectory(DBManager.dbPath.getAbsolutePath());
+                try {
+                    um.save(guestUser);
+                } catch (FtpException e) {
+                    e.printStackTrace();
+                    return new TaskResponse<>(request, Response.FAILED, 99);
+                }
+            }
             // Server save users and start.
             try {
-                um.save(user);
+                um.save(rootUser);
                 serverFactory.setUserManager(um);
                 // Server creation.
                 server = serverFactory.createServer();
@@ -466,6 +553,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         if (server != null){
             server.stop();
             server = null;
@@ -476,11 +568,21 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         stopFTP(request);
         return startFTP(request);
     }
 
     public static TaskResponse<Integer> cleanDisk(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -534,19 +636,19 @@ public class RAMTTaskLibrary {
                                 new TaskResponse<>(request, Response.SUCCESS, 0, -1);
                     };
                 case WINDOWS:
-                   String cmdScript =  switch (request.getParameter()) {
+                    String cmdScript =  switch (request.getParameter()) {
                         case 0 -> "cleanmgr.exe /AUTOCLEAN /d C";
                         case 2 -> "cleanmgr.exe /AUTOCLEAN";
                         case 3 ->  "rd /s /q %systemdrive%\\$Recycle.bin";
                         default -> "";
                     };
 
-                   Process process;
-                   if (!cmdScript.isEmpty()) {
-                       process = new ProcessBuilder("cmd.exe", "/c", cmdScript).start();
-                   } else {
-                       return new TaskResponse<>(request, Response.FAILED, 98);
-                   }
+                    Process process;
+                    if (!cmdScript.isEmpty()) {
+                        process = new ProcessBuilder("cmd.exe", "/c", cmdScript).start();
+                    } else {
+                        return new TaskResponse<>(request, Response.FAILED, 98);
+                    }
 
                     return (process.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -593,6 +695,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> enableWifi(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -643,6 +750,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> disableWifi(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -688,6 +800,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> enableBluetooth(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -737,6 +854,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> disableBluetooth(TaskRequest<Integer> request) {
+        TaskResponse auth = authorise(request, AppPermission.GENERAL);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             switch (getOS()) {
                 case WINDOWS_PS:
@@ -780,6 +902,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<String> getSetting(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getSetting(request.getParameter()));
         } catch (SQLException e) {
@@ -789,6 +916,13 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<HashMap<String, String>> getSettings(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            System.out.println("Not authed");
+            return auth;
+        }
+        System.out.println("Authed");
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getSettings());
         } catch (SQLException e) {
@@ -798,6 +932,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> setSetting(TaskRequest<String[]> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateSetting(request.getParameter()[0], request.getParameter()[1])); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -807,6 +946,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<String> setSettings(TaskRequest<HashMap<String, String>> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.updateSettings(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -816,6 +960,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<UserData> getUser(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -825,6 +974,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<ArrayList<UserData>> getUsers(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, 0,DBManager.getAllUsers()); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -834,6 +988,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<?> deleteUser(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -843,6 +1002,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<?> deleteUsers(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteGroupUsers(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -852,6 +1016,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<?> deleteGroup(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.deleteGroup(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -861,6 +1030,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<?> updateUser(TaskRequest<String[]> request) { //0,1,2 (what to change, what username, updated value)
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return switch (request.getParameter()[0].toLowerCase()) {
                 // Should make sure DB and RAMT codes are same.
@@ -879,6 +1053,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> addUser(TaskRequest<UserData> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.addUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -888,6 +1067,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<Void> addGroup(TaskRequest<UserGroup> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.addGroup(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -897,6 +1081,16 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<UserGroup> getGroup(TaskRequest<String> request) {
+        if (login(((TaskRequest) request)).getResponse() == Response.SUCCESS &&
+                request.getUser().getGroup().equals(request.getParameter())) {
+            System.out.println("Bypassing get group full auth to allow user to grab their own group.");
+        } else {
+            TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+            if (auth.getResponse() != Response.SUCCESS) {
+                return auth;
+            }
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getGroup(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -906,6 +1100,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<ArrayList<UserGroup>> getGroups(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, 0, DBManager.getAllGroups()); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -913,8 +1112,13 @@ public class RAMTTaskLibrary {
         }
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
-    
+
     public static TaskResponse<?> suspendUser(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.suspendUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -924,6 +1128,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<?> suspendUsers(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return new TaskResponse<>(request, Response.SUCCESS, DBManager.suspendGroupUsers(request.getParameter())); // Should make sure DB and RAMT codes are same.
         } catch (SQLException e) {
@@ -933,6 +1142,11 @@ public class RAMTTaskLibrary {
     }
 
     public static TaskResponse<?> updateGroup(TaskRequest<String[]> request) { //0,1,2+ (what to change, what group name, updated value(s))
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
         try {
             return switch (request.getParameter()[0].toLowerCase()) {
                 // Should make sure DB and RAMT codes are same.
@@ -953,6 +1167,33 @@ public class RAMTTaskLibrary {
             e.printStackTrace();
         }
         return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
+    public static TaskResponse<Void> factoryReset(TaskRequest<Void> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
+        stopFTP(request); // May cause errors if not stopped.
+
+        Executors.newScheduledThreadPool(1).schedule(() -> {
+            System.exit(0);
+        }, 2, TimeUnit.SECONDS);
+
+
+        boolean isMarked;
+
+        try {
+            isMarked = new File(DBManager.dbPath.getAbsolutePath() + ".wipe").createNewFile();
+        } catch (IOException e) {
+            isMarked = false;
+            e.printStackTrace();
+        }
+
+        return isMarked ?
+                new TaskResponse<>(request, Response.SUCCESS, 0) :
+                new TaskResponse<>(request, Response.FAILED, 1);
     }
 
     /**
@@ -999,19 +1240,36 @@ public class RAMTTaskLibrary {
     /**
      * This method is to encapsulate the authorisation of task and is called upon by other methods before processing any
      * tasks. If the task was successful then the return of this method will be 0. Any value greater than 0 indicates an
-     * error.
-     * @param user The UserData object refering to the user.
+     * error. This method accepts uses raw types because it doesn't touch anything related to generics. It should be
+     * safe to cast back to any expected requests.
+     * @param request The Response containing UserData object referring to the user.
      * @param permission The task's permissions enum representing the requested task.
      * @return A (error) code referring to the success of the operation. For a list of the error codes, please refer to
      * the classes JavaDoc.
      */
-    private static boolean authorise(UserData user, AppPermission permission) throws SQLException {
-        UserGroup group = DBManager.getGroup(user.getGroup());
+    private static TaskResponse authorise(TaskRequest request, AppPermission permission) {
+        TaskResponse loginResponse = login(request);
+
+        if (loginResponse.getResponse() != Response.SUCCESS) {
+            return loginResponse;
+        }
+
+        UserGroup group;
+
+        System.out.println("Request group: " + request.getUser().getGroup());
+
+        try {
+            group = DBManager.getGroup(request.getUser().getGroup());
+        } catch (SQLException e) {
+            System.out.println("Auth query failed, failing auth as fallback.");
+            e.printStackTrace();
+            return new TaskResponse(request, Response.FAILEDAUTHENTICATION, 20);
+        }
 
         if (group.getAdmin().equalsIgnoreCase("true")) {
-            return true; // Because admins have access to all.
+            return new TaskResponse<>(request, Response.SUCCESS, 0); // Because admins have access to all.
         } else {
-            return switch (permission) {
+            boolean authed = switch (permission) {
                 case GENERAL -> group.getGeneral().equalsIgnoreCase("true");
                 case PROCESS -> group.getProcess().equalsIgnoreCase("true");
                 case MONITORING -> group.getMonitoring().equalsIgnoreCase("true");
@@ -1019,6 +1277,12 @@ public class RAMTTaskLibrary {
                 case NONE -> true; // if none are needed.
                 default -> false; // In-case more are added in a future update.
             };
+
+            if (authed) {
+                return new TaskResponse<>(request, Response.SUCCESS, 0);
+            } else {
+                return new TaskResponse<>(request, Response.FAILED, 19);
+            }
         }
     }
 

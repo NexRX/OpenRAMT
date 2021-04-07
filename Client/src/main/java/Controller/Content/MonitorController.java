@@ -2,7 +2,8 @@ package Controller.Content;
 
 import Controller.Library.Services.MonitoringService;
 import Controller.RootController;
-import Model.Misc.DiskItem;
+import Model.Misc.HardDiskItem;
+import Model.Misc.SoftDiskItem;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.*;
@@ -10,7 +11,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class MonitorController extends ScrollPane {
@@ -123,9 +123,9 @@ public class MonitorController extends ScrollPane {
         }
     }*/
 
-    public void updateDiskSpaces(DiskItem[] disks) {
+    public void updateDiskSpaces(SoftDiskItem[] disks) {
         int i = 0;
-        for (DiskItem disk : disks) {
+        for (SoftDiskItem disk : disks) {
             if (disk.getCapacity() > maxDisk) {
                 maxDisk = disk.getCapacity();
                 axisDiskSize.setUpperBound(maxDisk);
@@ -142,7 +142,7 @@ public class MonitorController extends ScrollPane {
         }
     }
 
-    public void updateDiskIOs(DiskItem[] disks, String timestamp) {
+    public void updateDiskIOs(HardDiskItem[] disks, String timestamp) {
         if (ioSeries.size() == 0) { // initialise if device is added later will need initialising  in else if maybe
             for (int i = 0; i < disks.length; i++) {
                 XYChart.Series<String, Number> newSeries = new XYChart.Series<>();
@@ -164,7 +164,7 @@ public class MonitorController extends ScrollPane {
         }
 
         int i = 0;
-        for (DiskItem disk : disks) {
+        for (HardDiskItem disk : disks) {
             ioSeries.get(i).getData().add(new XYChart.Data<>(timestamp, disk.getDiskIO()));
             i++;
         }

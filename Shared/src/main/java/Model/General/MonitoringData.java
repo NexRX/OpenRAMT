@@ -1,16 +1,17 @@
 package Model.General;
 
-import Model.Misc.DiskItem;
+import Model.Misc.HardDiskItem;
+import Model.Misc.SoftDiskItem;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class MonitoringData implements Serializable {
     private final int cpuUsage;
     private final long ramUsage;
-    private final DiskItem[] disks;
+    private final SoftDiskItem[] softDisks;
+    private final HardDiskItem[] hardDisks;
     private final int cpuTemp;
     private final int systemTemp;
 
@@ -30,10 +31,11 @@ public class MonitoringData implements Serializable {
      * @param diskCount The amount of physical disks on the system.
      * @param ramCapacity The total capacity of physical memory.
      */
-    public MonitoringData(int cpuUsage, long ramUsage, DiskItem[] disks, int cpuTemp, int systemTemp, int diskCount, long ramCapacity) {
+    public MonitoringData(int cpuUsage, long ramUsage, SoftDiskItem[] softDisks, HardDiskItem[] hardDisks, int cpuTemp, int systemTemp, int diskCount, long ramCapacity) {
         this.cpuUsage = cpuUsage;
         this.ramUsage = ramUsage;
-        this.disks = disks;
+        this.softDisks = softDisks;
+        this.hardDisks = hardDisks;
         this.cpuTemp = cpuTemp;
         this.systemTemp = systemTemp;
         this.diskCount = diskCount;
@@ -45,9 +47,14 @@ public class MonitoringData implements Serializable {
 
     public long getRAMUsage() { return ramUsage; }
 
-    public DiskItem getDisk(int index) { return disks[index]; }
+    public SoftDiskItem getSoftDisk(int index) { return softDisks[index]; }
 
-    public DiskItem[] getDisks() { return disks; }
+    public SoftDiskItem[] getSoftDisks() { return softDisks; }
+
+    public HardDiskItem getHardDisk(int index) { return hardDisks[index]; }
+
+    public HardDiskItem[] getHardDisks() { return hardDisks; }
+
 
     public int getCPUTemp() { return cpuTemp; }
 

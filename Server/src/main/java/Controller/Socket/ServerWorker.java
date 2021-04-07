@@ -75,6 +75,7 @@ public class ServerWorker implements Runnable{
             case LOGIN -> login((TaskRequest<Void>) request);
             case KILLPROCESS -> killProcess((TaskRequest<Integer>) request);
             case RESTARTPROCESS -> restartProcess((TaskRequest<Integer>) request);
+            case FACTORYRESET -> factoryReset((TaskRequest<Void>) request);
             case FETCHPROCESSES -> fetchProcesses((TaskRequest<Void>) request);
             case SHUTDOWN -> shutdown((TaskRequest<Void>) request);
             case RESTART -> restart((TaskRequest<Void>) request);
