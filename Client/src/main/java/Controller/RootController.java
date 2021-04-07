@@ -36,8 +36,8 @@ public class RootController extends AnchorPane {
 	@FXML Pane resizeHelperR;
 	@FXML Pane resizeHelperB;
 
-	private final MainContentController mcc = new MainContentController(new WelcomeController());
-	private final SideBarController sbc = new SideBarController(mcc);
+	private final MainContentController mcc;
+	private final SideBarController sbc;
 
 	private static UserData loggedInUser;
 	private static final TaskProgressiveService taskService = new TaskProgressiveService(null);
@@ -52,7 +52,9 @@ public class RootController extends AnchorPane {
 	public RootController(UserData user) {
 		loggedInUser = user;
 
-		taskService.setRequest(new TaskRequest(Task.TESTING, loggedInUser));
+		taskService.setRequest(new TaskRequest<>(Task.TESTING, loggedInUser));
+
+		System.out.println(user.getHost());
 
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Root.fxml"));
 		this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -65,6 +67,8 @@ public class RootController extends AnchorPane {
 			throw new RuntimeException(exception);
 		}
 
+		mcc = new MainContentController(new WelcomeController());
+		sbc = new SideBarController(mcc);
 		addInitialChildren();
 		applyEventHandlers();
 	}
@@ -75,8 +79,6 @@ public class RootController extends AnchorPane {
 		this.getChildren().add(tb);
 
 		// Content Wizard
-		//nothing :3
-
 		this.getChildren().add(mcc);
 
 		// Side Bar

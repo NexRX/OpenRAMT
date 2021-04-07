@@ -1,14 +1,25 @@
 package Controller.Content;
 
 
+import Controller.RootController;
+import Model.User.UserData;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+
 import java.io.IOException;
 
 public class WelcomeController extends VBox {
     @FXML AnchorPane container;
+
+    @FXML Label lblHostValue;
+    @FXML Label lblPortValue;
+    @FXML Label lblConnectionValue;
+
+    @FXML Label lblUsernameValue;
+    @FXML Label lblGroupValue;
 
     /**
      * Constructs the VBox and loads its FXML file.
@@ -33,5 +44,16 @@ public class WelcomeController extends VBox {
         AnchorPane.setRightAnchor(this, 0.0);
         AnchorPane.setBottomAnchor(this, 0.0);
         AnchorPane.setLeftAnchor(this, 0.0);
+
+        UserData user = RootController.getLoggedInUser();
+
+        System.out.println(user.getUsername());
+
+        lblHostValue.setText(user.getHost());
+        lblPortValue.setText(String.valueOf(user.getPort()));
+        lblConnectionValue.setText(String.valueOf(user.isSecure()));
+
+        lblUsernameValue.setText(user.getUsername());
+        lblGroupValue.setText(user.getGroup());
     }
 }

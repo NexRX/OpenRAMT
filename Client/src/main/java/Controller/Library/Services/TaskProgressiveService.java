@@ -55,7 +55,7 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
                 jointUpdate(0.1f, "Starting");
 
                 // Communications with server
-                SSLSocket secureSocket = null;
+                SSLSocket secureSocket = null; //TODO SSLSocket extends socket so store use base class for task.
                 Socket socket = null;
                 boolean secure = request.getUser().isSecure();
 

@@ -37,7 +37,13 @@
 }
 
 .lbl-header {
-    -fx-font-size: 18;
+    -fx-font-size: 20;
+    -fx-text-fill: #ffffff;
+}
+
+.lbl-regular {
+    -fx-font-size: 13;
+    -fx-text-fill: white;
 }
 
 .btn-regular {
