@@ -19,7 +19,7 @@
          </font>
       </JFXButton>
       <Pane fx:id="topBar" layoutX="58.0" prefHeight="25.0" prefWidth="493.0" styleClass="secondary-background" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="0.0" />
-      <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" ripplerFill="#0d0000" styleClass="topBar-Buttons" text="🗕" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0">
+      <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" ripplerFill="#0d0000" styleClass="topBar-Buttons" text="_" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0">
          <font>
             <Font name="Arial" size="12.0" />
          </font></JFXButton>
