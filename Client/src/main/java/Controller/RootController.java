@@ -11,6 +11,7 @@ import Model.Task.TaskRequest;
 import Model.User.UserData;
 import application.Launcher;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -182,9 +183,12 @@ public class RootController extends AnchorPane {
 	 */
 	public static void exitApp(int exitCode) {
 		Platform.exit();
-
-		// mc.stopMonitoringService();
-
+		mc.stopMonitoringService();
 		System.exit(exitCode);
+	}
+
+	@FXML
+	public void exitApplication(ActionEvent event) {
+		exitApp(0);
 	}
 }

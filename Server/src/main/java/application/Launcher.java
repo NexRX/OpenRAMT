@@ -5,6 +5,9 @@ import Controller.ManagementController;
 import Controller.RAMTAlert;
 import Controller.SetupController;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -116,6 +119,11 @@ public class Launcher {
          */
         public static void main(String[] args) {
             launch(args);
+        }
+
+        @Override
+        public void stop(){
+            System.exit(0);
         }
     }
 }
