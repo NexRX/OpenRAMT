@@ -17,12 +17,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
+/**
+ * This class houses the login constructor needed to craft an instance needed to do the work needed.
+ */
 public class LoginProgressiveService extends Service<TaskResponse<UserData>> implements Progressible {
     private UserData user;
 
     private final AtomicBoolean secure = new AtomicBoolean(true);
 
+    /**
+     * This service is designed to get the process userdata and get a response from the server defined in the request
+     * given to contact the server and get more information about our user based on their known credentials. If the
+     * request is successful the response in the service value will reflect that, same goes for failed logins with more
+     * information provided in the response code.
+     * @param user the user with a valid host (+port) and username + password to validate. Also instructions on if the
+     *             server is secure or not.
+     */
     public LoginProgressiveService(UserData user) {
         this.user = user;
     }
@@ -72,15 +82,11 @@ public class LoginProgressiveService extends Service<TaskResponse<UserData>> imp
                         System.exit(1);
                     }
 
-                    switch ((result != null ? result.getResponseCode() : 99)) {
-                        case 0 -> {
-                            setProgress(1d);
-                            return result;
-                        }
-                        // Some error (probably not serious). needs timeouts set (for retries here) tho.
-                        default -> {
-                            addProgress(inc);
-                        }
+                    if ((result != null ? result.getResponseCode() : 99) == 0) {
+                        setProgress(1d);
+                        return result;
+                    } else {
+                        addProgress(inc); //retry
                     }
                 }
 

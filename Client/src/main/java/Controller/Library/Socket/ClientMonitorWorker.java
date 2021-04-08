@@ -7,6 +7,9 @@ import java.io.*;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.*;
 
+/**
+ * Client monitor worker for its intended services.
+ */
 public class ClientMonitorWorker implements Callable<Void> {
     private final ObjectInputStream socketInput;
     private final MonitorController monitorController;
@@ -15,6 +18,13 @@ public class ClientMonitorWorker implements Callable<Void> {
     private boolean isMonitoring;
     private boolean stopSignal;
 
+    /**
+     * Does the monitoring work needed to get the monitoring data with the given pre-established socket and updates the
+     * JavaFX thread where the monitorController will be to supply the information needed to update the charts.
+     * @param socketInput The pre-established and authorised input socket with the server.
+     * @param monitorController The monitoring controller to send the updated information too.
+     * @param pollingRate the rate at which information is being generated on the server.
+     */
     public ClientMonitorWorker(ObjectInputStream socketInput, MonitorController monitorController, int pollingRate) {
         this.socketInput = socketInput;
         this.monitorController = monitorController;

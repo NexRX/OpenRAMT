@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Controller class for creating new users.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewUserController extends AnchorPane {
     Stage stage;
@@ -45,7 +48,11 @@ public class NewUserController extends AnchorPane {
 
     @FXML JFXButton btnSubmit;
 
-
+    /**
+     * The controller creating a new user to be added to a server.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     */
     public NewUserController(Stage stage, Stage callingStage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/User/NewUser.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

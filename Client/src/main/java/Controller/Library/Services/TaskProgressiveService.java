@@ -12,12 +12,38 @@ import java.security.cert.CertificateException;
 import java.util.Objects;
 
 
+/**
+ * The task service for task work for the service, has many response codes defined by the server, here they are:
+ * A (error) code referring to the success of the operation. The codes are as follows:
+ * - 0 - Success without issue.
+ * - 1 - Generic error where the request failed normally i.e. no results found or something *without* exception/fault.
+ * - 2 - Parameters do not meet the require constraints of the database column, field or value.
+ * - 3 - Parameter contained semantically immutable field such as root/default user in a delete query.
+ * - 4 - Parameters required are invalid. This could be because of a null//incorrect value in request parameters.
+ * - 10 - Username not found.
+ * - 11 - Username found but incorrect password.
+ * - 12 - User details verified but account is suspended
+ * - 19 - User details verified but permissions are not satisfied (Unauthorised).
+ * - 20 - An SQL exception was thrown that wasn't handled (correctly).
+ * - 21 - Duplicate SQL error. When a value given would of violated a unique column for example.
+ * - 31 - Process task related error, process restart attempted, killed but couldn't start again.
+ * - 44 - Data given couldn't be found within the request i.e. row not found when updating a line in the database.
+ * - 97 - Server wasn't launched with permissions (i.e. sudo, as admin...).
+ * - 98 - Server doesn't support this task.
+ * - 99 - Catastrophic generic error. If this has returned, something has gone seriously wrong (i.e. unforeseen bugs).
+ */
 public class TaskProgressiveService extends Service<TaskResponse<?>> {
     private TaskRequest<?> request;
     private TaskResponse<?> lastResponse;
 
     private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
+    /**
+     * Constructs the service needed to request the tasks. users the information in the request to contact the server
+     * and ask if we have permission, if every goes as expected then the task will be executed and the server will send
+     * a response reflecting the state of the task. Read this classes response codes for more information on them.
+     * @param request
+     */
     public TaskProgressiveService(TaskRequest<?> request) {
         this.request = request;
 

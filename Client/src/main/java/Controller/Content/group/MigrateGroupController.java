@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class is the controller class for migrating users to a different group.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class MigrateGroupController extends AnchorPane {
     Stage stage;
@@ -27,7 +30,7 @@ public class MigrateGroupController extends AnchorPane {
     private double xOffset = 0;
     private double yOffset = 0;
 
-    private String lastRequestID  = "";
+    private String lastRequestID;
 
     HashMap<String, UserGroup> groups = new HashMap<>();
 
@@ -41,6 +44,12 @@ public class MigrateGroupController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for migrating users to a different group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param groupName The group name to migrate its users.
+     */
     public MigrateGroupController(Stage stage, Stage callingStage, String groupName) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Group/MigrateUsers.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

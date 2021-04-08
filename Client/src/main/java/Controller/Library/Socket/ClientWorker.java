@@ -1,10 +1,12 @@
 package Controller.Library.Socket;
 
+import Model.Task.Response;
 import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
 import javax.net.ssl.*;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Objects;
@@ -33,8 +35,14 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
         } else {
             this.socket = new Socket(request.getUser().getHost(), request.getUser().getPort());
         }
+        socket.setSoTimeout(10 * 1000);
 
-        TaskResponse<T> result = work();
+        TaskResponse<T> result;
+        try {
+            result = work();
+        } catch (SocketTimeoutException e) {
+            result = new TaskResponse<>(request, Response.FAILEDSTART, 99);
+        }
 
         try { socket.close(); } catch (IOException ignored){}
 

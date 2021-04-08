@@ -18,6 +18,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * Controller class for creating new groups with full information.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewGroupController extends AnchorPane {
     Stage stage;
@@ -41,7 +44,11 @@ public class NewGroupController extends AnchorPane {
     @FXML JFXToggleButton toggleBtnMonitor;
     @FXML JFXToggleButton toggleBtnPower;
 
-
+    /**
+     * The controller for the creation of new groups.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     */
     public NewGroupController(Stage stage, Stage callingStage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Group/NewGroup.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -113,7 +120,7 @@ public class NewGroupController extends AnchorPane {
 
     }
 
-    public UserGroup getUserGroup() {
+    private UserGroup getUserGroup() {
         return new UserGroup(txtName.getText(),
                 toggleBtnAdmin.isSelected(),
                 toggleBtnGeneral.isSelected(),

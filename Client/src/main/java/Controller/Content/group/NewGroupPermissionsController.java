@@ -17,6 +17,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * This class is the controller class for updating/changing the permissions of a group.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewGroupPermissionsController extends AnchorPane {
     Stage stage;
@@ -42,6 +45,12 @@ public class NewGroupPermissionsController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for updating/changing the permissions of a group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param groupName The group name to modify.
+     */
     public NewGroupPermissionsController(Stage stage, Stage callingStage, String groupName) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Group/Permissions.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

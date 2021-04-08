@@ -23,6 +23,9 @@ import java.util.HashMap;
 import static Controller.RootController.*;
 import static Controller.RootController.getTaskService;
 
+/**
+ * Controller class for moving users to different pre-existing groups.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewUserGroupController extends AnchorPane {
     Stage stage;
@@ -46,6 +49,12 @@ public class NewUserGroupController extends AnchorPane {
     // Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for moving a user to a different pre-existing group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param username The username of the user to move group.
+     */
     public NewUserGroupController(Stage stage, Stage callingStage, String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/User/Group.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

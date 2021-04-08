@@ -1,18 +1,17 @@
 package Controller.Content;
 
-import Controller.RAMTAlert;
 import Controller.RootController;
 import Model.Task.Task;
 import Model.Task.TaskRequest;
 import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
-
 import java.io.IOException;
 
+/**
+ * The controller class for handling the general tasks.
+ */
 public class GeneralController extends ScrollPane {
     private String lastRequestID = "";;
 
@@ -35,7 +34,7 @@ public class GeneralController extends ScrollPane {
 
 
     /**
-     * Constructs the VBox and loads its FXML file.
+     * Controller for general tasks for the user if permitted.
      */
     public GeneralController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/General.fxml"));

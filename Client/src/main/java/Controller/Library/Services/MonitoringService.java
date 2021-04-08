@@ -18,12 +18,22 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.concurrent.FutureTask;
 
+/**
+ * The service extending class responsible for handling monitoring data.
+ */
 public class MonitoringService extends Service<Void> {
-    private UserData user;
-    private ClientMonitorWorker monitoringWorker;
+    private final UserData user;
     private final MonitorController monitoringController;
+    private ClientMonitorWorker monitoringWorker;
     private Socket socket;
 
+    /**
+     * This service is used to monitor the server data given relating to its various states, such as disk spaces and CPU
+     *  usage. If a timeout occurs or a socket is closed for some reason, the service will need to be restarted again.
+     * @param user The logged in user data contians the information to connect to the host and authorise a monitoring
+     *             session.
+     * @param monitoringController The monitoring controller in which to update with our stream monitoring data.
+     */
     public MonitoringService(UserData user, MonitorController monitoringController) {
         super();
         this.user = user;
@@ -78,6 +88,9 @@ public class MonitoringService extends Service<Void> {
         };
     }
 
+    /**
+     * Stops the service workers, closes the socket and sets it as null afterwards.
+     */
     public void closeSockets() {
         monitoringWorker.stop();
         try {
@@ -86,15 +99,11 @@ public class MonitoringService extends Service<Void> {
         socket = null;
     }
 
-    public void updateUser(UserData user) {
-        this.user = user;
-    }
-
+    /**
+     * Used to detect if the server is continuing to monitor indefinitely while the sockets are healthy.
+     * @return The monitoring state. True for will continue to monitor indefinitely, False otherwise.
+     */
     public boolean isMonitoring() {
         return monitoringWorker.isMonitoring();
-    }
-
-    public ClientMonitorWorker getMonitoringWorker() {
-        return monitoringWorker;
     }
 }

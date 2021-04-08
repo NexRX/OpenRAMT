@@ -11,6 +11,9 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 
+/**
+ * Controller class for displaiyng welcome information
+ */
 public class WelcomeController extends VBox {
     @FXML AnchorPane container;
 
@@ -22,7 +25,7 @@ public class WelcomeController extends VBox {
     @FXML Label lblGroupValue;
 
     /**
-     * Constructs the VBox and loads its FXML file.
+     * Controller for welcoming the user after login. This should be accessible always regardless of permission.
      */
     public WelcomeController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Welcome.fxml"));

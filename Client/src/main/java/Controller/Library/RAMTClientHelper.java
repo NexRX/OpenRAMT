@@ -12,6 +12,9 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * Helper class for client.
+ */
 public class RAMTClientHelper extends AnchorPane{
     private final Stage hostStage;
 
@@ -41,6 +44,10 @@ public class RAMTClientHelper extends AnchorPane{
     @FXML ScrollPane scrollSettings;
     @FXML TextFlow tfSettings;
 
+    /**
+     * Controller for help wizard.
+     * @param hostStage the stage which hosts this controller.
+     */
     public RAMTClientHelper(Stage hostStage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Helper.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

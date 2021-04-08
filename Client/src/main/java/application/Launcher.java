@@ -18,7 +18,6 @@ import java.lang.reflect.Field;
 public class Launcher {
     /**
      * The first function called to start all our processes.
-     * Experienced errors not starting like this.
      * @param args Command-line arguments.
      */
     public static void main(String[] args) {
@@ -26,6 +25,10 @@ public class Launcher {
     }
 
 
+    /**
+     * Starting point for client OpenRAMT. Disabled JFoenix illegal reflection warnings and sets the stage.
+     * the init method is then called for initialisation.
+     */
     public static class MainStart extends Application {
         static Stage stage;
         @Override
@@ -34,13 +37,20 @@ public class Launcher {
             this.stage = stage;
 
             initScene();
-            //rootScene();
         }
 
+        /**
+         * Gets the main stage of the application where the main window should appear. Use this to call center events or
+         * actions from (sub-)controllers.
+         * @return
+         */
         public static Stage getStage() {
             return stage;
         }
 
+        /**
+         * Brings back the stage to the initial window for login.
+         */
         public static void initScene() {
             stage.close();
             stage = new Stage();
@@ -55,6 +65,10 @@ public class Launcher {
             stage.show();
         }
 
+        /**
+         * Used once at least after a login event is confirmed to start the main stage of the application.
+         * @param user The userdata which was confirmed by the server.
+         */
         public static void rootScene(UserData user) {
             stage.close();
             stage = new Stage();
@@ -69,7 +83,10 @@ public class Launcher {
             stage.show();
         }
 
-        public static void disableReflectionWarning() {
+        /**
+         * This method disables the illegal access warning which is unnecessary from print to console every time.
+         */
+        private static void disableReflectionWarning() {
             try {
                 Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
                 theUnsafe.setAccessible(true);

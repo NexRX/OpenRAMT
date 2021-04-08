@@ -20,6 +20,9 @@ import org.json.JSONException;
 
 import java.io.IOException;
 
+/**
+ * Controller class for process related tasks and display.
+ */
 public class ProcessController extends AnchorPane {
     private String lastRequestID = "";
 
@@ -36,7 +39,7 @@ public class ProcessController extends AnchorPane {
     @FXML TableColumn<ProcessItem, String> colMEM;
 
     /**
-     * Constructs the VBox and loads its FXML file.
+     * Controller for process related tasks and display.
      */
     public ProcessController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Process.fxml"));
@@ -119,6 +122,11 @@ public class ProcessController extends AnchorPane {
         });
     }
 
+    /**
+     * Gets the selected process ID in the table by the user if any.
+     * @return The selected process ID.
+     * @throws IllegalStateException if nothing is selected.
+     */
     private Integer selectedPID() throws IllegalStateException {
         if (tblProcesses.getSelectionModel().getSelectedItem() != null) {
             return Integer.valueOf(tblProcesses.getSelectionModel().getSelectedItem().getId());

@@ -15,6 +15,9 @@ import javafx.scene.layout.VBox;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * The controller class for monitoring related work and display.
+ */
 public class MonitorController extends ScrollPane {
     // Series Chart Data //
     //CPU
@@ -33,9 +36,9 @@ public class MonitorController extends ScrollPane {
     private static final XYChart.Series<String, Number> cpuTempSeries = new XYChart.Series<>();
     private static final XYChart.Series<String, Number> systemTempSeries = new XYChart.Series<>();
 
-    private final MonitoringService monitoringService = new MonitoringService(RootController.getLoggedInUser(), this);;
+    private final MonitoringService monitoringService = new MonitoringService(RootController.getLoggedInUser(), this);
 
-    // FXML ??
+    // FXML
     @FXML FlowPane container;
 
     // Charts
@@ -56,7 +59,7 @@ public class MonitorController extends ScrollPane {
 
 
     /**
-     * Constructs the VBox and loads its FXML file.
+     * Controller for monitoring work and display.
      */
     public MonitorController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Monitor.fxml"));
@@ -118,6 +121,9 @@ public class MonitorController extends ScrollPane {
         });
     }
 
+    /**
+     * Clears all the series data from the charts.
+     */
     private void clearCurrentData() {
         cpuUsageSeries.getData().clear();
         diskCapacitySeries.getData().clear();
@@ -129,21 +135,37 @@ public class MonitorController extends ScrollPane {
         systemTempSeries.getData().clear();
     }
 
+    /**
+     * Restarts the server.
+     */
     public void startMonitoringService() {
         monitoringService.restart();
     }
 
+    /**
+     * Closes the sockets in use for monitoring and cancels the service's task.
+     */
     public void stopMonitoringService() {
         monitoringService.closeSockets();
         monitoringService.cancel();
     }
 
+    /**
+     * Updates the CPU usage of the server.
+     * @param time A timestamp from the server when the data was recorded.
+     * @param value the CPU usage of the server from the timestamp.
+     */
     public void updateCPUUsage(String time, Integer value) {
         cpuUsageSeries.getData().add(new XYChart.Data<>(time, value));
         if (cpuUsageSeries.getData().size() > 30)
             cpuUsageSeries.getData().remove(0);
     }
 
+    /**
+     * Updates the ram usage pie chart values.
+     * @param used total physical memory used.
+     * @param total total physical memory.
+     */
     public void updateRAMUsage(long used, long total) {
         double usedPercent = (used * 1d / total /*+ 0.5 prevents truncating*/);
         double freePercent = 1d - usedPercent;
@@ -151,6 +173,10 @@ public class MonitorController extends ScrollPane {
         ramData[1].setPieValue(usedPercent);
     }
 
+    /**
+     * Updates all series of disk spaces. Expanding and contracting data if the servers information somehow changes.
+     * @param disks The array of SoftDiskItem objects used to update the Series data.
+     */
     public void updateDiskSpaces(SoftDiskItem[] disks) {
         int i = 0;
         for (SoftDiskItem disk : disks) {
@@ -173,6 +199,11 @@ public class MonitorController extends ScrollPane {
         }
     }
 
+    /**
+     * Updates all series of disk IO. Expanding and contracting data if the servers information somehow changes.
+     * @param disks The array of HardDiskItem objects used to update the Series data.
+     * @param timestamp A timestamp from the server when the data was recorded.
+     */
     public void updateDiskIOs(HardDiskItem[] disks, String timestamp) {
         if (ioSeries.size() == 0) { // initialise if device is added later will need initialising  in else if maybe
             for (int i = 0; i < disks.length; i++) {
@@ -189,8 +220,8 @@ public class MonitorController extends ScrollPane {
                 acDiskIO.getData().add(i, newSeries);
             }
         } else if (ioSeries.size() > disks.length) {
-            for (int i = ioSeries.size()-1; i > disks.length; i--) {
-                ioSeries.remove(i);
+            if (ioSeries.size() > disks.length + 1) {
+                ioSeries.subList(disks.length + 1, ioSeries.size()).clear();
             }
         }
 
@@ -203,12 +234,22 @@ public class MonitorController extends ScrollPane {
         }
     }
 
+    /**
+     * Updates the series with new data for CPU temp.
+     * @param time The timestamp from when the data was taken.
+     * @param value The temperature in Celsius of the CPU. As a whole/average, most expectedly it's packet temperature.
+     */
     public void updateCPUTemp(String time, Integer value) {
         cpuTempSeries.getData().add(new XYChart.Data<>(time, value));
         if (cpuTempSeries.getData().size() > 30)
             cpuTempSeries.getData().remove(0);
     }
 
+    /**
+     * Updates the series with new data for system temp.
+     * @param time The timestamp from when the data was taken.
+     * @param value The system temperature for the server. Should be an average of all temperatures or motherboard's.
+     */
     public void updateSystemTemp(String time, Integer value) {
         systemTempSeries.getData().add(new XYChart.Data<>(time, value));
         if (systemTempSeries.getData().size() > 30)

@@ -26,6 +26,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The controller class for handling admin related events. Most for user management.
+ */
 public class AdminController extends ScrollPane {
     private final Stage stage;
 
@@ -70,7 +73,7 @@ public class AdminController extends ScrollPane {
     @FXML TableColumn<UserItem, String> colSuspended;
 
     /**
-     * Constructs the VBox and loads its FXML file.
+     * Controller of the admin pane. The primary purpose is user management.
      */
     public AdminController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Admin.fxml"));
@@ -479,6 +482,19 @@ public class AdminController extends ScrollPane {
         }
     }
 
+    /**
+     * Of particular importance for documentation. This method will create a new instance of the class given with
+     * parameters needed. It is hardcorded for handling only new instances of user and group controllers for user
+     * management. Therefore, it should be updated where new classes are added and rely on the same reflective starting
+     * requirements. The new instances is then shown in the a new stage and scene. The instances have our stage used
+     * from here to return to when they are done with there work because after the are launcher, our stage hides.
+     * @param clazz The class object which should be constructed.
+     * @param name The parameters needed.
+     * @throws NoSuchMethodException Invalid class = constructor couldn't be found essentially.
+     * @throws IllegalAccessException The class given is protected in some way (private).
+     * @throws InvocationTargetException Bad constructor(s) for class given.
+     * @throws InstantiationException the class is not typical (I.e. abstract, interface) or constructor isn't suitable.
+     */
     private void reflectiveFormStart(Class<?> clazz, String... name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Stage creation = new Stage();
 
@@ -504,10 +520,19 @@ public class AdminController extends ScrollPane {
         stage.hide();
     }
 
+    /**
+     * Consults the table to see which user item is selected.
+     * @return The selected user item from table.
+     */
     public UserItem selectedUserItem() {
         return tblUsers.getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * Gets the username portion of the selected user item if any.
+     * @return the selected username in the table.
+     * @throws IllegalStateException if nothing was selected.
+     */
     public String selectedUsername() throws IllegalStateException {
         if (selectedUserItem() != null && !selectedUserItem().getUsername().isEmpty()) {
             return selectedUserItem().getUsername();
@@ -518,6 +543,11 @@ public class AdminController extends ScrollPane {
         throw new IllegalStateException("Nothing has been selected yet.");
     }
 
+    /**
+     * Gets the group's name portion of the selected user item if any.
+     * @return the selected username in the table.
+     * @throws IllegalStateException if nothing was selected.
+     */
     public String selectedGroupName() throws IllegalStateException {
         if (selectedUserItem() != null && !selectedUserItem().getGroup().isEmpty()) {
             return selectedUserItem().getGroup();

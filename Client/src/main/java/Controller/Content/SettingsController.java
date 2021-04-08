@@ -2,7 +2,6 @@ package Controller.Content;
 
 
 import Controller.RAMTAlert;
-import Controller.RootController;
 import Model.Task.Response;
 import Model.Task.Task;
 import Model.Task.TaskRequest;
@@ -22,6 +21,9 @@ import java.util.HashMap;
 
 import static Controller.RootController.*;
 
+/**
+ * Controller class for the remote management of server settings.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class SettingsController extends ScrollPane {
     @FXML VBox container;
@@ -49,7 +51,7 @@ public class SettingsController extends ScrollPane {
     @FXML JFXButton btnRefresh;
 
     /**
-     * Constructs the VBox and loads its FXML file.
+     * Controller for displaying server settings and the tasks related
      */
     public SettingsController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Settings.fxml"));
@@ -168,6 +170,11 @@ public class SettingsController extends ScrollPane {
         txtMonitoringPollingRate.setPromptText(settings.get("Monitoring Polling Rate"));
     }
 
+    /**
+     * Gets all the settings newly added byt the user in a hashmap composed of the key for settings and its new
+     * corresponding value.
+     * @return The hashmap of the new settings. The key is the setting name in the database for information.
+     */
     private HashMap<String, String> getNewSettings() {
         HashMap<String, String> results = new HashMap<>();
 

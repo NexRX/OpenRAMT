@@ -17,6 +17,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * This class is the controller class for changing the groups name to a new one.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewGroupNameController extends AnchorPane {
     Stage stage;
@@ -37,6 +40,12 @@ public class NewGroupNameController extends AnchorPane {
     // Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for updating the name of a given group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param groupName The group name to modify.
+     */
     public NewGroupNameController(Stage stage, Stage callingStage, String groupName) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/Group/Name.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

@@ -21,6 +21,9 @@ import java.security.spec.InvalidKeySpecException;
 
 import static Controller.RootController.*;
 
+/**
+ * Controller class for updating passwords of a given user.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewUserPasswordController extends AnchorPane {
     Stage stage;
@@ -42,6 +45,12 @@ public class NewUserPasswordController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * Controller for updating passwords of given users.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param username The username of the user to update their password.
+     */
     public NewUserPasswordController(Stage stage, Stage callingStage, String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/User/Password.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

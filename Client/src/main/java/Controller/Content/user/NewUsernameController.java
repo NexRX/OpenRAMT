@@ -21,6 +21,9 @@ import java.sql.SQLException;
 
 import static Controller.RootController.*;
 
+/**
+ * Controller Class for updating usernames.
+ */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class NewUsernameController extends AnchorPane {
     Stage stage;
@@ -42,6 +45,12 @@ public class NewUsernameController extends AnchorPane {
     // Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for moving a user to a different pre-existing group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param username The username of the user to update their name.
+     */
     public NewUsernameController(Stage stage, Stage callingStage, String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Content/User/Username.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

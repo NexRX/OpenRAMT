@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+/**
+ * Starting point for the client class.
+ */
 public class InitialController extends AnchorPane {
     private final Stage stage;
 
@@ -49,6 +52,10 @@ public class InitialController extends AnchorPane {
     @FXML Label lblSecure;
     @FXML Pane topBar;
 
+    /**
+     * The constructor for starting an instance where the user will be able to attempt to login to the server.
+     * After the user is logged in it will proceed to call the related methods to move to the RootController.
+     */
     public InitialController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Init.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
