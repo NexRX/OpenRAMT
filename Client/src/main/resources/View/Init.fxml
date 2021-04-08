@@ -11,29 +11,42 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<fx:root id="initial" minHeight="289.0" minWidth="211.0" prefHeight="300.0" prefWidth="220.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <ImageView fx:id="imageLogo" fitHeight="100.0" fitWidth="100.0" layoutX="60.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="60.0">
-         <image>
-            <Image url="@../IconPacks/openramt.png" />
-         </image>
-      </ImageView>
-      <JFXProgressBar fx:id="jfxProgress" layoutX="10.0" layoutY="150.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" />
-      <Label fx:id="lblProgress" alignment="CENTER" layoutX="11.0" layoutY="131.0" prefHeight="11.0" prefWidth="200.0" text="Starting..." textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
-         <font>
-            <Font name="Monospaced Regular" size="9.0" />
-         </font>
-      </Label>
-      <JFXTextField fx:id="loginHost" focusColor="#bf0000" layoutX="44.0" layoutY="168.0" promptText="Host" styleClass="login-field" unFocusColor="#867979" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0" />
-      <JFXTextField fx:id="loginUsername" focusColor="#bf0000" layoutX="44.0" layoutY="199.0" promptText="Username" styleClass="login-field" unFocusColor="#867979" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0" />
-      <JFXPasswordField fx:id="loginPassword" focusColor="#bf0000" layoutX="44.0" layoutY="230.0" promptText="Password" styleClass="login-field" unFocusColor="#867979" AnchorPane.leftAnchor="41.0" AnchorPane.rightAnchor="41.0" />
-      <JFXButton fx:id="btnLogin" buttonType="RAISED" layoutX="72.0" layoutY="261.0" prefHeight="25.0" prefWidth="76.0" ripplerFill="#bf0000" text="Login" textFill="WHITE" AnchorPane.leftAnchor="72.0" AnchorPane.rightAnchor="72.0" />
-      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="195.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="&#x2715;" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Pane fx:id="topBar" layoutY="2.0" prefHeight="14.0" prefWidth="195.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="0.0" />
-      <Label fx:id="lblSecure" alignment="CENTER" contentDisplay="CENTER" layoutX="183.0" layoutY="168.0" prefHeight="25.0" prefWidth="25.0" styleClass="lbl-secure" text="🔒" textAlignment="CENTER" textFill="LIME">
-         <font>
-            <Font name="Monospaced Regular" size="14.0" />
-         </font>
-      </Label>
-   </children>
+<fx:root id="initial" minHeight="289.0" minWidth="211.0" prefHeight="300.0" prefWidth="220.0"
+         styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane"
+         xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <ImageView fx:id="imageLogo" fitHeight="100.0" fitWidth="100.0" layoutX="60.0" layoutY="14.0" pickOnBounds="true"
+              preserveRatio="true" AnchorPane.leftAnchor="60.0" AnchorPane.rightAnchor="60.0">
+      <Image url="@../IconPacks/openramt.png"/>
+   </ImageView>
+   <JFXProgressBar fx:id="jfxProgress" layoutX="10.0" layoutY="150.0" AnchorPane.leftAnchor="10.0"
+                   AnchorPane.rightAnchor="10.0"/>
+   <Label fx:id="lblProgress" alignment="CENTER" layoutX="11.0" layoutY="131.0" prefHeight="11.0" prefWidth="200.0"
+          text="Starting..." textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.leftAnchor="10.0"
+          AnchorPane.rightAnchor="10.0">
+      <font>
+         <Font name="Monospaced Regular" size="9.0"/>
+      </font>
+   </Label>
+   <JFXTextField fx:id="loginHost" focusColor="#bf0000" layoutX="44.0" layoutY="168.0" promptText="Host"
+                 styleClass="login-field" unFocusColor="#867979" AnchorPane.leftAnchor="41.0"
+                 AnchorPane.rightAnchor="41.0"/>
+   <JFXTextField fx:id="loginUsername" focusColor="#bf0000" layoutX="44.0" layoutY="199.0" promptText="Username"
+                 styleClass="login-field" unFocusColor="#867979" AnchorPane.leftAnchor="41.0"
+                 AnchorPane.rightAnchor="41.0"/>
+   <JFXPasswordField fx:id="loginPassword" focusColor="#bf0000" layoutX="44.0" layoutY="230.0" promptText="Password"
+                     styleClass="login-field" unFocusColor="#867979" AnchorPane.leftAnchor="41.0"
+                     AnchorPane.rightAnchor="41.0"/>
+   <JFXButton fx:id="btnLogin" buttonType="RAISED" layoutX="72.0" layoutY="261.0" prefHeight="25.0" prefWidth="76.0"
+              ripplerFill="#bf0000" text="Login" textFill="WHITE" AnchorPane.leftAnchor="72.0"
+              AnchorPane.rightAnchor="72.0"/>
+   <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="195.0" prefHeight="25.0" prefWidth="25.0"
+              ripplerFill="RED" text="✕" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+   <Pane fx:id="topBar" layoutY="2.0" prefHeight="14.0" prefWidth="195.0" AnchorPane.leftAnchor="0.0"
+         AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="0.0"/>
+   <Label fx:id="lblSecure" alignment="CENTER" contentDisplay="CENTER" layoutX="183.0" layoutY="168.0" prefHeight="25.0"
+          prefWidth="25.0" styleClass="lbl-secure" text="🔒" textAlignment="CENTER" textFill="LIME">
+      <font>
+         <Font name="Monospaced Regular" size="14.0"/>
+      </font>
+   </Label>
 </fx:root>
