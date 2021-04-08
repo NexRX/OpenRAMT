@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
+
+<fx:root id="initial" minHeight="289.0" minWidth="211.0" prefHeight="480.0" prefWidth="345.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <ImageView fx:id="imageLogo" fitHeight="100.0" fitWidth="100.0" layoutX="123.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="123.0" AnchorPane.rightAnchor="122.0">
+      <Image url="@../IconPacks/openramt.png" />
+   </ImageView>
+   <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="195.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="RED" text="✕" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <font>
+         <Font name="Arial" size="12.0" />
+      </font></JFXButton>
+   <Pane fx:id="topBar" layoutY="2.0" prefHeight="25.0" prefWidth="320.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0" />
+   <TabPane fx:id="tabPane" layoutY="140.0" prefHeight="341.0" prefWidth="345.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+     <tabs>
+       <Tab fx:id="tabGeneral" styleClass="tab-btn" text="General">
+         <content>
+           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrollGeneral" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="345.0" styleClass="default-background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <TextFlow fx:id="tfGeneral" prefHeight="310.0" prefWidth="345.0">
+                              <styleClass>
+                                 <String fx:value="textflow" />
+                                 <String fx:value="default-background" />
+                              </styleClass>
+                              <padding>
+                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              </padding>
+                           </TextFlow>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+         </content>
+       </Tab>
+         <Tab fx:id="tabPower" styleClass="tab-btn" text="Power">
+            <content>
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrollPower" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="345.0" styleClass="default-background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <TextFlow fx:id="tfPower" prefHeight="310.0" prefWidth="345.0" styleClass="textflow">
+                              <padding>
+                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              </padding></TextFlow>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+         <Tab fx:id="tabAdmin" styleClass="tab-btn" text="Admin">
+            <content>
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrollAdmin" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="345.0" styleClass="default-background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <TextFlow fx:id="tfAdmin" prefHeight="310.0" prefWidth="345.0" styleClass="textflow">
+                              <padding>
+                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              </padding></TextFlow>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+         <Tab fx:id="tabMonitoring" styleClass="tab-btn" text="Monitoring">
+            <content>
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrollMonitoring" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="345.0" styleClass="default-background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <TextFlow fx:id="tfMonitoring" prefHeight="310.0" prefWidth="345.0" styleClass="textflow">
+                              <padding>
+                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              </padding></TextFlow>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+         <Tab fx:id="tabSettings" styleClass="tab-btn" text="Settings">
+            <content>
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrollSettings" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="345.0" styleClass="default-background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <TextFlow fx:id="tfSettings" prefHeight="310.0" prefWidth="345.0" styleClass="textflow">
+                              <padding>
+                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              </padding></TextFlow>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+         <Tab fx:id="tabProcess" styleClass="tab-btn" text="Process">
+            <content>
+               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                  <children>
+                     <ScrollPane fx:id="scrollProcess" hbarPolicy="NEVER" prefHeight="310.0" prefWidth="345.0" styleClass="default-background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <content>
+                           <TextFlow fx:id="tfProcess" prefHeight="310.0" prefWidth="345.0" styleClass="textflow">
+                              <padding>
+                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                              </padding></TextFlow>
+                        </content>
+                     </ScrollPane>
+                  </children>
+               </AnchorPane>
+            </content>
+         </Tab>
+     </tabs>
+   </TabPane>
+   <Line endX="244.2928924560547" endY="-1.263453483581543" layoutX="200.0" layoutY="139.0" startX="-100.0" stroke="#d30000" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="170.0" />
+   <Line endX="244.29283142089844" endY="1.263453483581543" layoutX="210.0" layoutY="149.0" startX="-100.0" stroke="#d30000" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="147.02943968772888" />
+</fx:root>

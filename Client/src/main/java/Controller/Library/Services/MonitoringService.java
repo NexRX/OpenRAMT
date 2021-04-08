@@ -22,6 +22,7 @@ public class MonitoringService extends Service<Void> {
     private UserData user;
     private ClientMonitorWorker monitoringWorker;
     private final MonitorController monitoringController;
+    private Socket socket;
 
     public MonitoringService(UserData user, MonitorController monitoringController) {
         super();
@@ -37,7 +38,7 @@ public class MonitoringService extends Service<Void> {
                 try {
                     System.out.println("Setting up monitoring.");
 
-                    Socket socket = user.isSecure() ? // Secure or plain socket?
+                    socket = user.isSecure() ? // Secure or plain socket?
                             ClientWorker.secureGeneration(user.getHost(), user.getMonitoringPort()) :
                             new Socket(user.getHost(), user.getMonitoringPort());
 
@@ -75,6 +76,14 @@ public class MonitoringService extends Service<Void> {
                 return null;
             }
         };
+    }
+
+    public void closeSockets() {
+        monitoringWorker.stop();
+        try {
+            socket.close();
+        } catch (IOException ignored) {}
+        socket = null;
     }
 
     public void updateUser(UserData user) {

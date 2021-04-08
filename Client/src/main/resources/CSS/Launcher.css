@@ -46,6 +46,11 @@
     -fx-text-fill: white;
 }
 
+.tab-btn {
+    -fx-font-size: 18;
+    -fx-text-base-color: white;
+}
+
 .btn-regular {
     -fx-font-size: 105%;
     -fx-text-fill: white;
@@ -67,23 +72,23 @@
 .topBar{}
 
 .topBar-Buttons {
-	-fx-background-radius: 0;
+    -fx-background-radius: 0;
     -fx-background-color: #474343;
     -fx-alignment: CENTER;
 }
 
 .topBar-Buttons:hover {
-	-fx-background-color: #776F6F;
+    -fx-background-color: #776F6F;
 }
 
 #btnClose {
-	-fx-background-radius: 0;
+    -fx-background-radius: 0;
     -fx-alignment: CENTER;
     -fx-background-color: #474343;
 }
 
 #btnClose:hover {
-	-fx-background-color: #FF6044;
+    -fx-background-color: #FF6044;
 }
 
 .sidebar-buttons {
@@ -265,6 +270,7 @@
 
 .scroll-pane .corner {
     -fx-background-insets: 0;
+    -fx-background-color: transparent;
 }
 
 /* Extra / Misc */
@@ -287,6 +293,7 @@
 .RAMTAlert > *.label.content{
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+    -fx-text-fill: white;
 }
 
 .RAMTAlert:header *.header-panel{
@@ -296,7 +303,7 @@
 .RAMTAlert:header *.header-panel *.label{
     -fx-font-size: 18px;
     -fx-font-style: italic;
-    -fx-fill: #ffffff;
+    -fx-text-fill: white;
 }
 
 .RAMTAlert .button{

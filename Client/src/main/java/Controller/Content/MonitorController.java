@@ -105,9 +105,9 @@ public class MonitorController extends ScrollPane {
         containerRestart.prefWidthProperty().bind(container.widthProperty());
 
         // Start Service
-        startMonitoringService();
-
         applyEventHandlers();
+
+        startMonitoringService();
     }
 
     private void applyEventHandlers() {
@@ -134,6 +134,7 @@ public class MonitorController extends ScrollPane {
     }
 
     public void stopMonitoringService() {
+        monitoringService.closeSockets();
         monitoringService.cancel();
     }
 
@@ -147,13 +148,6 @@ public class MonitorController extends ScrollPane {
         ramData[0].setPieValue(freePercent);
         ramData[1].setPieValue(usedPercent);
     }
-
-    /*public void updateDisks(ArrayList<DiskItem> disks) {
-        int i = 0;
-        for (DiskItem disk : disks) {
-            UPDATE BOTH SPACES AND IO HERE
-        }
-    }*/
 
     public void updateDiskSpaces(SoftDiskItem[] disks) {
         int i = 0;

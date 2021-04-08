@@ -2,16 +2,15 @@ package Controller;
 
 import Controller.Content.*;
 
+import Controller.Library.Services.MonitoringService;
 import Controller.Library.Services.TaskProgressiveService;
 import Controller.Library.SideButton;
 import Model.General.AppPermission;
 import Model.Task.Task;
 import Model.Task.TaskRequest;
-import Model.Task.TaskResponse;
 import Model.User.UserData;
-import Model.User.UserGroup;
 import application.Launcher;
-import javafx.concurrent.WorkerStateEvent;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,18 +19,12 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-
 import java.io.IOException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * The root pains controller.
  * Handles most of the post-initial tasks as well as the many generic (non-specific pane) tasks.
  */
-@SuppressWarnings("unchecked")
 public class RootController extends AnchorPane {
 	@FXML Pane resizeHelperR;
 	@FXML Pane resizeHelperB;
@@ -40,6 +33,9 @@ public class RootController extends AnchorPane {
 	private final SideBarController sbc;
 
 	private static UserData loggedInUser;
+
+	private static MonitorController mc;
+
 	private static final TaskProgressiveService taskService = new TaskProgressiveService(null);
 
 
@@ -69,6 +65,8 @@ public class RootController extends AnchorPane {
 
 		mcc = new MainContentController(new WelcomeController());
 		sbc = new SideBarController(mcc);
+		mc = new MonitorController();
+
 		addInitialChildren();
 		applyEventHandlers();
 	}
@@ -110,7 +108,7 @@ public class RootController extends AnchorPane {
 			addPaneButton(new ProcessController(), "Process", AppPermission.PROCESS, sbc.getLastIndex()+1);
 		}
 		if (loggedInUser.getObjGroup().isAdmin() || loggedInUser.getObjGroup().isMonitoring()) {
-			addPaneButton(new MonitorController(), "Monitoring", AppPermission.MONITORING, sbc.getLastIndex()+1);
+			addPaneButton(mc, "Monitoring", AppPermission.MONITORING, sbc.getLastIndex()+1);
 		}
 		if (loggedInUser.getObjGroup().isAdmin()) {
 			addPaneButton(new SettingsController(), "Server Settings", AppPermission.ADMINISTRATOR, sbc.getLastIndex()+1);
@@ -173,5 +171,20 @@ public class RootController extends AnchorPane {
 	 */
 	public static String requestAutomatedStart(TaskRequest<?> taskRequest) {
 		return RootController.getTaskService().updateAndRestart(taskRequest);
+	}
+
+	/**
+	 * This method is intended to be used as the de facto way for the application to be shut down. It will shutdown
+	 * all threads via utilising the System.exit method. Before that it will try to close any sockets still open.
+	 * If they take too long the application will be forced to close. The JavaFX thread will be the first to close.
+	 *
+	 * @param exitCode The exit code to pass to System.exit(int). 0 is recommended especially if nothing went wrong.
+	 */
+	public static void exitApp(int exitCode) {
+		Platform.exit();
+
+		// mc.stopMonitoringService();
+
+		System.exit(exitCode);
 	}
 }

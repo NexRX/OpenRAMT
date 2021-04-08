@@ -3,8 +3,6 @@ package Controller.Database;
 import Controller.CryptographyToolbox;
 import Model.User.UserData;
 import Model.User.UserGroup;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
-import org.h2.jdbc.JdbcSQLNonTransientException;
 
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
@@ -118,8 +116,6 @@ public class DBManager {
                     user.getGroup() + "', '" +
                     user.isSuspended() + "');")
                     > 0 ? 0 : 1; // 0 for success true for couldn't add.
-        } catch (JdbcSQLIntegrityConstraintViolationException e) {
-            result = 21;
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
             result = 99;
@@ -937,15 +933,11 @@ public class DBManager {
 
             while (rs.next()) {
 
-                int port;
-                try {
-                    port = Integer.parseInt(getSetting("Port"));
-                } catch (JdbcSQLNonTransientException e) {
-                    port = 3069; // fallback.
-                }
+                int port = Integer.parseInt(getSetting("Port"));
+
 
                 results.add(new UserData(
-                       null,
+                        null,
                         port,
                         rs.getString(1),
                         rs.getString(2),
@@ -977,17 +969,13 @@ public class DBManager {
 
         rs.next();
 
-        try {
-            return new UserGroup(
-                    rs.getString(1),
-                    rs.getBoolean(2),
-                    rs.getBoolean(3),
-                    rs.getBoolean(4),
-                    rs.getBoolean(5),
-                    rs.getBoolean(6));
-        } catch (JdbcSQLNonTransientException e) { // No data from result set.
-            return null;
-        }
+        return new UserGroup(
+                rs.getString(1),
+                rs.getBoolean(2),
+                rs.getBoolean(3),
+                rs.getBoolean(4),
+                rs.getBoolean(5),
+                rs.getBoolean(6));
     }
 
     /**

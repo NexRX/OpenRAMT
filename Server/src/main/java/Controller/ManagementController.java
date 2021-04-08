@@ -17,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -30,8 +31,11 @@ import java.util.HashMap;
 
 public class ManagementController extends AnchorPane {
     private final Stage stage;
+    private final Stage helpStage = new Stage();
+    private final RAMTServerHelper helper = new RAMTServerHelper(helpStage);
 
     @FXML Pane topBar;
+    @FXML JFXButton btnHelp;
     @FXML JFXButton btnClose;
     @FXML JFXButton btnMin;
 
@@ -178,6 +182,21 @@ public class ManagementController extends AnchorPane {
             stopServer();
             Platform.exit();
             System.exit(0);
+        });
+
+        btnHelp.setOnMouseClicked(event -> {
+            if (!helpStage.isShowing()) {
+                try {
+                    helpStage.initStyle(StageStyle.UNDECORATED);
+                    helpStage.setScene(new Scene(helper));
+                    helpStage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+                    helpStage.setTitle("OpenRAMT Helper");
+                    helpStage.setAlwaysOnTop(true);
+                } catch (IllegalStateException ignored) {}
+                helpStage.show();
+            } else {
+                helpStage.requestFocus();
+            }
         });
 
         /* User */

@@ -14,9 +14,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
@@ -28,6 +32,8 @@ public class SetupController extends AnchorPane {
 
     private double xOffset = 0;
     private double yOffset = 0;
+
+    private final FileChooser fileChooser = new FileChooser();
 
     @FXML JFXButton btnClose;
     @FXML JFXButton btnSetup;
@@ -47,6 +53,7 @@ public class SetupController extends AnchorPane {
 
     // Misc
     /*@FXML JFXButton btnCert;*/
+    @FXML JFXButton btnCert;
     @FXML JFXTextField txtFTPUsername;
     @FXML JFXPasswordField txtFTPPassword;
 
@@ -68,6 +75,37 @@ public class SetupController extends AnchorPane {
     }
 
     private void applyEventHandlers() {
+        btnCert.setOnMouseClicked(e -> {
+            new RAMTAlert(Alert.AlertType.INFORMATION,
+                    "OpenRAMT Information",
+                    "Import information, please read the following!",
+                    "Keystore passwords are hard coded in this application, please make sure that the " +
+                            "password of the keystore(JKS) formatted file are password protected with the following" +
+                            "password 'jknm43c23C1EW342we'.\n\n" +
+                            "Once a custom cert is imported, you must ensure clients have a copy of this imported file" +
+                            "otherwise SSL connections will fail. Imports can be done by deleting the keystore.jks" +
+                            "file in the data folder of this applications install directory.").showAndWait();
+
+            File srcFile = fileChooser.showOpenDialog(stage);
+
+            if (srcFile != null) {
+                try {
+                    Files.copy(srcFile.toPath(),
+                            (new File(DBManager.dbPath + "keystore.jks")).toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ioException) {
+                    new RAMTAlert(Alert.AlertType.ERROR,
+                            "OpenRAMT Copy Error",
+                            "That file couldn't be copied!",
+                            "Please ensure the file is still there and isn't being used by another program.\n\n" +
+                                    "You can also do this manually after setup by renaming the file to 'keystore.jks' and" +
+                                    "copying it to the data folder where this application is installed.\n" +
+                                    "The file must be in keystore(JKS) format and password protected with the" +
+                                    "password 'jknm43c23C1EW342we'. It is not recommended to do this manually unless this" +
+                                    "setup fails consistently.").showAndWait();
+                }
+            }
+        });
 
         btnSetup.setOnMouseClicked(event -> {
             try {

@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,7 @@ public class MonitorWorker implements Runnable {
             System.out.println("Monitor Request [" + requester.getUsername() + " | " + requester.getHost() + "] in socket: "
                     + socket);
 
-            UserGroup group = RAMTTaskLibrary.getGroup(new TaskRequest<String>(Task.GETGROUP, requester, requester.getGroup())).getResponseData();
+            UserGroup group = RAMTTaskLibrary.getGroup(new TaskRequest<>(Task.GETGROUP, requester, requester.getGroup())).getResponseData();
 
             if (group == null || !group.isMonitoring()) {
                 socketOutput.writeInt(0);
@@ -60,7 +61,7 @@ public class MonitorWorker implements Runnable {
                 boolean isNotTimedOut = true;
                 socket.setSoTimeout(10 * 1000); //10s
 
-                while (isNotTimedOut) {
+                while (isNotTimedOut && !socket.isClosed()) {
                     try {
                         try {
                             TimeUnit.MILLISECONDS.sleep(pollingRate * 1000L); // supports decimal seconds
@@ -68,7 +69,12 @@ public class MonitorWorker implements Runnable {
                             System.out.println("Polled Early...");
                         }
 
-                        socketOutput.writeUnshared(monitor.getMonitoringData()); // java.net.SocketException: Connection reset by peer could be used to handle early disconnect
+                        try {
+                            socketOutput.writeUnshared(monitor.getMonitoringData()); // java.net.SocketException: Connection reset by peer could be used to handle early disconnect
+                        } catch (SocketException e) {
+                            System.out.println("A monitoring socket closed with message: " + e.getMessage());
+                            socket.close();
+                        }
                     } catch (SocketTimeoutException e) {
                         isNotTimedOut = false;
                     }

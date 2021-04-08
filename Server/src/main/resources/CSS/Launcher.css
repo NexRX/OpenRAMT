@@ -26,6 +26,10 @@
     -fx-background-color: #cb0303;
 }
 
+.jfx-text-field {
+    -fx-prompt-text-fill: #8d7474;
+}
+
 .login-field {
     -fx-background-color: #696969;
     -fx-prompt-text-fill: white;
@@ -33,7 +37,18 @@
 }
 
 .lbl-header {
+    -fx-font-size: 20;
+    -fx-text-fill: #ffffff;
+}
+
+.lbl-regular {
+    -fx-font-size: 13;
+    -fx-text-fill: white;
+}
+
+.tab-btn {
     -fx-font-size: 18;
+    -fx-text-base-color: white;
 }
 
 .btn-regular {
@@ -41,7 +56,6 @@
     -fx-text-fill: white;
     -fx-border-color: rgba(24, 24, 24, 0.17);
     -fx-background-color: rgba(227, 0, 0, 0.1);
-    -fx-cursor:hand;
 }
 
 .btn-power {
@@ -49,34 +63,32 @@
     -fx-text-fill: white;
     -fx-border-color: rgba(24, 24, 24, 0.17);
     -fx-background-color: rgba(14, 5, 5, 0.2);
-    -fx-cursor:hand;
 }
 
 .btn-power#shutdown {
     -fx-background-color: rgba(184, 0, 0, 0.5);
-    -fx-cursor:hand;
 }
 
+.topBar{}
+
 .topBar-Buttons {
-	-fx-background-radius: 0;
+    -fx-background-radius: 0;
     -fx-background-color: #474343;
     -fx-alignment: CENTER;
-    -fx-cursor:hand;
 }
 
 .topBar-Buttons:hover {
-	-fx-background-color: #776F6F;
+    -fx-background-color: #776F6F;
 }
 
 #btnClose {
-	-fx-background-radius: 0;
+    -fx-background-radius: 0;
     -fx-alignment: CENTER;
     -fx-background-color: #474343;
-    -fx-cursor:hand;
 }
 
 #btnClose:hover {
-	-fx-background-color: #FF6044;
+    -fx-background-color: #FF6044;
 }
 
 .sidebar-buttons {
@@ -87,7 +99,7 @@
 
     -fx-shape:"M 25, 50 a 25,25 0 1,1 50,0 a 25,25 0 1,1 -50,0";
     /* Due to JavaFX CSS limitations the image must be the same size to fit. Cannot resize with CSS and Shape.*/
-    -fx-background-image: url("../IconPacks/pack1/SlightlyGalactic-default-70px.png");
+    -fx-background-image: url("../IconPacks/Pack1/SlightlyGalactic-default-70px.png");
     -fx-background-radius: 50%;
     -fx-border-radius: 50%;
 
@@ -105,8 +117,6 @@
     -fx-border-color: white;
 
     -jfx-button-type: RAISED;
-
-    -fx-cursor:hand;
 }
 
 
@@ -135,8 +145,13 @@
     -fx-stroke: rgba(255, 0, 0, 0.5);
 }
 
-.chart-legend-item{
+.chart-legend {
+    -fx-background-color: #583535;
+}
+
+.chart-legend-item {
     -fx-text-fill: #ffffff;
+    -fx-background-color: #583535;
 }
 
 .axis {
@@ -177,11 +192,6 @@
     -fx-background-color: transparent;
 }
 
-/* Combo Box */
-
-.combobox-primary {
-    -fx-background-color: rgba(14, 5, 5, 0.2)
-}
 
 
 /*******************************************************************************
@@ -260,6 +270,7 @@
 
 .scroll-pane .corner {
     -fx-background-insets: 0;
+    -fx-background-color: transparent;
 }
 
 /* Extra / Misc */
@@ -270,8 +281,6 @@
 .tabless .tab-header-area {
     visibility: hidden;
 }
-
-/*Dialog/Alert Box*/
 
 .RAMTAlert {
     -fx-background-color: #544F4F;
@@ -284,7 +293,9 @@
 .RAMTAlert > *.label.content{
     -fx-font-size: 14px;
     -fx-font-weight: bold;
+    -fx-text-fill: white;
 }
+
 .RAMTAlert:header *.header-panel{
     -fx-background-color: #4c4747;
 }
@@ -292,7 +303,7 @@
 .RAMTAlert:header *.header-panel *.label{
     -fx-font-size: 18px;
     -fx-font-style: italic;
-    -fx-fill: #ffffff;
+    -fx-text-fill: white;
 }
 
 .RAMTAlert .button{
@@ -308,3 +319,5 @@
     -fx-text-fill: #e0e0e0;
     -fx-font-weight:bold;
 }
+
+.lbl-secure {}

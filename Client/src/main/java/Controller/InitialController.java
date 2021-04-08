@@ -16,31 +16,38 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class InitialController extends AnchorPane {
     private final Stage stage;
 
-    @FXML JFXProgressBar jfxProgress;
-    @FXML JFXButton btnClose;
-    @FXML JFXTextField loginHost;
-    @FXML JFXTextField loginUsername;
-    @FXML JFXPasswordField loginPassword;
-    @FXML JFXButton btnLogin;
-    //@FXML Label lblProgress;
-    @FXML Label lblSecure;
-    @FXML Pane topBar;
-
     private double xOffset = 0;
     private double yOffset = 0;
+
+    private final FileChooser fileChooser = new FileChooser();
 
     private boolean secure = true;
 
     private UserData user = new UserData(null, 0, null, null, true);
     private final LoginProgressiveService loginTask;
 
+    @FXML JFXProgressBar jfxProgress;
+    @FXML JFXButton btnClose;
+    @FXML JFXButton btnCert;
+    @FXML JFXTextField loginHost;
+    @FXML JFXTextField loginUsername;
+    @FXML JFXPasswordField loginPassword;
+    @FXML JFXButton btnLogin;
+
+    //@FXML Label lblProgress;
+    @FXML Label lblSecure;
+    @FXML Pane topBar;
 
     public InitialController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Init.fxml"));
@@ -89,6 +96,36 @@ public class InitialController extends AnchorPane {
 
             secure = !secure;
             loginTask.setSecure(secure);
+        });
+
+        btnCert.setOnMouseClicked(e -> {
+            new RAMTAlert(Alert.AlertType.INFORMATION,
+                    "OpenRAMT Information",
+                    "Import information, please read the following!",
+                    "Only use this setting if your importing a servers keystore file. This will prevent any" +
+                            " secure connections from working unless the server has a identical copy of this file.\n\n" +
+                            "Please note that you will need to go into the installation directory of this application " +
+                            "and delete the keystore.jks file to go back to the default one provided.").showAndWait();
+
+            File srcFile = fileChooser.showOpenDialog(stage);
+
+            if (srcFile != null) {
+                try {
+                    Files.copy(srcFile.toPath(),
+                            (new File(new File("data/").toPath() + "keystore.jks")).toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException ioException) {
+                    new RAMTAlert(Alert.AlertType.ERROR,
+                            "OpenRAMT Copy Error",
+                            "That file couldn't be copied!",
+                            "Please ensure the file is still there and isn't being used by another program.\n\n" +
+                                    "You can also do this manually after setup by renaming the file to 'keystore.jks' and" +
+                                    "copying it to the data folder where this application is installed.\n" +
+                                    "The file must be in keystore(JKS) format and password protected with the" +
+                                    "password 'jknm43c23C1EW342we'. It is not recommended to do this manually unless this" +
+                                    "setup fails consistently.").showAndWait();
+                }
+            }
         });
 
         btnLogin.setOnMouseClicked(event -> {

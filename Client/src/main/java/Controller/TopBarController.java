@@ -1,5 +1,6 @@
 package Controller;
 
+import Controller.Library.RAMTClientHelper;
 import application.Launcher;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXProgressBar;
@@ -10,10 +11,13 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -22,6 +26,8 @@ import java.io.IOException;
  */
 public class TopBarController extends AnchorPane {
     private final Stage stage;
+    private final Stage helpStage = new Stage();
+    private final RAMTClientHelper helper = new RAMTClientHelper(helpStage);
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -40,7 +46,7 @@ public class TopBarController extends AnchorPane {
     /**
      * Constructs the ButtonBar and loads its FXML file. Does a lot of the undecorated
      * window processing.
-     * @param progressProperty
+     * @param progressProperty The property of what to be bind the progress value to for the progress bar & state.
      */
     public TopBarController(ReadOnlyDoubleProperty progressProperty, ReadOnlyStringProperty stateProperty) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/TopBar.fxml"));
@@ -76,7 +82,7 @@ public class TopBarController extends AnchorPane {
             isMaximised = false;
         });
 
-        btnExit.setOnMouseClicked(event -> { Platform.exit(); System.exit(0); });
+        btnExit.setOnMouseClicked(event -> RootController.exitApp(0));
 
         btnMax.setOnMouseClicked(event -> {
             ObservableList<Screen> screens = Screen.getScreensForRectangle(new Rectangle2D(stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight()));
@@ -108,6 +114,21 @@ public class TopBarController extends AnchorPane {
         });
 
         btnMin.setOnMouseClicked(event -> stage.setIconified(true));
+
+        btnHelp.setOnMouseClicked(event -> {
+            if (!helpStage.isShowing()) {
+                try {
+                    helpStage.initStyle(StageStyle.UNDECORATED);
+                    helpStage.setScene(new Scene(helper));
+                    helpStage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+                    helpStage.setTitle("OpenRAMT Helper");
+                    helpStage.setAlwaysOnTop(true);
+                } catch (IllegalStateException ignored) {}
+                helpStage.show();
+            } else {
+                helpStage.requestFocus();
+            }
+        });
     }
 }
 
