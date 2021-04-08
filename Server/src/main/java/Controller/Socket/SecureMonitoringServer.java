@@ -8,8 +8,15 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+/**
+ * SSL/TLS implementation of the plain monitoring server.
+ */
 public class SecureMonitoringServer extends PlainMonitoringServer {
 
+    /**
+     * A secure server version of the plain monitoring server. It does the same work as it is extending it.
+     */
     public SecureMonitoringServer() {
         super();
     }

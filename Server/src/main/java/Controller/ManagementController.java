@@ -29,6 +29,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The controller class for handling admin related events. Most for user management.
+ */
 public class ManagementController extends AnchorPane {
     private final Stage stage;
     private final Stage helpStage = new Stage();
@@ -81,6 +84,10 @@ public class ManagementController extends AnchorPane {
 
     private boolean secure;
 
+    /**
+     * Controller of the management pane. The primary purpose is user management.
+     * @param stage The stage which the server is hosted within.
+     */
     public ManagementController(Stage stage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Management.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -426,6 +433,19 @@ public class ManagementController extends AnchorPane {
         });
     }
 
+    /**
+     * Of particular importance for documentation. This method will create a new instance of the class given with
+     * parameters needed. It is hardcorded for handling only new instances of user and group controllers for user
+     * management. Therefore, it should be updated where new classes are added and rely on the same reflective starting
+     * requirements. The new instances is then shown in the a new stage and scene. The instances have our stage used
+     * from here to return to when they are done with there work because after the are launcher, our stage hides.
+     * @param clazz The class object which should be constructed.
+     * @param name The parameters needed.
+     * @throws NoSuchMethodException Invalid class = constructor couldn't be found essentially.
+     * @throws IllegalAccessException The class given is protected in some way (private).
+     * @throws InvocationTargetException Bad constructor(s) for class given.
+     * @throws InstantiationException the class is not typical (I.e. abstract, interface) or constructor isn't suitable.
+     */
     private void reflectiveFormStart(Class<?> clazz, String... name) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Stage creation = new Stage();
 
@@ -461,10 +481,19 @@ public class ManagementController extends AnchorPane {
         System.exit(1);
     }
 
+    /**
+     * Consults the table to see which user item is selected.
+     * @return The selected user item from table.
+     */
     public UserItem selectedUserItem() {
         return tblUsers.getSelectionModel().getSelectedItem();
     }
 
+    /**
+     * Gets the username portion of the selected user item if any.
+     * @return the selected username in the table.
+     * @throws IllegalStateException if nothing was selected.
+     */
     public String selectedUsername() {
         if (selectedUserItem() != null && !selectedUserItem().getUsername().isEmpty()) {
             return selectedUserItem().getUsername();
@@ -475,6 +504,11 @@ public class ManagementController extends AnchorPane {
         throw new IllegalStateException("Nothing has been selected yet.");
     }
 
+    /**
+     * Gets the group's name portion of the selected user item if any.
+     * @return the selected username in the table.
+     * @throws IllegalStateException if nothing was selected.
+     */
     public String selectedGroupName() throws IllegalStateException {
         if (selectedUserItem() != null && !selectedUserItem().getGroup().isEmpty()) {
             return selectedUserItem().getGroup();
@@ -494,6 +528,9 @@ public class ManagementController extends AnchorPane {
                         "desired group to edit it first.").showAndWait();
     }
 
+    /**
+     * Default warning for a failed port binding.
+     */
     private void portWarning() {
         new RAMTAlert(Alert.AlertType.WARNING,
                 "Application Warning",

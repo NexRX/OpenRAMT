@@ -18,7 +18,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 
-
+/**
+ * Controller class for updating passwords of a given user.
+ */
 public class NewUserPasswordController extends AnchorPane {
     Stage stage;
     Stage callingStage;
@@ -40,6 +42,12 @@ public class NewUserPasswordController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * Controller for updating passwords of given users.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param username The username of the user to update their password.
+     */
     public NewUserPasswordController(Stage stage, Stage callingStage, String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/User/Password.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -70,8 +78,8 @@ public class NewUserPasswordController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> {
             Alert alert = new RAMTAlert(Alert.AlertType.NONE);

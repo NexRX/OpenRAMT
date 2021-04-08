@@ -15,6 +15,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controller Class for updating usernames.
+ */
 public class NewUsernameController extends AnchorPane {
     Stage stage;
     Stage callingStage;
@@ -34,6 +37,12 @@ public class NewUsernameController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for moving a user to a different pre-existing group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param username The username of the user to update their name.
+     */
     public NewUsernameController(Stage stage, Stage callingStage, String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/User/Username.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -64,8 +73,8 @@ public class NewUsernameController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> {
             Alert alert = new RAMTAlert(Alert.AlertType.NONE);

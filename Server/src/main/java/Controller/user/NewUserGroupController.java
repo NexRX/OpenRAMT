@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+/**
+ * Controller class for moving users to different pre-existing groups.
+ */
 public class NewUserGroupController extends AnchorPane {
     Stage stage;
     Stage callingStage;
@@ -38,6 +41,12 @@ public class NewUserGroupController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for moving a user to a different pre-existing group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param username The username of the user to move group.
+     */
     public NewUserGroupController(Stage stage, Stage callingStage, String username) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/User/Group.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -95,8 +104,8 @@ public class NewUserGroupController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> {
             Alert alert = new RAMTAlert(Alert.AlertType.NONE);

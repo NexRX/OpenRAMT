@@ -5,9 +5,6 @@ import Controller.ManagementController;
 import Controller.RAMTAlert;
 import Controller.SetupController;
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
@@ -15,7 +12,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import oshi.SystemInfo;
 import sun.misc.Unsafe;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -108,9 +104,7 @@ public class Launcher {
                 Field logger = clazz.getDeclaredField("logger");
 
                 unsafe.putObjectVolatile(clazz, unsafe.staticFieldOffset(logger), null);
-            } catch (Exception e) {
-                // Do nothing.
-            }
+            } catch (Exception ignored) {}
         }
 
         /**
@@ -121,6 +115,10 @@ public class Launcher {
             launch(args);
         }
 
+        /**
+         * Fully closes the server ensuring that even if the OS calls for a window/stage to close, if the launcher stage
+         * is closed then everything exists, including none JavaFX threads.
+         */
         @Override
         public void stop(){
             System.exit(0);

@@ -13,6 +13,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+
+/**
+ * Helper class for server.
+ */
 public class RAMTServerHelper extends AnchorPane{
     private final Stage hostStage;
 
@@ -33,6 +37,10 @@ public class RAMTServerHelper extends AnchorPane{
     @FXML ScrollPane scrollFTP;
     @FXML TextFlow tfFTP;
 
+    /**
+     * Controller for help wizard.
+     * @param hostStage the stage which hosts this controller.
+     */
     public RAMTServerHelper(Stage hostStage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Helper.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());

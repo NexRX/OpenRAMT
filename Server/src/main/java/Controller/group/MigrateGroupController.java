@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+/**
+ * This class is the controller class for migrating users to a different group.
+ */
 public class MigrateGroupController extends AnchorPane {
     private final Stage stage;
     private final Stage callingStage;
@@ -36,6 +39,12 @@ public class MigrateGroupController extends AnchorPane {
     //Submit
     @FXML JFXButton btnSubmit;
 
+    /**
+     * The controller for migrating users to a different group.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     * @param groupName The group name to migrate its users.
+     */
     public MigrateGroupController(Stage stage, Stage callingStage, String groupName) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Group/MigrateUsers.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -93,8 +102,8 @@ public class MigrateGroupController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> {
             Alert alert = new RAMTAlert(Alert.AlertType.NONE);

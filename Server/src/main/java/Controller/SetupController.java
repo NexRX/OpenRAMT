@@ -58,6 +58,10 @@ public class SetupController extends AnchorPane {
     @FXML JFXPasswordField txtFTPPassword;
 
 
+    /**
+     * Creats an instance of the setup controller which is used for first time setup or after reset setups too.
+     * @param stage the stage which this controller is hosted within.
+     */
     public SetupController(Stage stage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Setup.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -148,6 +152,15 @@ public class SetupController extends AnchorPane {
         });
     }
 
+    /**
+     * Gets all the data from the form and processes it here. A string is then returned reflecting the state of the operation
+     * @return a string reflecting the success of the method based on user data provided in the forms, "Success" on
+     * success, "One or more fields aren't valid, please check and try again." when as it says occurs. and a generic
+     * string reflect generic problems.
+     * @throws InvalidKeySpecException Hashing has failed
+     * @throws NoSuchAlgorithmException Environment couldn't supply the hashing algorithm
+     * @throws SQLException Database error.
+     */
     private String setup() throws InvalidKeySpecException, NoSuchAlgorithmException, SQLException {
         // Username
         if ( txtUsername.getText().length() < 3 || txtUsername.getText().length() > 100) {

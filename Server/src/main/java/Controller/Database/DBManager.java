@@ -1033,6 +1033,11 @@ public class DBManager {
 
     }
 
+    /**
+     * Finishes up the connection layer for the server. If you have results sets or any data relying on it needed, you
+     * need to use this method afterwards.
+     * @throws SQLException Anomalous unwanted behaviour.
+     */
     private static void stopDB() throws SQLException {
         if (con != null) {
             con.close();
@@ -1071,6 +1076,18 @@ public class DBManager {
         con.close();
     }
 
+    /**
+     * Setups the server with the data it needs to run in their default form. Also, stores the given user as a default
+     * user.
+     * @param username The default user details
+     * @param hashedPassword the hashed password for the user
+     * @param secure Secure server for true or false for plain sever
+     * @param port Port for the server to use
+     * @param ftpUsername The FTP admin username
+     * @param ftpPassword The FTP admin password
+     * @return the response code of the first method to call a error inserting the data. If all goes well it should be 0
+     * @throws SQLException Database error.
+     */
     private static int setupData(String username, String hashedPassword, Boolean secure, int port, String ftpUsername, String ftpPassword) throws SQLException {
         if (!isStringConstraint("username", username) ||
                 !isStringConstraint("password", hashedPassword) ||

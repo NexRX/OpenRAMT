@@ -24,6 +24,10 @@ public class SecureServer implements Runnable {
 
     protected SSLServerSocket serverSocket;
 
+    /**
+     * Creates a server to accept tasks from clients with the default port. Doesn't extend PLainServer but does mostly
+     * the same thing.
+     */
     public SecureServer() { // default (use default port)
         try {
             serverSocket = initialisation(port);
@@ -35,12 +39,16 @@ public class SecureServer implements Runnable {
                             "try closing the other program or wiping this application to choose a different port." +
                             "\n\n This program will now be exiting.").showAndWait();
             System.exit(-1);
-            //TODO provide a way to change settings without a wipe in the future.
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Accepts a custom port to start a server to accept tasks from clients. Doesn't extend PLainServer but does mostly
+     * the same thing.
+     * @param port the port to run the server on.
+     */
     public SecureServer(int port) {
         this.port = port;
 
@@ -54,7 +62,6 @@ public class SecureServer implements Runnable {
                             "try closing the other program or wiping this application to choose a different port." +
                             "\n\n This program will now be exiting.").showAndWait();
             System.exit(-1);
-            //TODO provide a way to change settings without a wipe in the future.
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
             e.printStackTrace();
         }

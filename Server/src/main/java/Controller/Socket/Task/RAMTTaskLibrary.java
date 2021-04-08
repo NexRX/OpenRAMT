@@ -113,6 +113,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Kills the process given to it by PID.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> killProcess(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.PROCESS);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -153,6 +158,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.SUCCESS, 99);
     }
 
+    /**
+     * Kills and attempts to start again with for the process given by PID.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.PROCESS);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -223,6 +233,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.SUCCESS, 99);
     }
 
+    /**
+     * Gets a JSON array of all the processes from the server.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<String> fetchProcesses(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.PROCESS);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -286,6 +301,11 @@ public class RAMTTaskLibrary {
         return null;
     }
 
+    /**
+     * Shuts down the host system.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> shutdown(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.POWER);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -331,6 +351,11 @@ public class RAMTTaskLibrary {
         return null;
     }
 
+    /**
+     * Restarts the host system.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> restart(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.POWER);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -376,6 +401,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Sleeps the host system.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> sleep(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.POWER);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -419,6 +449,12 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Starts and crafts the embedded FTP. The user details are recreated using server settings. This is pure java code
+     * and has not platform specific requirements.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -523,6 +559,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
+    /**
+     * Stops the FTP.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> stopFTP(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -538,6 +579,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
+    /**
+     * Restarts the FTP by using stop and start FTP methods in this class if authorised as usual.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> restartFTP(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -548,6 +594,15 @@ public class RAMTTaskLibrary {
         return startFTP(request);
     }
 
+    /**
+     * Will attempt to clean the disks based on the int given
+     * 0 for full system disk clean,
+     * 1 for extra disks clean, (Unsupported on base CMD for windows).
+     * 2 for all disks clean,
+     * 3 for bin /recycle empty/clean.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Integer> cleanDisk(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -665,6 +720,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Enables any wifi adapters that can be found.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> enableWifi(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -720,6 +780,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Disables any WiFi adapters that can be found.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> disableWifi(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -770,6 +835,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Enables any bluetooth adapters that can be found
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> enableBluetooth(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -824,6 +894,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Disables any bluetooth adapters that can be found
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> disableBluetooth(TaskRequest<Integer> request) {
         TaskResponse auth = authorise(request, AppPermission.GENERAL);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -872,6 +947,11 @@ public class RAMTTaskLibrary {
         }
     }
 
+    /**
+     * Gets the settings desired in the parameters of the request if they exist.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<String> getSetting(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -886,6 +966,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Gets all the settings as a hashmap.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<HashMap<String, String>> getSettings(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -902,6 +987,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Sets the settings defined in the parameters of this request.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> setSetting(TaskRequest<String[]> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -916,6 +1006,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Sets the settings defined in the key and value of the hash map in the request parameter.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<String> setSettings(TaskRequest<HashMap<String, String>> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -930,6 +1025,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Gets the user in the parameters of the request.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<UserData> getUser(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -944,6 +1044,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Gets all the users in an ArrayList.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<ArrayList<UserData>> getUsers(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -958,6 +1063,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Deletes the user in the request parameter by username.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> deleteUser(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -972,6 +1082,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Deletes all the users in a given group name defined in the requests parameters.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> deleteUsers(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -986,6 +1101,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Deletes a group which will cause any remaining users to be moved to the default group.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> deleteGroup(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1000,6 +1120,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Updates the user with details defined in the request parameters.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> updateUser(TaskRequest<String[]> request) { //0,1,2 (what to change, what username, updated value)
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1023,6 +1148,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Addes the new user (UserData) to the database in the request parameters.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> addUser(TaskRequest<UserData> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1037,6 +1167,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Creates the given group with the object defined in the request parameters
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> addGroup(TaskRequest<UserGroup> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1051,6 +1186,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Gets the group with the matching group name.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<UserGroup> getGroup(TaskRequest<String> request) {
         if (login(((TaskRequest) request)).getResponse() == Response.SUCCESS &&
                 request.getUser().getGroup().equals(request.getParameter())) {
@@ -1070,6 +1210,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Gets an arraylist of all groups.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<ArrayList<UserGroup>> getGroups(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1084,6 +1229,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Suspends the given user.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> suspendUser(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1098,6 +1248,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Un-suspends the given user.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> unsuspendUser(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1112,6 +1267,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Suspends all the users in a given group.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> suspendUsers(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1126,6 +1286,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Updates a group with the given information.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<?> updateGroup(TaskRequest<String[]> request) { //0,1,2+ (what to change, what group name, updated value(s))
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
@@ -1154,6 +1319,11 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    /**
+     * Marks the server for wipe and closes the application if successful.
+     * @param request The request sent from the client to perform this action and perform authorisation on.
+     * @return The response of the procedure containing its state and any parameters expected on success.
+     */
     public static TaskResponse<Void> factoryReset(TaskRequest<Void> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {

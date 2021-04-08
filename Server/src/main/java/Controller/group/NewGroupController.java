@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.sql.SQLException;
 
+/**
+ * Controller class for creating new groups with full information.
+ */
 public class NewGroupController extends AnchorPane {
     @FXML JFXButton btnClose;
     @FXML JFXButton btnSubmit;
@@ -36,6 +39,11 @@ public class NewGroupController extends AnchorPane {
     private double xOffset = 0;
     private double yOffset = 0;
 
+    /**
+     * The controller for the creation of new groups.
+     * @param stage A stage hosting this controller. It will be closed when requested by the user.
+     * @param callingStage The stage to return to after this controller is done.
+     */
     public NewGroupController(Stage stage, Stage callingStage) {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/View/Group/NewGroup.fxml"));
         this.getStylesheets().add(getClass().getResource("/CSS/Launcher.css").toExternalForm());
@@ -64,8 +72,8 @@ public class NewGroupController extends AnchorPane {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        btnClose.setOnMouseClicked(event -> {returnToCaller();});
-        stage.setOnCloseRequest(event -> {returnToCaller();});
+        btnClose.setOnMouseClicked(event -> returnToCaller());
+        stage.setOnCloseRequest(event -> returnToCaller());
 
         btnSubmit.setOnMouseClicked(event -> {
             Alert alert = new RAMTAlert(Alert.AlertType.NONE);

@@ -13,6 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Multithreaded server to accept monitoring requests.
+ */
 public class PlainMonitoringServer implements Runnable {
     protected int port = 3068; // Default
     protected boolean stop = false;
@@ -22,6 +25,10 @@ public class PlainMonitoringServer implements Runnable {
 
     protected ServerSocket serverSocket;
 
+    /**
+     * The base monitoring server without any security features implemented other than checking if a user is authorised.
+     * It runs on the port defined in the settings and is multithreaded.
+     */
     public PlainMonitoringServer() {
         try {
             port = Integer.parseInt(DBManager.getSetting("Monitoring Port"));

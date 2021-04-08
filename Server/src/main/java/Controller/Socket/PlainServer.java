@@ -18,6 +18,9 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Objects;
 
+/**
+ * PLain server for usual tasks.
+ */
 public class PlainServer implements Runnable {
     protected int port = 3069; // Default
     protected boolean isStopped = false;
@@ -27,6 +30,9 @@ public class PlainServer implements Runnable {
 
     protected ServerSocket serverSocket;
 
+    /**
+     * Creates a server to accept tasks from clients with the default port.
+     */
     public PlainServer() { // default (use default port)
         try {
             initialisation();
@@ -37,6 +43,10 @@ public class PlainServer implements Runnable {
         }
     }
 
+    /**
+     * Accepts a custom port to start a server to accept tasks from clients.
+     * @param port the port to run the server on.
+     */
     public PlainServer(int port) {
         this.port = port;
 

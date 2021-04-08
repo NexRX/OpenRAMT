@@ -17,6 +17,9 @@ import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Does the work for handling monitoring requests.
+ */
 //@SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class MonitorWorker implements Runnable {
     Socket socket;
@@ -25,6 +28,11 @@ public class MonitorWorker implements Runnable {
 
     private final int pollingRate;
 
+    /**
+     * This runnable is for priming and polling data for monitoring requests.
+     * @param socket the socket to use for monitoring.
+     * @param monitor the Monitoring tasks from which is called.
+     */
     public MonitorWorker(Socket socket, MonitoringTask monitor) {
         this.socket = socket;
         this.monitor = monitor;

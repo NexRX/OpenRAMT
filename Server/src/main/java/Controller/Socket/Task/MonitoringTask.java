@@ -16,6 +16,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.IntStream;
 
+/**
+ * This task does the bulk of the work for monitoring.
+ */
 public class MonitoringTask implements Runnable {
     // Atomic Monitoring Data.
     private int cpuUsage = 0;
@@ -40,13 +43,17 @@ public class MonitoringTask implements Runnable {
     private final long ramCapacity;
 
     // Misc
-    long[] preCPUTick = new long[8];
-    private AtomicInteger pollingRate = new AtomicInteger(); // Assign automatically from settings
+    long[] preCPUTick;
+    private final AtomicInteger pollingRate = new AtomicInteger(); // Assign automatically from settings
 
     public MonitoringData getMonitoringData() {
         return output.get();
     }
 
+    /**
+     * Designed so it can be run in a thread and have its monitoring data accessed atomically in a thread safe manor.
+     * Will work with the polling rate defined in the server settings when ran in a ExecutionScheduler.
+     */
     public MonitoringTask() {
         // Disks
         this.disks = sysInfo.getOperatingSystem().getFileSystem().getFileStores(true);
