@@ -3,6 +3,7 @@ package Controller;
 import Controller.Database.DBManager;
 import Controller.Socket.PlainMonitoringServer;
 import Controller.Socket.PlainServer;
+import Controller.Socket.SecureMonitoringServer;
 import Controller.Socket.SecureServer;
 import Controller.Socket.Task.RAMTTaskLibrary;
 import Model.User.UserData;
@@ -117,6 +118,7 @@ public class ManagementController extends AnchorPane {
 
         if (secure) {
             try {
+                System.out.println("SSL");
                 secureServer = new SecureServer(Integer.parseInt(DBManager.getSetting("Port")));
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -147,7 +149,11 @@ public class ManagementController extends AnchorPane {
     }
 
     private void startMonitoring() {
-        new Thread(new PlainMonitoringServer()).start();
+        if (secure) {
+            new Thread(new SecureMonitoringServer(), "Secure Monitoring Server").start();
+        } else {
+            new Thread(new PlainMonitoringServer(), "Plain Monitoring Server").start();
+        }
     }
 
     private void stopMonitoring() {

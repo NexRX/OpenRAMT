@@ -19,50 +19,37 @@ import static Controller.Socket.Task.RAMTTaskLibrary.*;
  */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class ServerWorker implements Runnable{
-    protected SSLSocket clientSecureSocket;
-    protected Socket clientSocket;
+    protected Socket socket;
 
-    protected boolean secure;
-
-    protected String serverText;
-
-    public ServerWorker(SSLSocket clientSecureSocket, String serverText) {
-        this.clientSecureSocket = clientSecureSocket;
-        secure = true;
-        this.serverText   = serverText;
-    }
-
-    public ServerWorker(Socket clientSocket, String serverText) {
-        this.clientSocket = clientSocket;
-        secure = false;
-        this.serverText   = serverText;
+    public ServerWorker(Socket clientSocket) {
+        this.socket     = clientSocket;
     }
 
     public void run() {
         try {
             // create DataStreams so we can read/write data from it.
-            ObjectInputStream socketInput = new ObjectInputStream((secure ? clientSecureSocket : clientSocket).getInputStream());
-            ObjectOutputStream socketOutput = new ObjectOutputStream((secure ? clientSecureSocket : clientSocket).getOutputStream());
+            ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
 
             // Get the Task request from client then process.
             TaskRequest<?> request = (TaskRequest<?>) socketInput.readObject();
 
             System.out.println("Received [" + request.getRequestID() + " | " + request.getTask() +
-                    ", by " + request.getUser().getUsername() + "] in socket: " + (secure ? clientSecureSocket : clientSocket));
+                    ", by " + request.getUser().getUsername() + "] in socket: " + socket);
 
             TaskResponse<?> response = processTask(request);
             socketOutput.writeObject(response);
 
             // Finished, so printing this as such.
-            System.out.println(request.getRequestID() + " closed without exception in socket: " + (secure ? clientSecureSocket : clientSocket));
+            System.out.println(request.getRequestID() + " closed without exception in socket: " + socket);
 
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Socket " + (secure ? clientSecureSocket : clientSocket) + " closing because of an exception," +
+            System.out.println("Socket " + socket + " closing because of an exception," +
                     " could be early wrong security/early disconnect from user. Printing Stack Trace...");
             e.printStackTrace();
         } finally {
             try {
-                (secure ? clientSecureSocket : clientSocket).close();
+                socket.close();
                 System.out.println("A Socket closure completed");
             } catch (IOException e) {
                 e.printStackTrace();

@@ -2,7 +2,6 @@ package Controller.Socket;
 
 import Controller.RAMTAlert;
 import javafx.scene.control.Alert;
-
 import javax.net.ssl.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,17 +17,16 @@ import java.util.Objects;
 public class SecureServer implements Runnable {
     protected int port = 3069; // Default
     protected boolean isStopped = false;
-    private boolean isInitialised = false;
 
     protected Thread runningThread = null;
 
-    protected File ksFile = new File("data/keystore.jks");
+    protected static File ksFile = new File("data/keystore.jks");
 
     protected SSLServerSocket serverSocket;
 
     public SecureServer() { // default (use default port)
         try {
-            initialisation();
+            serverSocket = initialisation(port);
         } catch (BindException e) {
             new RAMTAlert(Alert.AlertType.ERROR,
                     "OpenRAMT Startup Error.",
@@ -36,7 +34,7 @@ public class SecureServer implements Runnable {
                     "This can be because two servers are running at once (on the same port) so please " +
                             "try closing the other program or wiping this application to choose a different port." +
                             "\n\n This program will now be exiting.").showAndWait();
-            System.exit(0);
+            System.exit(-1);
             //TODO provide a way to change settings without a wipe in the future.
         } catch (IOException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException | CertificateException | KeyManagementException e) {
             e.printStackTrace();
@@ -47,7 +45,7 @@ public class SecureServer implements Runnable {
         this.port = port;
 
         try {
-            initialisation();
+            serverSocket = initialisation(port);
         } catch (BindException e) {
             new RAMTAlert(Alert.AlertType.ERROR,
                     "OpenRAMT Startup Error.",
@@ -63,24 +61,12 @@ public class SecureServer implements Runnable {
     }
 
     /**
-     * If the server successfully initialised once then the return of this will be true.
-     * @return returns true for the state initialisation, false otherwise.
-     */
-    public boolean isInitialised() {
-        return isInitialised;
-    }
-
-    /**
      * Runs a server that will start a new thread per incoming client request.
      */
     @Override
     public void run() {
         synchronized (this) {
             this.runningThread = Thread.currentThread();
-        }
-
-        if (isInitialised) {
-            System.out.println("Server not initialised");
         }
 
         while (!isStopped()) {
@@ -96,7 +82,7 @@ public class SecureServer implements Runnable {
                 throw new RuntimeException("Error accepting client connection", e);
             }
 
-            new Thread(new ServerWorker(clientSocket, "Multithreaded Server")).start();
+            new Thread(new ServerWorker(clientSocket), "Client Socket Thread "+clientSocket.toString()).start();
         }
 
         System.out.println("Server Stopped.");
@@ -129,11 +115,11 @@ public class SecureServer implements Runnable {
      * @throws CertificateException      This will only be thrown if the certificate is not valid.
      * @throws KeyManagementException    If keystore fails generally in the processes here then this exception is thrown.
      */
-    private void initialisation() throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+    public static SSLServerSocket initialisation(int port) throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
         char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
         if (!ksFile.isFile()) {
-            Files.copy(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("Cert/keystore.jks")), Paths.get("data/keystore.jks"), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Objects.requireNonNull(SecureServer.class.getClassLoader().getResourceAsStream("Cert/keystore.jks")), Paths.get("data/keystore.jks"), StandardCopyOption.REPLACE_EXISTING);
         }
 
         System.out.println(ksFile.exists() + " | " + ksFile.getAbsolutePath() + " | " + ksFile.canRead() + " | " + ksFile.length());
@@ -152,9 +138,6 @@ public class SecureServer implements Runnable {
         sc.init(kmf.getKeyManagers(), trustManagers, null);
 
         SSLServerSocketFactory ssf = sc.getServerSocketFactory();
-        this.serverSocket = (SSLServerSocket) ssf.createServerSocket(this.port);
-
-        isInitialised = true;
-
+        return (SSLServerSocket) ssf.createServerSocket(port);
     }
 }

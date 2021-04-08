@@ -14,10 +14,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PlainMonitoringServer implements Runnable {
-    protected int port; // Default
+    protected int port = 3068; // Default
     protected boolean stop = false;
     protected boolean isStopped = false;
-    private boolean isInitialised = false;
 
     protected Thread runningThread = null;
 
@@ -26,20 +25,12 @@ public class PlainMonitoringServer implements Runnable {
     public PlainMonitoringServer() {
         try {
             port = Integer.parseInt(DBManager.getSetting("Monitoring Port"));
-            initialisation();
+            serverSocket = initialisation(port);
         } catch (BindException e) {
             failedServerBind();
         } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * If the server successfully initialised once then the return of this will be true.
-     * @return returns true for the state initialisation, false otherwise.
-     */
-    public boolean isInitialised() {
-        return isInitialised;
     }
 
     /**
@@ -49,10 +40,6 @@ public class PlainMonitoringServer implements Runnable {
     public void run() {
         synchronized (this) {
             this.runningThread = Thread.currentThread();
-        }
-
-        if (!isInitialised) {
-            System.out.println("Server not initialised");
         }
 
         System.out.println("Monitoring server starting up");
@@ -111,13 +98,14 @@ public class PlainMonitoringServer implements Runnable {
      *
      * @throws IOException      If the file doesn't exist then this exception will be thrown.
      * @throws BindException    If the port or server couldn't be opened when creating server.
+     * @return The server socket using the information composed form the class.
      */
-    private void initialisation() throws IOException {
-        this.serverSocket = new ServerSocket(this.port);
-        isInitialised = true;
+    protected ServerSocket initialisation(int port) throws IOException {
+        System.out.println("Plain Monitoring Init");
+        return new ServerSocket(port);
     }
 
-    private void failedServerBind() {
+    protected void failedServerBind() {
         new RAMTAlert(Alert.AlertType.ERROR,
                 "OpenRAMT Startup Error.",
                 "The port assigned to the server is already taken.",

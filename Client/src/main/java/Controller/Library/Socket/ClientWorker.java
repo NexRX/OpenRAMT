@@ -34,9 +34,11 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
             this.socket = new Socket(request.getUser().getHost(), request.getUser().getPort());
         }
 
+        TaskResponse<T> result = work();
+
         try { socket.close(); } catch (IOException ignored){}
 
-        return work();
+        return result;
     }
 
     private TaskResponse<T> work() throws IOException, ClassNotFoundException {
@@ -65,8 +67,9 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
         if(!ksFile.isFile()) {
             byte[] in = Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream("Cert/keystore.jks")).readAllBytes();
 
-            ksFile.getParentFile().mkdirs();
-            ksFile.createNewFile();
+            if (ksFile.getParentFile().mkdirs() && ksFile.createNewFile()) {
+                System.out.println("Keystore dir is guaranteed as ready.");
+            }
 
             FileOutputStream out = new FileOutputStream("data/keystore.jks");
             out.write(in);

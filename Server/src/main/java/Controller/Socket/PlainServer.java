@@ -84,7 +84,7 @@ public class PlainServer implements Runnable {
                 throw new RuntimeException("Error accepting client connection", e);
             }
 
-            new Thread(new ServerWorker(clientSocket, "Multithreaded Server")).start();
+            new Thread(new ServerWorker(clientSocket), "Client Socket Thread "+clientSocket.toString()).start();
         }
 
         System.out.println("Server Stopped.");
