@@ -28,6 +28,7 @@
 
 .jfx-text-field {
     -fx-prompt-text-fill: #8d7474;
+    -fx-text-fill: white;
 }
 
 .login-field {

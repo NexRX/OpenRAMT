@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<fx:root maxHeight="28.0" minHeight="28.0" prefHeight="28.0" prefWidth="820.0" stylesheets="@../CSS/Launcher.css" type="AnchorPane" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="28.0" minHeight="28.0" prefHeight="28.0" prefWidth="820.0" stylesheets="@../CSS/Launcher.css" type="AnchorPane" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-2.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
       <JFXButton fx:id="btnHelp" alignment="TOP_RIGHT" maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="28.0" styleClass="topBar-Buttons" text="?" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Label fx:id="lblState" alignment="CENTER" layoutX="39.0" layoutY="5.0" maxHeight="18.0" maxWidth="150.0" prefHeight="18.0" prefWidth="132.0" text="State: Initializing" textAlignment="CENTER" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="39.0" AnchorPane.topAnchor="5.0" />
+      <Label fx:id="lblState" alignment="CENTER" layoutX="39.0" layoutY="5.0" maxHeight="18.0" maxWidth="150.0" prefHeight="18.0" prefWidth="132.0" text="State: Initializing" textAlignment="CENTER" textFill="WHITE" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="39.0" AnchorPane.topAnchor="5.0" />
       <JFXProgressBar fx:id="progressBarState" layoutX="28.0" layoutY="27.0" maxHeight="2.0" maxWidth="150.0" prefWidth="234.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="28.0" AnchorPane.topAnchor="26.0" />
       <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" layoutX="626.0" maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="28.0" ripplerFill="BLACK" styleClass="topBar-Buttons" text="_" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="0.0">
       <font>
