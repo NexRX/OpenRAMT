@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
 public class MonitoringTask implements Runnable {
     // Atomic Monitoring Data.
@@ -32,7 +33,7 @@ public class MonitoringTask implements Runnable {
     private final CentralProcessor cpu = hal.getProcessor();
     private final List<OSFileStore> disks;
     private final GlobalMemory memory;
-    private final PowerSource systemPower;
+    private final List<PowerSource> systemPower;
 
     // One rrs.
     private final int diskCount;
@@ -56,7 +57,7 @@ public class MonitoringTask implements Runnable {
         this.ramCapacity = memory.getTotal();
 
         // Other
-        this.systemPower = hal.getPowerSources().get(0);
+        systemPower = hal.getPowerSources();
 
         preCPUTick = cpu.getSystemCpuLoadTicks();
     }
@@ -111,7 +112,18 @@ public class MonitoringTask implements Runnable {
 
         // Temps
         cpuTemp = (int) sysInfo.getHardware().getSensors().getCpuTemperature();
-        systemTemp = (int) systemPower.getTemperature(); // Actually battery temp, so 0 on desktop.
+
+
+        int systemAvgTemp = 0;
+        int tempCount = 0;
+        for (PowerSource ps : systemPower) {
+            systemAvgTemp += ps.getTemperature();
+            tempCount++;
+        }
+        systemAvgTemp += cpuTemp;
+        tempCount++;
+
+        systemTemp = systemAvgTemp / tempCount; // Actually battery temp, so 0 on desktop.
         // NEW NOTE: actually, on my laptop it was 0 too? maybe debug
         //further to see if multiple power sources (i.e. because charger is a power source)
         //If i cant be helped, new idea get any temps (cpu, gpu, etc) that arent 0 and use the average instead
