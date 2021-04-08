@@ -63,6 +63,10 @@
     -fx-font-size: 99%;
 }
 
+.btn-general {
+    -fx-font-size: 100%;
+}
+
 .btn-power {
     -fx-font-size: 175%;
     -fx-text-fill: white;
