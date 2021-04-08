@@ -20,7 +20,7 @@
       </font></JFXButton>
       <JFXButton id="btnClose" fx:id="btnExit" alignment="TOP_RIGHT" layoutX="792.0" maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="28.0" ripplerFill="BLACK" text="✕" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <font>
-         <Font name="Arial" size="11.0" />
+         <Font name="Arial" size="12.0" />
       </font></JFXButton>
    <styleClass>
       <String fx:value="topBar" />
