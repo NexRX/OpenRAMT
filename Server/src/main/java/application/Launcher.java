@@ -4,6 +4,7 @@ import Controller.Database.DBManager;
 import Controller.ManagementController;
 import Controller.RAMTAlert;
 import Controller.SetupController;
+import com.sun.javafx.tk.Toolkit;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -15,6 +16,7 @@ import sun.misc.Unsafe;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,7 +74,7 @@ public class Launcher {
 
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(new Scene(new SetupController(stage)));
-            stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+            stage.getIcons().add(new Image(Objects.requireNonNull(Launcher.class.getClassLoader().getResourceAsStream("openramt.png"))));
             stage.setTitle("OpenRAMT Setup");
             stage.setMinWidth(420);
             stage.setMinHeight(300);
@@ -86,7 +88,7 @@ public class Launcher {
 
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(new Scene(new ManagementController(stage)));
-            stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
+            stage.getIcons().add(new Image(Objects.requireNonNull(Launcher.class.getClassLoader().getResourceAsStream("openramt.png"))));
             stage.setTitle("OpenRAMT");
             stage.setMinWidth(580);
             stage.setMinHeight(410);
