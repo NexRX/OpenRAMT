@@ -25,8 +25,8 @@
          </font>
       </JFXButton>
       <Pane fx:id="topBar" layoutX="58.0" prefHeight="25.0" prefWidth="493.0" styleClass="secondary-background" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="0.0" />
-      <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" ripplerFill="#0d0000" styleClass="topBar-Buttons" text="🗕" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0" />
-      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="#bc0000" text="X" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" ripplerFill="#0d0000" styleClass="topBar-Buttons" text="&#128469;" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0" />
+      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="#bc0000" text="&#x2715;" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <AnchorPane fx:id="container" layoutY="25.0" minHeight="405.0" minWidth="-Infinity" prefHeight="439.0" prefWidth="600.0" styleClass="default-background">
          <children>
             <VBox alignment="CENTER" layoutY="6.0" prefHeight="116.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
