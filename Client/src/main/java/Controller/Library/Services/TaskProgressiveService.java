@@ -16,13 +16,14 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
     private TaskRequest<?> request;
     private TaskResponse<?> lastResponse;
 
+    private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
+
     public TaskProgressiveService(TaskRequest<?> request) {
         this.request = request;
 
         System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
 
         //private SSLSocket socket;
-        char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
     }
 
@@ -48,7 +49,6 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
     @Override
     protected Task<TaskResponse<?>> createTask() {
         return new Task<>() {
-            private final char[] ksPwd = "jknm43c23C1EW342we".toCharArray();
 
             @Override
             protected TaskResponse<?> call() throws IOException, UnrecoverableKeyException, CertificateException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException,  ClassNotFoundException {
@@ -56,14 +56,9 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
                 progressUpdate(0.1f, "Starting");
 
                 // Communications with server
-                Socket socket;
-                boolean secure = request.getUser().isSecure();
-
-                if (secure) {
-                    socket = sslGeneration();
-                } else {
-                    socket = new Socket(request.getUser().getHost(), request.getUser().getPort());
-                }
+                Socket socket = request.getUser().isSecure() ?  // Secure or plain socket.
+                        sslGeneration() :
+                        new Socket(request.getUser().getHost(), request.getUser().getPort());
 
                 // Create Data Streams.
                 progressUpdate(0.33f, "Connected");

@@ -2,6 +2,7 @@ package Controller.Library.Services;
 
 import Controller.Content.MonitorController;
 import Controller.Library.Socket.ClientMonitorWorker;
+import Controller.Library.Socket.ClientWorker;
 import Model.User.UserData;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -10,6 +11,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.FutureTask;
 
 public class MonitoringService extends Service<Void> {
@@ -29,10 +35,15 @@ public class MonitoringService extends Service<Void> {
             @Override
             protected Void call() {
                 try {
-                    System.out.println("Setting up monitoring connection.");
-                    Socket socket = new Socket(user.getHost(), user.getMonitoringPort());
+                    System.out.println("Setting up monitoring.");
+
+                    Socket socket = user.isSecure() ? // Secure or plain socket?
+                            ClientWorker.secureGeneration(user.getHost(), user.getMonitoringPort()) :
+                            new Socket(user.getHost(), user.getMonitoringPort());
+
                     socket.setSoTimeout(10 * 1000); //10s
 
+                    // Object stream setup
                     ObjectOutputStream socketOutput = new ObjectOutputStream(socket.getOutputStream());
                     ObjectInputStream socketInput = new ObjectInputStream(socket.getInputStream());
 
@@ -56,7 +67,11 @@ public class MonitoringService extends Service<Void> {
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (CertificateException | NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException | KeyManagementException e) {
+                    System.out.println("Failed to generate secure server.");
+                    e.printStackTrace();
                 }
+
                 return null;
             }
         };

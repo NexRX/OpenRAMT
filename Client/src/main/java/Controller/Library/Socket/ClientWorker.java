@@ -59,7 +59,7 @@ public class ClientWorker<T> implements Callable<TaskResponse<T>> {
      * Generates a certificate at runtime if (parts of) one are missing. Then returns a SSLSocket for use.
      * @return A secure socket reflecting the environment requested.
      */
-    private static SSLSocket secureGeneration(String host, int port) throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
+    public static SSLSocket secureGeneration(String host, int port) throws IOException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyManagementException {
         final File ksFile = new File("data/keystore.jks");
 
         if(!ksFile.isFile()) {

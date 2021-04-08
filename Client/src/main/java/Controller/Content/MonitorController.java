@@ -14,23 +14,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MonitorController extends ScrollPane {
-    // Series Chart Data
+    // Series Chart Data //
+    //CPU
     private static final XYChart.Series<String, Number> cpuUsageSeries = new XYChart.Series<>();
 
+    // RAM
     private static final PieChart.Data[] ramData = new PieChart.Data[2];
 
+    // Drives
     private static final XYChart.Series<Number, String> diskCapacitySeries = new XYChart.Series<>();
     private static final XYChart.Series<Number, String> diskSpaceSeries = new XYChart.Series<>();
+    private static final ArrayList<XYChart.Series<String, Number>> ioSeries = new ArrayList<>(); //ArrayList might not be need and can be internalised in the chart itself.
     private static long maxDisk = 1;
 
-    private static final ArrayList<XYChart.Series<String, Number>> ioSeries = new ArrayList<>(); //ArrayList might not be need and can be internalised in the chart itself.
-
+    //Temps
     private static final XYChart.Series<String, Number> cpuTempSeries = new XYChart.Series<>();
-
     private static final XYChart.Series<String, Number> systemTempSeries = new XYChart.Series<>();
 
     private final MonitoringService monitoringService = new MonitoringService(RootController.getLoggedInUser(), this);;
 
+    // FXML ??
     @FXML FlowPane container;
 
     // Charts
