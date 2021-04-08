@@ -286,6 +286,7 @@
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
+
 .RAMTAlert:header *.header-panel{
     -fx-background-color: #4c4747;
 }

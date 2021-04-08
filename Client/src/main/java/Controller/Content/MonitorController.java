@@ -4,11 +4,13 @@ import Controller.Library.Services.MonitoringService;
 import Controller.RootController;
 import Model.Misc.HardDiskItem;
 import Model.Misc.SoftDiskItem;
+import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.*;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,8 +48,11 @@ public class MonitorController extends ScrollPane {
     @FXML AreaChart<String, Number> acDiskIO;
 
     @FXML AreaChart<String, Number> acCPUTemp;
-
     @FXML AreaChart<String, Number> acSystemTemp;
+
+    // Extra
+    @FXML VBox containerRestart;
+    @FXML JFXButton btnRestart;
 
 
     /**
@@ -96,8 +101,32 @@ public class MonitorController extends ScrollPane {
 
         acSystemTemp.getData().add(systemTempSeries);
 
+        // Extra
+        containerRestart.prefWidthProperty().bind(container.widthProperty());
+
         // Start Service
-        monitoringService.restart();
+        startMonitoringService();
+
+        applyEventHandlers();
+    }
+
+    private void applyEventHandlers() {
+        btnRestart.setOnMouseClicked(e -> {
+            stopMonitoringService();
+            clearCurrentData();
+            startMonitoringService();
+        });
+    }
+
+    private void clearCurrentData() {
+        cpuUsageSeries.getData().clear();
+        diskCapacitySeries.getData().clear();
+        diskSpaceSeries.getData().clear();
+        for (XYChart.Series<String, Number> series :ioSeries) {
+            series.getData().clear();
+        }
+        cpuTempSeries.getData().clear();
+        systemTempSeries.getData().clear();
     }
 
     public void startMonitoringService() {
