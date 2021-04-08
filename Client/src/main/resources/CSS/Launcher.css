@@ -64,6 +64,8 @@
     -fx-background-color: rgba(184, 0, 0, 0.5);
 }
 
+.topBar{}
+
 .topBar-Buttons {
 	-fx-background-radius: 0;
     -fx-background-color: #474343;
@@ -309,4 +311,7 @@
     -fx-background-color: #ff0000;
     -fx-text-fill: #e0e0e0;
     -fx-font-weight:bold;
+}
+
+.lbl-secure {
 }
