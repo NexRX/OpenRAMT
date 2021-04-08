@@ -35,7 +35,7 @@ public class ClientMonitorWorker implements Callable<Void> {
                     monitorController.updateRAMUsage(loopData.getRAMUsage(), loopData.getRamCapacity());
                     monitorController.updateDiskSpaces(loopData.getSoftDisks());
                     monitorController.updateDiskIOs(loopData.getHardDisks(), loopData.getTimestamp());
-                    monitorController.updateCPUTemp(loopData.getTimestamp(), loopData.getCPUUsage());
+                    monitorController.updateCPUTemp(loopData.getTimestamp(), loopData.getCPUTemp());
                     monitorController.updateSystemTemp(loopData.getTimestamp(), loopData.getSystemTemp());
                 });
 

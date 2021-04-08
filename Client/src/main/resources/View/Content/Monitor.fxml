@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root fx:id="root" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" vvalue="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="root" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" vvalue="0.27" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <FlowPane fx:id="container" alignment="TOP_CENTER" columnHalignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="default-background">
          <children>
@@ -30,7 +30,6 @@
                         <Insets />
                      </VBox.margin>
                   </AreaChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Usage" textAlignment="CENTER" />
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -43,7 +42,10 @@
                         <Insets />
                      </VBox.margin>
                   </PieChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="RAM Usage" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="RAM Usage" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -51,7 +53,7 @@
             </VBox>
             <VBox fx:id="containerDiskSpace" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
                <children>
-                  <StackedBarChart id="diskspace" fx:id="barDiskSpace" alternativeColumnFillVisible="true" animated="false" horizontalZeroLineVisible="false">
+                  <StackedBarChart id="diskspace" fx:id="barDiskSpace" alternativeColumnFillVisible="true" animated="false" horizontalZeroLineVisible="false" styleClass="barchart-regular">
                     <xAxis>
                        <NumberAxis fx:id="axisDiskSize" side="BOTTOM" />
                     </xAxis>
@@ -59,7 +61,10 @@
                        <CategoryAxis fx:id="axisDiskName" side="LEFT" />
                     </yAxis>
                   </StackedBarChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="252.0" text="Disk Space" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="252.0" text="Disk Space" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -78,7 +83,10 @@
                         <Insets />
                      </VBox.margin>
                   </AreaChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="Disk I/O" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="Disk I/O" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -97,7 +105,10 @@
                         <Insets />
                      </VBox.margin>
                   </AreaChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Temp" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Temp" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
@@ -116,7 +127,10 @@
                         <Insets />
                      </VBox.margin>
                   </AreaChart>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="System Temp" textAlignment="CENTER" />
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="System Temp" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
                </children>
                <FlowPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

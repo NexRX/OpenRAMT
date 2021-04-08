@@ -139,46 +139,6 @@
 
 }
 
-.vboxChart#innerchart {
-    -fx-background-color: transparent;
-}
-
-.chart-plot-background {
-    -fx-background-color: #695f5f;
-}
-
-.chart-vertical-grid-lines {
-    -fx-stroke: rgba(255, 0, 0, 0.5);
-}
-.chart-horizontal-grid-lines {
-    -fx-stroke: rgba(255, 0, 0, 0.5);
-}
-
-.chart-legend {
-    -fx-background-color: #583535;
-}
-
-.chart-legend-item {
-    -fx-text-fill: #ffffff;
-    -fx-background-color: #583535;
-}
-
-.axis {
-    -fx-tick-label-fill: #ffffff;
-    -fx-tick-length: 5;
-}
-.axis-label {
-    -fx-text-fill: #ffffff;
-}
-
-.axis:left {
-    -fx-border-color: transparent #0f0f0f transparent transparent;
-}
-
-.axis:bottom{
-    -fx-border-color: #0f0f0f transparent transparent;
-}
-
 .table-view .column-header .label {
     -fx-text-fill: #ffffff;
     -fx-font-size: 10px;
@@ -280,6 +240,108 @@
 .scroll-pane .corner {
     -fx-background-insets: 0;
     -fx-background-color: transparent;
+}
+
+/* Chart / Series */
+
+.default-color0.chart-series-line { -fx-stroke: #ff0000; }
+.default-color1.chart-series-line { -fx-stroke: #ff5900; }
+.default-color2.chart-series-line { -fx-stroke: #f9ff25; }
+.default-color3.chart-series-line { -fx-stroke: #92ff25; }
+.default-color4.chart-series-line { -fx-stroke: #25ffcc; }
+.default-color5.chart-series-line { -fx-stroke: #2542ff; }
+.default-color6.chart-series-line { -fx-stroke: #a10cb1; }
+.default-color7.chart-series-line { -fx-stroke: #790c3a; }
+
+.areachart-regular {
+    CHART_COLOR_1: #ff0000;
+    CHART_COLOR_2: #ff5900;
+    CHART_COLOR_3: #f9ff25;
+    CHART_COLOR_4: #92ff25;
+    CHART_COLOR_5: #25ffcc;
+    CHART_COLOR_6: #2542ff;
+    CHART_COLOR_7: #a10cb1;
+}
+
+.default-color0.chart-pie { -fx-pie-color: #ff0000; }
+.default-color1.chart-pie { -fx-pie-color: #45ac2b; }
+.default-color2.chart-pie { -fx-pie-color: #f39100; }
+.default-color3.chart-pie { -fx-pie-color: #92ff25; }
+.default-color4.chart-pie { -fx-pie-color: #25ffcc; }
+.default-color5.chart-pie { -fx-pie-color: #2542ff; }
+.default-color6.chart-pie { -fx-pie-color: #a10cb1; }
+.default-color7.chart-pie { -fx-pie-color: #790c3a; }
+
+.piechart-regular {
+    PIE_COLOR_1: #ff0000;
+    PIE_COLOR_2: #45ac2b    ;
+    PIE_COLOR_3: #f39100;
+    PIE_COLOR_4: #c4fa89;
+    PIE_COLOR_5: #25ffcc;
+    PIE_COLOR_6: #2542ff;
+    PIE_COLOR_7: #a10cb1;
+}
+
+.default-color0.chart-bar { -fx-bar-fill: #ff0000; }
+.default-color1.chart-bar { -fx-bar-fill: #45ac2b; }
+.default-color2.chart-bar { -fx-bar-fill: #f39100; }
+.default-color3.chart-bar { -fx-bar-fill: #92ff25; }
+.default-color4.chart-bar { -fx-bar-fill: #25ffcc; }
+.default-color5.chart-bar { -fx-bar-fill: #2542ff; }
+.default-color6.chart-bar { -fx-bar-fill: #a10cb1; }
+.default-color7.chart-bar { -fx-bar-fill: #790c3a; }
+
+.barchart-regular {
+    BAR_COLOR_1: #ff0000;
+    BAR_COLOR_2: #45ac2b;
+    BAR_COLOR_3: #f39100;
+    BAR_COLOR_4: #92ff25;
+    BAR_COLOR_5: #25ffcc;
+    BAR_COLOR_6: #2542ff;
+    BAR_COLOR_7: #a10cb1;
+}
+
+.vboxChart#innerchart {
+    -fx-background-color: transparent;
+
+}
+
+.chart-plot-background {
+    -fx-background-color: #695f5f;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: rgba(255, 0, 0, 0.5);
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 0, 0, 0.5);
+}
+
+.chart-legend {
+    -fx-background-color: #583535;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #ffffff;
+    -fx-background-color: #583535;
+}
+
+.chart-series-line { -fx-stroke: #ff0000; }
+
+.axis {
+    -fx-tick-label-fill: #ffffff;
+    -fx-tick-length: 5;
+}
+.axis-label {
+    -fx-text-fill: #ffffff;
+}
+
+.axis:left {
+    -fx-border-color: transparent #0f0f0f transparent transparent;
+}
+
+.axis:bottom{
+    -fx-border-color: #0f0f0f transparent transparent;
 }
 
 /* Extra / Misc */

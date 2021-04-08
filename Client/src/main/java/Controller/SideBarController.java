@@ -40,10 +40,7 @@ public class SideBarController extends VBox {
         this.wizard = wizard;
 
         SideButton sBtnDefault = new SideButton("Welcome", AppPermission.NONE);
-        sBtnDefault.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            System.out.println("Changing Pane to Default");
-            this.wizard.changePane(0);
-        });
+        sBtnDefault.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> this.wizard.changePane(0) );
         sideButtons.put(0, sBtnDefault); // Make a constructor that can add a different default button.
         getChildren().add(sBtnDefault); // Add our default button.
 
@@ -63,10 +60,7 @@ public class SideBarController extends VBox {
 
         getChildren().add(index, sBtn);
 
-        sBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            System.out.println("Changing Pane to " + index.toString());
-            this.wizard.changePane(index);
-        });
+        sBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> this.wizard.changePane(index) );
 
         return true;
     }
@@ -84,10 +78,7 @@ public class SideBarController extends VBox {
 
         getChildren().add(index, sBtn);
 
-        sBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            System.out.println("Changing Pane to " + index.toString());
-            this.wizard.changePane(index);
-        });
+        sBtn.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> this.wizard.changePane(index) );
 
         return true;
     }

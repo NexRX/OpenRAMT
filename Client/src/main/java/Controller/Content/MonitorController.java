@@ -140,6 +140,8 @@ public class MonitorController extends ScrollPane {
 
     public void updateCPUUsage(String time, Integer value) {
         cpuUsageSeries.getData().add(new XYChart.Data<>(time, value));
+        if (cpuUsageSeries.getData().size() > 30)
+            cpuUsageSeries.getData().remove(0);
     }
 
     public void updateRAMUsage(long used, long total) {
@@ -164,6 +166,9 @@ public class MonitorController extends ScrollPane {
                 diskSpaceSeries.getData().add(i, new XYChart.Data<>(disk.getSpace(), disk.getDiskIdentifier()));
                 diskCapacitySeries.getData().add(i, new XYChart.Data<>(disk.getCapacity() - disk.getSpace(), disk.getDiskIdentifier()));
             }
+
+            if (diskSpaceSeries.getData().size() > 30)
+                diskSpaceSeries.getData().remove(0);
             i++;
         }
     }
@@ -192,15 +197,21 @@ public class MonitorController extends ScrollPane {
         int i = 0;
         for (HardDiskItem disk : disks) {
             ioSeries.get(i).getData().add(new XYChart.Data<>(timestamp, disk.getDiskIO()));
+            if (ioSeries.get(i).getData().size() > 30)
+                ioSeries.get(i).getData().remove(0);
             i++;
         }
     }
 
     public void updateCPUTemp(String time, Integer value) {
         cpuTempSeries.getData().add(new XYChart.Data<>(time, value));
+        if (cpuTempSeries.getData().size() > 30)
+            cpuTempSeries.getData().remove(0);
     }
 
     public void updateSystemTemp(String time, Integer value) {
         systemTempSeries.getData().add(new XYChart.Data<>(time, value));
+        if (systemTempSeries.getData().size() > 30)
+            systemTempSeries.getData().remove(0);
     }
 }

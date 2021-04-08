@@ -322,7 +322,20 @@ public class RAMTClientHelper extends AnchorPane{
         txt1.setPrefWidth(scrollMonitoring.getPrefWidth()-50);
         txt1.getStyleClass().add("lbl-regular");
 
-        tfMonitoring.getChildren().addAll(head1, txt1);
+        Label head2 = new Label("Missing Data\n");
+        head2.setPrefWidth(scrollMonitoring.getPrefWidth()-50);
+        head2.setWrapText(true);
+        head2.getStyleClass().add("lbl-header");
+
+        Label txt2 = new Label("This is mostly a problem on windows but if you get missing data (most likely Temperature) " +
+                "then first make sure the program is running as admin if that doesn't work and your on windows. You can install " +
+                "a program called 'Open Hardware Monitor' which will running, may satisfy the dependency needed to fix " +
+                "this issue for you. Otherwise, please report this as a bug to the OpenRAMT Github.\n\n");
+        txt2.setWrapText(true);
+        txt2.setPrefWidth(scrollMonitoring.getPrefWidth()-50);
+        txt2.getStyleClass().add("lbl-regular");
+
+        tfMonitoring.getChildren().addAll(head1, txt1, head2, txt2);
     }
 
     private void setupSettingsTab() {
