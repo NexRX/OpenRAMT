@@ -35,9 +35,9 @@
          <Font name="Monospaced Regular" size="14.0" />
       </font>
    </Label>
-   <JFXButton id="btnClose" fx:id="btnCert" contentDisplay="CENTER" layoutY="2.0" prefHeight="25.0" prefWidth="30.0" ripplerFill="RED" text="📜" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+   <JFXButton id="btnCert" fx:id="btnCert" contentDisplay="CENTER" layoutY="2.0" prefHeight="25.0" prefWidth="30.0" ripplerFill="RED" text="📜" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
       <font>
-         <Font name="Arial" size="12.0" />
+         <Font name="Arial" size="11.0" />
       </font>
    </JFXButton>
 </fx:root>

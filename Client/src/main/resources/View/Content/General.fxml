@@ -49,7 +49,7 @@
                         <String fx:value="btn-regular" />
                         <String fx:value="btn-general" />
                      </styleClass></JFXButton>
-                  <JFXButton fx:id="btnCleanDiskBin" buttonType="RAISED" layoutX="164.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Bin / Recycling" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="111.0">
+                  <JFXButton fx:id="btnCleanDiskBin" buttonType="RAISED" layoutX="164.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Bin / Recycle" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="111.0">
                      <styleClass>
                         <String fx:value="btn-regular" />
                         <String fx:value="btn-general" />

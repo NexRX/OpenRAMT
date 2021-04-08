@@ -16,6 +16,7 @@ import sun.misc.Unsafe;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Essentially the bootstrap to kickstart the main start class.
@@ -46,7 +47,8 @@ public class Launcher {
                         "OpenRAMT is designed to be ran as administrator, running without is unsupported.\n" +
                                 "You may continue but certain tasks will not work as warned here.\n\n" +
                                 "Otherwise, please restart as Administrator / with sudo.\n" +
-                                "(Extra Note: Clients won't detect his as a problem)").show();
+                                "(Note: Clients won't detect this as the problems.)").show();
+                try {TimeUnit.SECONDS.sleep(5); } catch (InterruptedException ignored){} // Small warning wait
             }
 
             // Detect wipe needed.
@@ -72,7 +74,7 @@ public class Launcher {
             stage.initStyle(StageStyle.UNDECORATED);
             stage.setScene(new Scene(new SetupController(stage)));
             stage.getIcons().add(new Image("file:src/main/resources/openramt.png"));
-            stage.setTitle("OpenRAMT");
+            stage.setTitle("OpenRAMT Setup");
             stage.setMinWidth(420);
             stage.setMinHeight(300);
 
