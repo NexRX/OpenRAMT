@@ -5,7 +5,6 @@ import Model.Task.TaskRequest;
 import Model.Task.TaskResponse;
 import Model.User.UserData;
 import Model.User.UserGroup;
-import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -14,9 +13,6 @@ import java.util.HashMap;
 
 import static Controller.Socket.Task.RAMTTaskLibrary.*;
 
-/**
-
- */
 @SuppressWarnings("unchecked") // Safe when server & client respects request/response structure.
 public class ServerWorker implements Runnable{
     protected Socket socket;
@@ -90,6 +86,7 @@ public class ServerWorker implements Runnable{
             case ENABLEBLUETOOTH -> enableBluetooth((TaskRequest<Integer>) request);
             case DISABLEBLUETOOTH -> disableBluetooth((TaskRequest<Integer>) request);
             case SUSPENDUSER -> suspendUser((TaskRequest<String>) request);
+            case UNSUSPENDUSER -> unsuspendUser((TaskRequest<String>) request);
             case SUSPENDUSERS -> suspendUsers((TaskRequest<String>) request);
             case UPDATEGROUP -> updateGroup((TaskRequest<String[]>) request);
             default -> new TaskResponse<Void>(request, Response.INTERRUPTED, 99); // Lil' future proofing.

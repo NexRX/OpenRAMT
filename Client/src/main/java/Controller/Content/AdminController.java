@@ -43,6 +43,7 @@ public class AdminController extends ScrollPane {
     @FXML JFXButton btnUserPassword;
     @FXML JFXButton btnUserGroup;
     @FXML JFXButton btnUserSuspend;
+    @FXML JFXButton btnUserUnsuspend;
     @FXML JFXButton btnUserDelete;
 
     // Group
@@ -145,32 +146,58 @@ public class AdminController extends ScrollPane {
             }
         });
 
+        btnUserUnsuspend.setOnMouseClicked(event -> {
+            try {
+                String user = this.selectedUsername();
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "User suspension Confirmation.",
+                        "Do you wish to suspend user " + user + "?",
+                        "Please note that users must be unsuspended manually!");
+
+                alert.showAndWait();
+
+                if (alert.getResult() == ButtonType.OK) {
+                    lastRequestID = RootController.requestStart(new TaskRequest<>(Task.UNSUSPENDUSER, RootController.getLoggedInUser(), selectedUsername()));
+                }
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
+            }
+        });
+
         btnUserSuspend.setOnMouseClicked(event -> {
-            String user = this.selectedUsername();
-            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                    "User suspension Confirmation.",
-                    "Do you wish to suspend user " + user + "?",
-                    "Please note that users must be unsuspended manually!");
+            try {
+                String user = this.selectedUsername();
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "User suspension Confirmation.",
+                        "Do you wish to suspend user " + user + "?",
+                        "Please note that users must be unsuspended manually!");
 
-            alert.showAndWait();
+                alert.showAndWait();
 
-            if (alert.getResult() == ButtonType.OK) {
-                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.SUSPENDUSER, RootController.getLoggedInUser(), selectedUsername()));
+                if (alert.getResult() == ButtonType.OK) {
+                    lastRequestID = RootController.requestStart(new TaskRequest<>(Task.SUSPENDUSER, RootController.getLoggedInUser(), selectedUsername()));
+                }
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
             }
         });
 
         btnUserDelete.setOnMouseClicked(event -> {
-            String user = this.selectedUsername();
-            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                    "User Deletion Confirmation.",
-                    "Do you wish to delete user " + user + "?",
-                    "This cannot be undone without a data backup! \n" +
-                            "Please double check and ensure your at least delete the correct user.");
+            try {
+                String user = this.selectedUsername();
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "User Deletion Confirmation.",
+                        "Do you wish to delete user " + user + "?",
+                        "This cannot be undone without a data backup! \n" +
+                                "Please double check and ensure your at least delete the correct user.");
 
-            alert.showAndWait();
+                alert.showAndWait();
 
-            if (alert.getResult() == ButtonType.OK) {
-                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DELETEUSER, RootController.getLoggedInUser(), selectedUsername()));
+                if (alert.getResult() == ButtonType.OK) {
+                    lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DELETEUSER, RootController.getLoggedInUser(), selectedUsername()));
+                }
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
             }
         });
 
@@ -217,47 +244,59 @@ public class AdminController extends ScrollPane {
         });
 
         btnGroupSuspendUsers.setOnMouseClicked(event -> {
-            String group = this.selectedGroupName();
-            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                    "Group suspension Confirmation.",
-                    "Do you wish to suspend users in " + group + "?",
-                    "Please note that users must be unsuspended manually! \n" +
-                            "This means that they cannot be 'all' unsuspended via a one click solution.");
+            try {
+                String group = this.selectedGroupName();
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "Group suspension Confirmation.",
+                        "Do you wish to suspend users in " + group + "?",
+                        "Please note that users must be unsuspended manually! \n" +
+                                "This means that they cannot be 'all' unsuspended via a one click solution.");
 
-            alert.showAndWait();
+                alert.showAndWait();
 
-            if (alert.getResult() == ButtonType.OK) {
-                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.SUSPENDUSERS, RootController.getLoggedInUser(), selectedGroupName()));
+                if (alert.getResult() == ButtonType.OK) {
+                    lastRequestID = RootController.requestStart(new TaskRequest<>(Task.SUSPENDUSERS, RootController.getLoggedInUser(), selectedGroupName()));
+                }
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
             }
         });
 
         btnGroupDeleteUsers.setOnMouseClicked(event -> {
-            String group = this.selectedGroupName();
-            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                    "Group User Deletion Confirmation.",
-                    "Do you wish to delete all users in " + group + "?",
-                    "This cannot be undone without a data backup! \n" +
-                            "Please double check and ensure your at least delete users in the right group.");
+            try {
+                String group = this.selectedGroupName();
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "Group User Deletion Confirmation.",
+                        "Do you wish to delete all users in " + group + "?",
+                        "This cannot be undone without a data backup! \n" +
+                                "Please double check and ensure your at least delete users in the right group.");
 
-            alert.showAndWait();
+                alert.showAndWait();
 
-            if (alert.getResult() == ButtonType.OK) {
-                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DELETEUSERS, RootController.getLoggedInUser(), selectedGroupName()));
+                if (alert.getResult() == ButtonType.OK) {
+                    lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DELETEUSERS, RootController.getLoggedInUser(), selectedGroupName()));
+                }
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
             }
         });
 
         btnGroupDelete.setOnMouseClicked(event -> {
-            String group = this.selectedGroupName();
-            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
-                    "Group Deletion Confirmation.",
-                    "Do you wish to delete the following " + group + "?",
-                    "This cannot be undone without a data backup! \n" +
-                            "All users will be moved to the default group. So please make sure everything is correct!");
+            try {
+                String group = this.selectedGroupName();
+                Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                        "Group Deletion Confirmation.",
+                        "Do you wish to delete the following " + group + "?",
+                        "This cannot be undone without a data backup! \n" +
+                                "All users will be moved to the default group. So please make sure everything is correct!");
 
-            alert.showAndWait();
+                alert.showAndWait();
 
-            if (alert.getResult() == ButtonType.OK) {
-                lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DELETEGROUP, RootController.getLoggedInUser(), selectedGroupName()));
+                if (alert.getResult() == ButtonType.OK) {
+                    lastRequestID = RootController.requestStart(new TaskRequest<>(Task.DELETEGROUP, RootController.getLoggedInUser(), selectedGroupName()));
+                }
+            } catch (IllegalStateException e) {
+                nothingSelectedAlert();
             }
         });
 
@@ -314,6 +353,26 @@ public class AdminController extends ScrollPane {
                                     "OpenRAMT Error",
                                     "Something went wrong during that request.",
                                     "User couldn't be suspended because something went wrong in the server").show();
+                        }
+                    }
+                    case UNSUSPENDUSER -> {
+                        switch (RootController.getTaskService().getValue().getResponseCode()) {
+                            case 0 -> new RAMTAlert(Alert.AlertType.INFORMATION,
+                                    "OpenRAMT Information",
+                                    "The user was unsuspended successfully!",
+                                    "You can close this message at any time.").show();
+                            case 1 -> new RAMTAlert(Alert.AlertType.WARNING,
+                                    "OpenRAMT Warning",
+                                    "That user couldn't be unsuspended!",
+                                    "Maybe the user doesn't exist. Try go back and refreshing to check.").show();
+                            case 3 -> new RAMTAlert(Alert.AlertType.WARNING,
+                                    "OpenRAMT Warning",
+                                    "Cannot unsuspend default users!",
+                                    "That user is protected/reserved by the system.").show();
+                            default -> new RAMTAlert(Alert.AlertType.ERROR,
+                                    "OpenRAMT Error",
+                                    "Something went wrong during that request.",
+                                    "User couldn't be unsuspended because something went wrong in the server").show();
                         }
                     }
                     case SUSPENDUSERS -> {
@@ -449,7 +508,7 @@ public class AdminController extends ScrollPane {
         return tblUsers.getSelectionModel().getSelectedItem();
     }
 
-    public String selectedUsername() {
+    public String selectedUsername() throws IllegalStateException {
         if (selectedUserItem() != null && !selectedUserItem().getUsername().isEmpty()) {
             return selectedUserItem().getUsername();
         } else if(lblUserValue != null && !lblUserValue.getText().isEmpty()) {

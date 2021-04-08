@@ -31,6 +31,7 @@ public enum Task {
     STARTFTP,
     STOPFTP,
     SUSPENDUSER,
+    UNSUSPENDUSER,
     SUSPENDUSERS,
     TESTING,
     UPDATEGROUP,

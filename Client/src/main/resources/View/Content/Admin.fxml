@@ -33,6 +33,7 @@
                         <JFXButton fx:id="btnUserPassword" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Update Password" />
                         <JFXButton fx:id="btnUserGroup" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Change Group" />
                         <JFXButton fx:id="btnUserSuspend" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Suspend User" />
+                        <JFXButton fx:id="btnUserUnsuspend" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Unsuspend User" />
                         <JFXButton fx:id="btnUserDelete" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Delete User" />
                      </children>
                      <padding>

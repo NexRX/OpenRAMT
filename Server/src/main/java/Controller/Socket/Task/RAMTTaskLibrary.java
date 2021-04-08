@@ -1098,6 +1098,20 @@ public class RAMTTaskLibrary {
         return new TaskResponse<>(request, Response.FAILED, 99);
     }
 
+    public static TaskResponse<?> unsuspendUser(TaskRequest<String> request) {
+        TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
+        if (auth.getResponse() != Response.SUCCESS) {
+            return auth;
+        }
+
+        try {
+            return new TaskResponse<>(request, Response.SUCCESS, DBManager.unsuspendUser(request.getParameter())); // Should make sure DB and RAMT codes are same.
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new TaskResponse<>(request, Response.FAILED, 99);
+    }
+
     public static TaskResponse<?> suspendUsers(TaskRequest<String> request) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
