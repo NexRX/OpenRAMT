@@ -25,6 +25,10 @@ import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.json.JSONArray;
 import java.io.*;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -93,6 +97,9 @@ public class RAMTTaskLibrary {
                 } else {                                // User Checks out!
                     UserData loggedInUser = DBManager.getUser(request.getUser().getUsername());
                     loggedInUser.setObjGroup(DBManager.getGroup(loggedInUser.getGroup())); // adding UserGroup
+
+                    // Get macAddress for user connected port.
+                    loggedInUser.setMacAddress(getMacAddress(request.getUser().getHost()));
 
                     return new TaskResponse<>(request, Response.SUCCESS, 0, loggedInUser);
 
@@ -1247,6 +1254,18 @@ public class RAMTTaskLibrary {
             }
         }
     }
+
+    private static byte[] getMacAddress(String ip) {
+        try {
+            InetAddress localHost = InetAddress.getByName(ip);
+            NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
+            return ni.getHardwareAddress();
+        } catch (UnknownHostException | SocketException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     /*
      * All Scripts as variables/methods go here to prevent clutter of the top of this class.

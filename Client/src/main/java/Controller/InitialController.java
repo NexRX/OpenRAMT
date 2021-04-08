@@ -3,7 +3,6 @@ package Controller;
 import Controller.Library.Services.LoginProgressiveService;
 import Model.Task.TaskResponse;
 import Model.User.UserData;
-import Model.User.UserGroup;
 import application.Launcher;
 import application.Launcher.MainStart;
 import com.jfoenix.controls.JFXButton;
@@ -30,7 +29,7 @@ public class InitialController extends AnchorPane {
     @FXML JFXTextField loginUsername;
     @FXML JFXPasswordField loginPassword;
     @FXML JFXButton btnLogin;
-    @FXML Label lblProgress;
+    //@FXML Label lblProgress;
     @FXML Label lblSecure;
     @FXML Pane topBar;
 
@@ -136,7 +135,8 @@ public class InitialController extends AnchorPane {
                                     loginResponse.getResponseData().isSuspended(),
                                     user.isSecure(),
                                     loginResponse.getResponseData().getObjGroup(),
-                                    loginResponse.getResponseData().getMonitoringPort()
+                                    loginResponse.getResponseData().getMonitoringPort(),
+                                    loginResponse.getResponseData().getMacAddress()
                             )
                     );
                     System.out.println("Logged in.");
