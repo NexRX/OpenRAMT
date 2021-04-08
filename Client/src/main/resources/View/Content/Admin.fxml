@@ -75,14 +75,14 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
                <columns>
-                  <TableColumn fx:id="colUsername" editable="false" maxWidth="500.0" prefWidth="-1.0" text="Username" />
-                  <TableColumn fx:id="colGroup" editable="false" maxWidth="350.0" prefWidth="-1.0" text="Group" />
-                  <TableColumn fx:id="colAdmin" editable="false" maxWidth="200.0" prefWidth="75.0" text="Admin" />
-                  <TableColumn fx:id="colGeneral" editable="false" maxWidth="200.0" prefWidth="75.0" text="General" />
-                  <TableColumn fx:id="colProcess" editable="false" maxWidth="200.0" prefWidth="75.0" text="Process" />
-                  <TableColumn fx:id="colMonitoring" editable="false" maxWidth="200.0" prefWidth="75.0" text="Monitor" />
-                  <TableColumn fx:id="colPower" editable="false" maxWidth="200.0" prefWidth="75.0" text="Power" />
-                  <TableColumn fx:id="colSuspended" editable="false" maxWidth="200.0" prefWidth="75.0" text="Suspend" />
+                  <TableColumn fx:id="colUsername" editable="false" maxWidth="500.0" prefWidth="-1.0" styleClass="tbl-Header" text="Username" />
+                  <TableColumn fx:id="colGroup" editable="false" maxWidth="350.0" prefWidth="-1.0" styleClass="tbl-Header" text="Group" />
+                  <TableColumn fx:id="colAdmin" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Admin" />
+                  <TableColumn fx:id="colGeneral" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="General" />
+                  <TableColumn fx:id="colProcess" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Process" />
+                  <TableColumn fx:id="colMonitoring" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Monitor" />
+                  <TableColumn fx:id="colPower" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Power" />
+                  <TableColumn fx:id="colSuspended" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Suspend" />
                </columns>
             </TableView>
          </children>
