@@ -21,9 +21,8 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
     public TaskProgressiveService(TaskRequest<?> request) {
         this.request = request;
 
+        // For security with SSLSockets.
         System.setProperty("javax.net.ssl.trustStore","data/keystore.jks");
-
-        //private SSLSocket socket;
         System.setProperty("javax.net.ssl.trustStorePassword", String.valueOf(ksPwd));
     }
 
@@ -139,6 +138,11 @@ public class TaskProgressiveService extends Service<TaskResponse<?>> {
         };
     }
 
+    /**
+     * Getting the value of a socket causes it to be null, so as a fallback for any data this method can be used as a
+     * last resort.
+     * @return The last response received from the server.
+     */
     public TaskResponse<?> getLastResponse() {
         return lastResponse;
     }
