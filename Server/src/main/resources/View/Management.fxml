@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<fx:root id="initial" minHeight="410.0" minWidth="580.0" prefHeight="466.0" prefWidth="599.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/14.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="initial" minHeight="410.0" minWidth="580.0" prefHeight="466.0" prefWidth="599.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <JFXButton fx:id="btnClose1" contentDisplay="CENTER" layoutX="25.0" layoutY="2.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="WHITE" text="⚙" textFill="WHITE" AnchorPane.leftAnchor="25.0" AnchorPane.topAnchor="0.0">
          <font>
@@ -25,8 +19,14 @@
          </font>
       </JFXButton>
       <Pane fx:id="topBar" layoutX="58.0" prefHeight="25.0" prefWidth="493.0" styleClass="secondary-background" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="0.0" />
-      <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" ripplerFill="#0d0000" styleClass="topBar-Buttons" text="&#128469;" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0" />
-      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="#bc0000" text="&#x2715;" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <JFXButton fx:id="btnMin" alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" ripplerFill="#0d0000" styleClass="topBar-Buttons" text="🗕" textFill="WHITE" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font></JFXButton>
+      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="556.0" layoutY="2.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="#bc0000" text="✕" textFill="WHITE" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font></JFXButton>
       <AnchorPane fx:id="container" layoutY="25.0" minHeight="405.0" minWidth="-Infinity" prefHeight="439.0" prefWidth="600.0" styleClass="default-background">
          <children>
             <VBox alignment="CENTER" layoutY="6.0" prefHeight="116.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
