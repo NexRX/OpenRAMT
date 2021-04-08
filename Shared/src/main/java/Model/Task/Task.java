@@ -34,6 +34,5 @@ public enum Task {
     SUSPENDUSERS,
     TESTING,
     UPDATEGROUP,
-    UPDATEUSER,
-    WOL
+    UPDATEUSER
 }

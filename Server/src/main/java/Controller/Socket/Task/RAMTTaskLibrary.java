@@ -11,7 +11,6 @@ import Model.User.UserGroup;
 import com.profesorfalken.jpowershell.PowerShell;
 import com.profesorfalken.jpowershell.PowerShellNotAvailableException;
 import com.profesorfalken.jpowershell.PowerShellResponse;
-import javafx.application.Platform;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.ftplet.Authority;
@@ -25,17 +24,13 @@ import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
 import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.json.JSONArray;
-
 import java.io.*;
-import java.net.*;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static Model.General.OSType.*;
@@ -415,37 +410,6 @@ public class RAMTTaskLibrary {
             e.printStackTrace();
             return new TaskResponse<>(request, Response.FAILED, 99);
         }
-    }
-
-    // Takes IP and MAC ADDRESS and finally port (indexes respectively 0, 1, 2)
-    public static TaskResponse<Void> wakeOnLAN(TaskRequest<String[]> request) {
-        TaskResponse auth = authorise(request, AppPermission.POWER);
-        if (auth.getResponse() != Response.SUCCESS) {
-            return auth;
-        }
-
-        byte[] macBytes = getMacBytes(request.getParameter()[1]);
-        byte[] bytes = new byte[6 + 16 * macBytes.length];
-        for (int i = 0; i < 6; i++) {
-            bytes[i] = (byte) 0xff;
-        }
-        for (int i = 6; i < bytes.length; i += macBytes.length) {
-            System.arraycopy(macBytes, 0, bytes, i, macBytes.length);
-        }
-
-        InetAddress address;
-        try {
-            address = InetAddress.getByName(request.getParameter()[0]);
-            DatagramPacket packet = new DatagramPacket(bytes, bytes.length, address, Integer.parseInt(request.getParameter()[2]));
-            DatagramSocket socket = new DatagramSocket();
-            socket.send(packet);
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new TaskResponse<>(request, Response.FAILED, 4);
-        }
-
-        return new TaskResponse<>(request, Response.SUCCESS, 0);
     }
 
     public static TaskResponse<Void> startFTP(TaskRequest<Void> request) {
@@ -1177,9 +1141,7 @@ public class RAMTTaskLibrary {
 
         stopFTP(request); // May cause errors if not stopped.
 
-        Executors.newScheduledThreadPool(1).schedule(() -> {
-            System.exit(0);
-        }, 2, TimeUnit.SECONDS);
+        Executors.newScheduledThreadPool(1).schedule(() -> System.exit(0), 2, TimeUnit.SECONDS);
 
 
         boolean isMarked;
@@ -1323,25 +1285,6 @@ public class RAMTTaskLibrary {
                     "end tell";
         }
     }
-
-    private static byte[] getMacBytes(String macStr) throws IllegalArgumentException {
-        byte[] bytes = new byte[6];
-        String[] hex = macStr.split("([:\\-])");
-        if (hex.length != 6) {
-            throw new IllegalArgumentException("Invalid MAC address.");
-        }
-        try {
-            for (int i = 0; i < 6; i++) {
-                bytes[i] = (byte) Integer.parseInt(hex[i], 16);
-            }
-        }
-        catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid hex digit in MAC address.");
-        }
-        return bytes;
-    }
-
-
 
     /**
      * 5 Second timeout for the powershell.

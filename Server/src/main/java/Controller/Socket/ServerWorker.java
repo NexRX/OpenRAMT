@@ -92,7 +92,6 @@ public class ServerWorker implements Runnable{
             case SUSPENDUSER -> suspendUser((TaskRequest<String>) request);
             case SUSPENDUSERS -> suspendUsers((TaskRequest<String>) request);
             case UPDATEGROUP -> updateGroup((TaskRequest<String[]>) request);
-            case WOL -> wakeOnLAN((TaskRequest<String[]>) request);
             default -> new TaskResponse<Void>(request, Response.INTERRUPTED, 99); // Lil' future proofing.
         };
     }
