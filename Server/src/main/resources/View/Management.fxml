@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<fx:root id="initial" minHeight="410.0" minWidth="580.0" prefHeight="466.0" prefWidth="599.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root id="initial" minHeight="410.0" minWidth="580.0" prefHeight="466.0" prefWidth="599.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <JFXButton fx:id="btnHelp" contentDisplay="CENTER" layoutX="2.0" layoutY="2.0" prefHeight="25.0" prefWidth="28.0" ripplerFill="WHITE" text="?" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <font>
@@ -40,6 +46,7 @@
                <JFXButton fx:id="btnUserPassword" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Update Password" />
                <JFXButton fx:id="btnUserGroup" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Change Group" />
                <JFXButton fx:id="btnUserSuspend" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Suspend User" />
+               <JFXButton fx:id="btnUserUnsuspend" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Unsuspend User" />
                <JFXButton fx:id="btnUserDelete" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" styleClass="btn-regular" text="Delete User" />
             </FlowPane>
          </VBox>

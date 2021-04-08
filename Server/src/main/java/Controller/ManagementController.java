@@ -46,6 +46,7 @@ public class ManagementController extends AnchorPane {
     @FXML JFXButton btnUserPassword;
     @FXML JFXButton btnUserGroup;
     @FXML JFXButton btnUserSuspend;
+    @FXML JFXButton btnUserUnsuspend;
     @FXML JFXButton btnUserDelete;
 
     // Group
@@ -160,10 +161,6 @@ public class ManagementController extends AnchorPane {
         }
     }
 
-    private void stopMonitoring() {
-
-    }
-
     private void applyEventHandlers() {
         /* Window */
         topBar.setOnMousePressed(event -> { // These next two control window movement
@@ -253,6 +250,25 @@ public class ManagementController extends AnchorPane {
             if (alert.getResult() == ButtonType.OK) {
                 try {
                     DBManager.suspendUser(user);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    sqlError();
+                }
+            }
+        });
+
+        btnUserUnsuspend.setOnMouseClicked(event -> {
+            String user = this.selectedUsername();
+            Alert alert = new RAMTAlert(Alert.AlertType.CONFIRMATION,
+                    "User un-suspension Confirmation.",
+                    "Do you wish to unsuspend user " + user + "?",
+                    "If so, press ok to continue.");
+
+            alert.showAndWait();
+
+            if (alert.getResult() == ButtonType.OK) {
+                try {
+                    DBManager.unsuspendUser(user);
                 } catch (SQLException e) {
                     e.printStackTrace();
                     sqlError();
