@@ -59,6 +59,10 @@
     -fx-background-color: rgba(227, 0, 0, 0.1);
 }
 
+.btn-admin {
+    -fx-font-size: 99%;
+}
+
 .btn-power {
     -fx-font-size: 175%;
     -fx-text-fill: white;

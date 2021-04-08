@@ -31,8 +31,8 @@
       <AnchorPane fx:id="container" layoutY="25.0" minHeight="405.0" minWidth="-Infinity" prefHeight="439.0" prefWidth="600.0" styleClass="default-background">
          <VBox alignment="CENTER" layoutY="6.0" prefHeight="116.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <HBox alignment="CENTER" prefHeight="27.0" prefWidth="600.0">
-               <Label fx:id="lblUser" alignment="CENTER" prefHeight="27.0" prefWidth="60.0" styleClass="lbl-header" text="User:" textFill="WHITE" underline="true" />
-               <JFXButton fx:id="btnUserNew" buttonType="RAISED" prefHeight="29.0" prefWidth="46.0" ripplerFill="#680000" styleClass="btn-regular" text="New" />
+               <Label fx:id="lblUser" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" styleClass="lbl-header" text="User:" textFill="WHITE" underline="true" />
+               <JFXButton fx:id="btnUserNew" buttonType="RAISED" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="75.0" ripplerFill="#680000" styleClass="btn-regular" text="New" />
                <Label fx:id="lblUserValue" alignment="CENTER" prefHeight="27.0" prefWidth="500.0" styleClass="lbl-header" />
             </HBox>
             <FlowPane hgap="50.0" maxWidth="600.0" prefHeight="113.0" prefWidth="600.0" vgap="20.0">
@@ -52,8 +52,8 @@
          </VBox>
          <VBox alignment="CENTER" layoutY="129.0" prefHeight="116.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <HBox alignment="CENTER" prefHeight="27.0" prefWidth="600.0">
-               <Label fx:id="lblGroup" alignment="CENTER" prefHeight="27.0" prefWidth="60.0" styleClass="lbl-header" text="Group:" textFill="WHITE" underline="true" />
-               <JFXButton fx:id="btnGroupNew" buttonType="RAISED" prefHeight="29.0" prefWidth="46.0" ripplerFill="#680000" styleClass="btn-regular" text="New" />
+               <Label fx:id="lblGroup" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" styleClass="lbl-header" text="Group:" textFill="WHITE" underline="true" />
+               <JFXButton fx:id="btnGroupNew" buttonType="RAISED" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="75.0" ripplerFill="#680000" styleClass="btn-regular" text="New" />
                <Label fx:id="lblGroupValue" alignment="CENTER" prefHeight="27.0" prefWidth="500.0" styleClass="lbl-header" />
             </HBox>
             <FlowPane hgap="50.0" maxWidth="600.0" prefHeight="97.0" prefWidth="600.0" vgap="20.0">
@@ -73,7 +73,7 @@
                </VBox.margin>
             </FlowPane>
          </VBox>
-         <JFXButton fx:id="btnRefresh" buttonType="RAISED" layoutX="519.0" layoutY="253.0" prefHeight="29.0" prefWidth="67.0" ripplerFill="#680000" styleClass="btn-regular" text="Refresh" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="253.0" />
+         <JFXButton fx:id="btnRefresh" buttonType="RAISED" layoutX="519.0" layoutY="253.0" prefHeight="29.0" prefWidth="80.0" ripplerFill="#680000" styleClass="btn-regular" text="Refresh" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="253.0" />
          <TableView fx:id="tblUsers" layoutX="14.0" layoutY="287.0" prefHeight="194.0" prefWidth="580.0" styleClass="secondary-background" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="287.0">
             <columns>
                <TableColumn fx:id="colUsername" editable="false" maxWidth="500.0" prefWidth="-1.0" text="Username" />
