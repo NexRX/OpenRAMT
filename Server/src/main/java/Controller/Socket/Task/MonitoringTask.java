@@ -116,8 +116,10 @@ public class MonitoringTask implements Runnable {
         int systemAvgTemp = 0;
         int tempCount = 0;
         for (PowerSource ps : systemPower) {
-            systemAvgTemp += ps.getTemperature();
-            tempCount++;
+            if (ps.getTemperature() > 0) {
+                systemAvgTemp += ps.getTemperature();
+                tempCount++;
+            }
         }
         systemAvgTemp += cpuTemp;
         tempCount++;
