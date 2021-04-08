@@ -173,7 +173,7 @@
 
 .table-view .column-header .label {
     -fx-text-fill: #ffffff;
-    -fx-font-size: 11px;
+    -fx-font-size: 10px;
     -fx-font-family: Dialog;
     -fx-font-weight: bold;
     -fx-background-color: #695f5f;
