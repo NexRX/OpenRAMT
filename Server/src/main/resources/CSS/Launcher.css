@@ -28,6 +28,7 @@
 
 .jfx-text-field {
     -fx-prompt-text-fill: #8d7474;
+    -fx-text-fill: white;
 }
 
 .login-field {
@@ -172,6 +173,8 @@
 
 .table-view .column-header .label {
     -fx-text-fill: #ffffff;
+    -fx-font-size: 11px;
+    -fx-font-family: Dialog;
     -fx-font-weight: bold;
     -fx-background-color: #695f5f;
     -fx-border-color: black;
@@ -191,8 +194,6 @@
 .table-view .corner {
     -fx-background-color: transparent;
 }
-
-
 
 /*******************************************************************************
  *                                                                             *
