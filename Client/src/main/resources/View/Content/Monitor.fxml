@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.AreaChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root fx:id="root" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" vvalue="0.27" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <FlowPane fx:id="container" alignment="TOP_CENTER" columnHalignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="default-background">
+         <children>
+            <VBox fx:id="containerCPUUsage" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="cpuusage" fx:id="acCPUUsage" styleClass="areachart-regular">
+                    <xAxis>
+                      <CategoryAxis label="Time" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis label="Usage (%)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" />
+                    </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fx:id="containerRAMUsage" fillWidth="false" layoutX="10.0" layoutY="10.0" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
+               <children>
+                  <PieChart id="ramusage" fx:id="pieRAMUsage" styleClass="piechart-regular">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </PieChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="RAM Usage" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fx:id="containerDiskSpace" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
+               <children>
+                  <StackedBarChart id="diskspace" fx:id="barDiskSpace" alternativeColumnFillVisible="true" animated="false" horizontalZeroLineVisible="false" styleClass="barchart-regular">
+                    <xAxis>
+                       <NumberAxis fx:id="axisDiskSize" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                       <CategoryAxis fx:id="axisDiskName" side="LEFT" />
+                    </yAxis>
+                  </StackedBarChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="252.0" text="Disk Space" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fx:id="containerDiskIO" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="iousage" fx:id="acDiskIO" alternativeRowFillVisible="false" legendSide="TOP" styleClass="areachart-regular">
+                     <xAxis>
+                        <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Usage (%)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                     </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="Disk I/O" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fx:id="containerCPUTemp" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="cputemp" fx:id="acCPUTemp" styleClass="areachart-regular">
+                     <xAxis>
+                        <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Temp (*C)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                     </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="CPU Temp" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fx:id="containerSystemTemp" fillWidth="false" prefHeight="500.0" prefWidth="550.0" styleClass="vboxChart">
+               <children>
+                  <AreaChart id="systemtemp" fx:id="acSystemTemp" styleClass="areachart-regular">
+                     <xAxis>
+                        <CategoryAxis label="Seconds" prefHeight="15.0" prefWidth="143.0" side="BOTTOM" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis label="Temp (*C)" minorTickVisible="false" prefHeight="138.0" prefWidth="39.0" side="LEFT" tickLabelGap="1.0" upperBound="99.0" />
+                     </yAxis>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AreaChart>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="20.0" prefWidth="99999.0" text="System Temp" textAlignment="CENTER">
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin></Label>
+               </children>
+               <FlowPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </FlowPane.margin>
+            </VBox>
+            <VBox fx:id="containerRestart" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="51.0" prefWidth="569.0">
+               <children>
+                  <JFXButton fx:id="btnRestart" prefHeight="30.0" prefWidth="98.0" styleClass="btn-regular" text="Restart" />
+               </children>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </FlowPane>
+   </content>
+</fx:root>

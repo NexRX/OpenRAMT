@@ -1,41 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXPasswordField?>
-<?import com.jfoenix.controls.JFXProgressBar?>
-<?import com.jfoenix.controls.JFXRadioButton?>
-<?import com.jfoenix.controls.JFXTextField?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <fx:root id="initial" minHeight="300.0" minWidth="420.0" prefHeight="300.0" prefWidth="420.0" styleClass="default-background" stylesheets="@../CSS/Launcher.css" type="AnchorPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
+      <Pane fx:id="topBar" layoutX="26.0" prefHeight="28.0" prefWidth="372.0" AnchorPane.leftAnchor="28.0" AnchorPane.rightAnchor="28.0" AnchorPane.topAnchor="0.0" />
+      <JFXButton id="btnClose" fx:id="btnClose1" contentDisplay="CENTER" prefHeight="28.0" prefWidth="28.0" ripplerFill="WHITE" text="?" textFill="WHITE" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="395.0" prefHeight="28.0" prefWidth="28.0" ripplerFill="RED" styleClass="btnClose" text="✕" textFill="WHITE" textOverrun="CLIP" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <ImageView fx:id="imageLogo" fitHeight="100.0" fitWidth="100.0" layoutX="160.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="160.0" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="25.0">
          <image>
             <Image url="@../IconPacks/openramt.png" />
          </image>
       </ImageView>
       <JFXProgressBar fx:id="jfxProgress" layoutX="11.0" layoutY="149.0" prefWidth="398.0" AnchorPane.bottomAnchor="148.0" AnchorPane.leftAnchor="11.0" AnchorPane.rightAnchor="11.0" AnchorPane.topAnchor="149.0" />
-      <Label fx:id="lblProgress" alignment="CENTER" layoutX="110.0" layoutY="132.0" prefHeight="11.0" prefWidth="200.0" text="Starting..." textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="157.0" AnchorPane.leftAnchor="110.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="132.0">
+      <Label fx:id="lblProgress" alignment="CENTER" layoutX="110.0" layoutY="132.0" prefHeight="11.0" prefWidth="200.0" text="Setup" textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="157.0" AnchorPane.leftAnchor="110.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="132.0">
          <font>
             <Font name="Monospaced Regular" size="9.0" />
          </font>
       </Label>
-      <JFXTextField fx:id="fieldUsername" focusColor="#bf0000" layoutX="14.0" layoutY="167.0" prefHeight="25.0" prefWidth="121.0" promptText="Username" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="14.0" />
-      <JFXPasswordField fx:id="fieldPassword" focusColor="#bf0000" layoutX="14.0" layoutY="198.0" prefHeight="25.0" prefWidth="121.0" promptText="Password" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="14.0" />
-      <JFXButton fx:id="btnSetup" buttonType="RAISED" layoutX="181.0" layoutY="267.0" ripplerFill="#bf0000" text="Setup" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="180.0" />
-      <JFXButton id="btnClose" fx:id="btnClose" contentDisplay="CENTER" layoutX="395.0" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="X" />
-      <JFXTextField fx:id="fieldWhatever" focusColor="#bf0000" layoutX="282.0" layoutY="167.0" prefHeight="25.0" prefWidth="121.0" promptText="Whatever For Now" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="108.0" AnchorPane.rightAnchor="17.0" />
+      <JFXTextField fx:id="txtUsername" focusColor="#bf0000" layoutX="15.0" layoutY="167.0" prefHeight="25.0" prefWidth="120.0" promptText="Username" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="15.0" />
+      <JFXPasswordField fx:id="txtPassword" focusColor="#bf0000" layoutX="15.0" layoutY="198.0" prefHeight="25.0" prefWidth="120.0" promptText="Password" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="77.0" AnchorPane.leftAnchor="15.0" />
+      <JFXPasswordField fx:id="txtPasswordConfirm" focusColor="#bf0000" layoutX="15.0" layoutY="230.0" prefHeight="25.0" prefWidth="120.0" promptText="Confirm Password" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="15.0" />
       <Label fx:id="lblAccount" alignment="CENTER" layoutX="14.0" layoutY="152.0" prefHeight="11.0" prefWidth="121.0" text="Root Account" textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="137.0" AnchorPane.leftAnchor="14.0">
          <font>
             <Font name="Monospaced Regular" size="9.0" />
          </font>
       </Label>
-      <JFXPasswordField fx:id="fieldPasswordConfirm" focusColor="#bf0000" layoutX="14.0" layoutY="229.0" prefHeight="25.0" prefWidth="121.0" promptText="Confirm Password" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="14.0" />
       <Label fx:id="lblNetwork" alignment="CENTER" layoutX="150.0" layoutY="152.0" prefHeight="11.0" prefWidth="121.0" text="Network Settings" textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="137.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0">
          <font>
             <Font name="Monospaced Regular" size="9.0" />
@@ -47,12 +41,15 @@
          </toggleGroup>
       </JFXRadioButton>
       <JFXRadioButton fx:id="radioInsecure" layoutX="150.0" layoutY="202.0" text="Insecure (No SSL)" textFill="WHITE" toggleGroup="$socketToggle" AnchorPane.bottomAnchor="81.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" />
-      <JFXTextField fx:id="fieldPort" focusColor="#bf0000" layoutX="150.0" layoutY="229.0" prefHeight="25.0" prefWidth="121.0" promptText="Port (Default 3069)" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" />
+      <JFXTextField fx:id="txtPort" focusColor="#bf0000" layoutX="150.0" layoutY="230.0" prefHeight="25.0" prefWidth="120.0" promptText="Port (Default 3069)" styleClass="login-field" unFocusColor="#867979" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" />
       <Label fx:id="lblMisc" alignment="CENTER" layoutX="282.0" layoutY="152.0" prefHeight="11.0" prefWidth="121.0" text="Misc" textAlignment="CENTER" textFill="WHITE" underline="true" AnchorPane.bottomAnchor="137.0" AnchorPane.rightAnchor="17.0">
          <font>
             <Font name="Monospaced Regular" size="9.0" />
          </font>
       </Label>
-      <JFXButton id="btnClose" fx:id="btnClose1" contentDisplay="CENTER" prefHeight="25.0" prefWidth="25.0" ripplerFill="RED" text="?" />
+      <JFXButton fx:id="btnCert" alignment="CENTER" layoutX="283.0" layoutY="165.0" prefHeight="29.0" prefWidth="120.0" ripplerFill="#bf0000" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #696969;" styleClass="btn-regular" text="Custom Cert" textFill="WHITE" />
+      <JFXTextField fx:id="txtFTPUsername" focusColor="#bf0000" layoutX="283.0" layoutY="198.0" prefHeight="25.0" prefWidth="120.0" promptText="FTP Username" styleClass="login-field" unFocusColor="#867979" />
+      <JFXPasswordField fx:id="txtFTPPassword" focusColor="#bf0000" layoutX="283.0" layoutY="230.0" prefHeight="25.0" prefWidth="120.0" promptText="FTP Password" styleClass="login-field" unFocusColor="#867979" />
+      <JFXButton fx:id="btnSetup" buttonType="RAISED" layoutX="181.0" layoutY="267.0" ripplerFill="#bf0000" text="Setup" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="180.0" />
    </children>
 </fx:root>

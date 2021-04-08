@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <AnchorPane fx:id="container" minHeight="598.0" minWidth="-Infinity" prefHeight="598.0" prefWidth="600.0" styleClass="default-background">
+         <children>
+            <VBox alignment="CENTER" layoutY="6.0" prefHeight="125.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="27.0" prefWidth="600.0">
+                     <children>
+                        <Label fx:id="lblUser" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" styleClass="lbl-header" text="User:" textFill="WHITE" underline="true" />
+                        <JFXButton fx:id="btnUserNew" buttonType="RAISED" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="75.0" ripplerFill="#680000" styleClass="btn-regular" text="New" />
+                        <Label fx:id="lblUserValue" alignment="CENTER" prefHeight="27.0" prefWidth="500.0" styleClass="lbl-header" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <FlowPane hgap="50.0" maxWidth="600.0" prefHeight="113.0" prefWidth="600.0" vgap="20.0">
+                     <children>
+                        <JFXButton fx:id="btnUserName" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Update Name">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnUserPassword" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Update Password">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnUserGroup" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Change Group">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnUserSuspend" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Suspend User">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnUserUnsuspend" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Unsuspend User">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnUserDelete" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Delete User">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                     </children>
+                     <padding>
+                        <Insets left="60.0" right="60.0" />
+                     </padding>
+                  </FlowPane>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" layoutY="147.0" prefHeight="123.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <HBox alignment="CENTER" prefHeight="27.0" prefWidth="600.0">
+                     <children>
+                        <Label fx:id="lblGroup" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="27.0" prefWidth="100.0" styleClass="lbl-header" text="Group:" textFill="WHITE" underline="true" />
+                        <JFXButton fx:id="btnGroupNew" buttonType="RAISED" minHeight="-Infinity" minWidth="-Infinity" prefHeight="29.0" prefWidth="75.0" ripplerFill="#680000" styleClass="btn-regular" text="New" />
+                        <Label fx:id="lblGroupValue" alignment="CENTER" prefHeight="27.0" prefWidth="500.0" styleClass="lbl-header" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <FlowPane hgap="50.0" maxWidth="600.0" prefHeight="97.0" prefWidth="600.0" vgap="20.0">
+                     <padding>
+                        <Insets left="60.0" right="60.0" />
+                     </padding>
+                     <children>
+                        <JFXButton fx:id="btnGroupName" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Update Name">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnGroupPermission" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Update Permission">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnGroupMigrate" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Migrate Users">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnGroupSuspendUsers" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Suspend Users">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnGroupDeleteUsers" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Delete Users">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                        <JFXButton fx:id="btnGroupDelete" buttonType="RAISED" prefHeight="20.0" prefWidth="125.0" ripplerFill="#680000" text="Delete Group">
+                           <styleClass>
+                              <String fx:value="btn-regular" />
+                              <String fx:value="btn-admin" />
+                           </styleClass></JFXButton>
+                     </children>
+                  </FlowPane>
+               </children>
+            </VBox>
+            <JFXButton fx:id="btnRefresh" buttonType="RAISED" layoutX="519.0" layoutY="287.0" prefHeight="29.0" prefWidth="80.0" ripplerFill="#680000" styleClass="btn-regular" text="Refresh" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="287.0" />
+            <TableView fx:id="tblUsers" layoutX="14.0" layoutY="181.0" prefHeight="275.0" prefWidth="580.0" styleClass="secondary-background" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="320.0">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+               <columns>
+                  <TableColumn fx:id="colUsername" editable="false" maxWidth="500.0" prefWidth="-1.0" styleClass="tbl-Header" text="Username" />
+                  <TableColumn fx:id="colGroup" editable="false" maxWidth="350.0" prefWidth="-1.0" styleClass="tbl-Header" text="Group" />
+                  <TableColumn fx:id="colAdmin" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Admin" />
+                  <TableColumn fx:id="colGeneral" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="General" />
+                  <TableColumn fx:id="colProcess" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Process" />
+                  <TableColumn fx:id="colMonitoring" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Monitor" />
+                  <TableColumn fx:id="colPower" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Power" />
+                  <TableColumn fx:id="colSuspended" editable="false" maxWidth="200.0" prefWidth="75.0" styleClass="tbl-Header" text="Suspend" />
+               </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+   </content>
+</fx:root>

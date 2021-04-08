@@ -20,17 +20,17 @@ public class UndecoratedResizable {
 
     /**
      * Automatically set min and max which then calls the manual version with the values needed. This function handles
-     * aadding the listeners for resizing events for the undecorated window.
+     * adding the listeners for resizing events for the undecorated window.
      * @param stage The stage which holds the application.
      * @param lc The LauncherController needed to automatically set parameters for the manual function and add the
      *           listeners.
      */
-	public static void addResizeListener(Stage stage, Parent lc) {
-		addResizeListener(stage, lc, 0, 0, Double.MAX_VALUE, Double.MAX_VALUE);
+	public static void addResizeListener(Stage stage, Parent lc,  boolean recursive) {
+		addResizeListener(stage, lc, stage.getMinWidth(), stage.getMinHeight(), Double.MAX_VALUE, Double.MAX_VALUE, recursive);
 	}
 
     /**
-     * The manual function in which you can assign any of the parameters manually. This function handles aadding the
+     * The manual function in which you can assign any of the parameters manually. This function handles adding the
      * listeners for resizing events for the undecorated window.
      * @param stage The stage which holds the application.
      * @param lc The LauncherController to apply the ResizeListeners too.
@@ -39,24 +39,27 @@ public class UndecoratedResizable {
      * @param maxWidth Maximum width in which the program can be resized to.
      * @param maxHeight Maximum height in which the program can be resized to.
      */
-	public static void addResizeListener(Stage stage, Parent lc, double minWidth, double minHeight, double maxWidth, double maxHeight) {
+	public static void addResizeListener(Stage stage, Parent lc, double minWidth, double minHeight, double maxWidth, double maxHeight, boolean recursive) {
 		ResizeListener resizeListener = new ResizeListener(stage);
+
+		// Assign range of resizing.
+        resizeListener.setMinWidth(minWidth);
+        resizeListener.setMinHeight(minHeight);
+        resizeListener.setMaxWidth(maxWidth);
+        resizeListener.setMaxHeight(maxHeight);
+
+
 		lc.addEventHandler(MouseEvent.MOUSE_MOVED, resizeListener);
 		lc.addEventHandler(MouseEvent.MOUSE_PRESSED, resizeListener);
 		lc.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeListener);
 		lc.addEventHandler(MouseEvent.MOUSE_EXITED, resizeListener);
 		lc.addEventHandler(MouseEvent.MOUSE_EXITED_TARGET, resizeListener);
 
-		resizeListener.setMinWidth(minWidth);
-		resizeListener.setMinHeight(minHeight);
-		resizeListener.setMaxWidth(maxWidth);
-		resizeListener.setMaxHeight(maxHeight);
-
 		// Get all the children from our controller and resizes them all at once through the loop (i.e. topBar, stackPane).
 		ObservableList<Node> children = lc.getChildrenUnmodifiable();
 		System.out.println(children.toString());
 		for (Node child : children) {
-			addListenerDeeply(child, resizeListener, false);
+			addListenerDeeply(child, resizeListener, recursive);
 		}
 	}
 
@@ -97,8 +100,8 @@ public class UndecoratedResizable {
 		// Max and min sizes for controlled stage
 		private double minWidth;
 		private double maxWidth;
-		private double minHeight;
-		private double maxHeight;
+		private double assignedMinHeight;
+		private double assignedMaxHeight;
 
 		public ResizeListener(Stage stage) {
 			this.stage = stage;
@@ -113,11 +116,11 @@ public class UndecoratedResizable {
 		}
 
 		public void setMinHeight(double minHeight) {
-			this.minHeight = minHeight;
+			this.assignedMinHeight = minHeight;
 		}
 
 		public void setMaxHeight(double maxHeight) {
-			this.maxHeight = maxHeight;
+			this.assignedMaxHeight = maxHeight;
 		}
 
 		@Override
@@ -163,7 +166,7 @@ public class UndecoratedResizable {
                             }
                         } else {
                             if (stage.getHeight() > minHeight || mouseEventY + startY - stage.getHeight() > 0) {
-                                setStageHeight(mouseEventY + startY);
+                                setStageHeight(Math.max(minHeight, mouseEventY + startY));
                             }
                         }
                     }
@@ -178,7 +181,7 @@ public class UndecoratedResizable {
                             }
                         } else {
                             if (stage.getWidth() > minWidth || mouseEventX + startX - stage.getWidth() > 0) {
-                                setStageWidth(mouseEventX + startX);
+                                setStageWidth(Math.max(minWidth, mouseEventX + startX));
                             }
                         }
                     }
@@ -194,8 +197,8 @@ public class UndecoratedResizable {
         }
 
         private void setStageHeight(double height) {
-            height = Math.min(height, maxHeight);
-            height = Math.max(height, minHeight);
+            height = Math.min(height, assignedMaxHeight);
+            height = Math.max(height, assignedMinHeight);
             stage.setHeight(height);
         }
 	}

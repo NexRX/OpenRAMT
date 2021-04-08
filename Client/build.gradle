@@ -1,7 +1,7 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.runtime' version '1.11.4'
+    id 'org.beryx.runtime' version '1.12.1'
 }
 
 repositories {
@@ -10,17 +10,32 @@ repositories {
 
 dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
+    implementation 'org.json:json:20131018'
     implementation project(':Shared')
 }
 
+// Project variables
+def projectJvmArgs = [
+        "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
+        "--illegal-access=permit",
+        "-Xmx256m"
+]
+
+def projectAppVersion = '0.9.2'
+
+def projectAppName = 'OpenRAMT-Client'
+
+def projectAppDescription = 'A client for the OpenRAMT server edition.'
+//
+
 javafx {
     modules = ['javafx.controls', 'javafx.fxml']
-    version = '14.0.2'
+    version = '15.0.1'
 }
 
 application {
     mainClass.set("application.Launcher")
-    applicationName = 'OpenRAMT'
+    applicationName = projectAppName
 }
 
 run {
@@ -30,7 +45,12 @@ run {
     ]
 }
 
+compileJava {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
 runtime {
+
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         noConsole = true
@@ -38,23 +58,38 @@ runtime {
                 "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
                 "--illegal-access=permit"
         ]
-    }
-    jpackage {
-        def currentOs = org.gradle.internal.os.OperatingSystem.current()
-        def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
-        imageOptions += ['--icon', "src/main/resources/openramt.$imgType"]
-        appVersion = "0.0.1"
-        installerOptions += ['--resource-dir', "src/main/resources"]
-        installerOptions += ['--vendor', 'Nex']
-        if(currentOs.windows) {
-            installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
-        }
-        else if (currentOs.linux) {
-            installerOptions += ['--linux-package-name', applicationName,'--linux-shortcut']
-            installerType = 'msi'
-        }
-        else if (currentOs.macOsX) {
-            installerOptions += ['--mac-package-name', applicationName]
+        jpackage {
+            def currentOs = org.gradle.internal.os.OperatingSystem.current()
+            def imgType = currentOs.windows ? 'ico' : currentOs.macOsX ? 'icns' : 'png'
+            imageOptions += ['--icon', "src/main/resources/openramt.$imgType"]
+            installerOptions += ['--vendor', 'Nex-Coder']
+            installerOptions += ['--resource-dir', "build/jpackage/OpenRAMT-Server/lib"]
+            imageName = projectAppName // Should be the same
+            installerName = projectAppName
+            appVersion = projectAppVersion
+            //imageOutputDir = ''
+            //installerOutputDir = ''
+            //skipInstaller = true // create just app image
+
+            if(currentOs.windows) {
+                installerOptions += ['--win-per-user-install', '--win-dir-chooser', '--win-menu', '--win-shortcut']
+                installerType = 'msi'
+            }
+            else if (currentOs.linux) {
+                installerOptions += [
+                        '--linux-menu-group', 'Utility',
+                        '--description', projectAppDescription,
+                        '--app-version', projectAppVersion,
+                        '--linux-shortcut',
+                        '--linux-deb-maintainer', 'nex@nexhub.co.uk',
+                        '--linux-rpm-license-type', 'MIT',
+                ]
+                installerType = 'deb'
+            }
+            else if (currentOs.macOsX) {
+                installerOptions += ['--mac-package-name', projectAppName]
+                installerType = 'dmg'
+            }
         }
     }
 }

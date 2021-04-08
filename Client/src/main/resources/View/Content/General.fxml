@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+
+<fx:root fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="default-background" stylesheets="@../../CSS/Launcher.css" type="ScrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <content>
+      <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="400.0" prefWidth="602.0" prefWrapLength="886.0" styleClass="default-background">
+         <children>
+            <AnchorPane fx:id="containerFTP" prefHeight="190.0" prefWidth="295.0">
+               <children>
+                  <Label fx:id="lblFTP" layoutX="15.0" layoutY="14.0" prefHeight="30.0" prefWidth="267.0" styleClass="lbl-header" text="Embedded FTP" AnchorPane.bottomAnchor="149.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="14.0" />
+                  <JFXButton fx:id="btnFTPStart" buttonType="RAISED" layoutX="15.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Start" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnFTPStop" buttonType="RAISED" layoutX="164.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Stop" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnFTPRestart" buttonType="RAISED" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Restart" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="111.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="containerCleanDisk" prefHeight="190.0" prefWidth="295.0">
+               <children>
+                  <Label fx:id="lblCleanDisk" layoutX="15.0" layoutY="14.0" prefHeight="30.0" prefWidth="267.0" styleClass="lbl-header" text="Clean Disk" AnchorPane.bottomAnchor="149.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="14.0" />
+                  <JFXButton fx:id="btnCleanDiskSystem" buttonType="RAISED" layoutX="15.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="System Disk" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnCleanDiskExtra" buttonType="RAISED" layoutX="164.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Extra Disk(s)" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnCleanDiskAll" buttonType="RAISED" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="All Disk(s)" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="111.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnCleanDiskBin" buttonType="RAISED" layoutX="164.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Bin / Recycle" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="111.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="containerWiFi" prefHeight="190.0" prefWidth="295.0">
+               <children>
+                  <Label fx:id="lblWiFi" layoutX="15.0" layoutY="14.0" prefHeight="30.0" prefWidth="266.0" styleClass="lbl-header" text="WiFi" AnchorPane.bottomAnchor="149.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                  <JFXButton fx:id="btnWiFiEnable" buttonType="RAISED" layoutX="15.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Enable" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnWiFiDisable" buttonType="RAISED" layoutX="164.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Disable" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnWiFiReenable" buttonType="RAISED" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Re-enable" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="111.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="containerBluetooth" prefHeight="190.0" prefWidth="295.0">
+               <children>
+                  <Label fx:id="lblBluetooth" layoutX="15.0" layoutY="14.0" prefHeight="30.0" prefWidth="267.0" styleClass="lbl-header" text="Bluetooth" AnchorPane.bottomAnchor="149.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="14.0" />
+                  <JFXButton fx:id="btnBluetoothEnable" buttonType="RAISED" layoutX="15.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Enable" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnBluetoothDisable" buttonType="RAISED" layoutX="164.0" layoutY="61.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Disable" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="164.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="60.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+                  <JFXButton fx:id="btnBluetoothReenable" buttonType="RAISED" layoutX="15.0" layoutY="111.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="116.0" ripplerFill="#680000" text="Re-enable" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="164.0" AnchorPane.topAnchor="111.0">
+                     <styleClass>
+                        <String fx:value="btn-regular" />
+                        <String fx:value="btn-general" />
+                     </styleClass></JFXButton>
+               </children>
+            </AnchorPane>
+         </children>
+      </FlowPane>
+   </content>
+</fx:root>

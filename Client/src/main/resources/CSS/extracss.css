@@ -1,6 +1,0 @@
-.tabless {
-    -fx-tab-max-height: 0 ;
-}
-.tabless .tab-header-area {
-    visibility: hidden;
-}
