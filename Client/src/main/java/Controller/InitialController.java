@@ -119,7 +119,7 @@ public class InitialController extends AnchorPane {
         });
 
         loginTask.setOnSucceeded(event -> {
-            Alert a = new Alert(Alert.AlertType.ERROR);
+            Alert a = new RAMTAlert(Alert.AlertType.ERROR);
             a.setAlertType(Alert.AlertType.ERROR);
             TaskResponse<UserData> loginResponse = loginTask.getValue();
 
