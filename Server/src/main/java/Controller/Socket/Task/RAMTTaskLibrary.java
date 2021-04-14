@@ -701,19 +701,19 @@ public class RAMTTaskLibrary {
 
                 case LINUX:
                     String linuxScript =  switch (request.getParameter()) {
-                        case 0,1,2 -> "apt-get clean";
+                        case 0,1,2 -> "apt-get autoclean -y";
                         case 3 -> "rm -rf ~/.local/share/Trash/*";
                         default -> "";
                     };
 
                     Process linuxCMD;
                     if (!linuxScript.isEmpty()) {
-                        linuxCMD = new ProcessBuilder("/bin/bash", "/c", linuxScript).start();
+                        linuxCMD = new ProcessBuilder("/bin/bash", "-c", "apt-get clean").start();
                     } else {
                         return new TaskResponse<>(request, Response.FAILED, 98);
                     }
 
-                    System.out.println(linuxCMD.exitValue());
+                    System.out.println(linuxCMD.waitFor());
                     return (linuxCMD.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
