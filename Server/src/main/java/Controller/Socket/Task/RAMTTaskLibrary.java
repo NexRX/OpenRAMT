@@ -713,8 +713,8 @@ public class RAMTTaskLibrary {
 
                 case MAC:
                     String macScript =  switch (request.getParameter()) {
-                        case 0,1,2 -> "cd /private/var/tmp/; rm -rf TM*";
-                        case 3 -> "cd ~/Library/Caches/; rm -rf ~/Library/Caches/*";
+                        case 0,1,2 -> "rm -rf /private/var/tmp/";
+                        case 3 -> "rm -rf ~/Library/Caches/*";
                         default -> "";
                     };
 
