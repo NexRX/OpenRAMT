@@ -10,7 +10,7 @@
 OpenRAMT is a Open-source Remote Access and Monitoring tool that depends on open source projects to give a cross platform applications that can allow you to setup a server on one end and a client on the other, without the need to use the same supporting environment.
 
 ## Features
-There will be 4 Milestones
+
 - A user management system that is heavily customizable with groups and extra users.
 - Basic disk cleaning utilities and recycling.
 - Embedded FTP server (powered by Apache FTPServer) with some lite customisable settings.
