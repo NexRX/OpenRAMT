@@ -757,7 +757,7 @@ public class RAMTTaskLibrary {
 
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*WiFi*'}) | " +
-                            "Enable-NetAdapter -Confirm:$false -PassThru");
+                            "Enable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     System.out.println(response.getCommandOutput());
 
@@ -815,7 +815,7 @@ public class RAMTTaskLibrary {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*WiFi*'}) | " +
-                            "Disable-NetAdapter -Confirm:$false -PassThru");
+                            "Disable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     System.out.println(response.getCommandOutput());
 
@@ -870,7 +870,9 @@ public class RAMTTaskLibrary {
                 case WINDOWS_PS:
                     if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
 
-                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter).where({$psitem.name -like '*Bluetooth*'}) | Enable-NetAdapter -Confirm:$false -PassThru");
+                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
+                            ".where({$psitem.name -like '*Bluetooth*'}) | " +
+                            "Enable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -927,7 +929,7 @@ public class RAMTTaskLibrary {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*Bluetooth*'}) | " +
-                            "Disable-NetAdapter -Confirm:$false -PassThru");
+                            "Disable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
