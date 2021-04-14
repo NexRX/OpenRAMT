@@ -890,7 +890,7 @@ public class RAMTTaskLibrary {
 
                 case MAC:
                     //if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
-                    disableBluetooth(request);
+                    return disableBluetooth(request);
 
                 default:
                     return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
