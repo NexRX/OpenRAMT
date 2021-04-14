@@ -890,7 +890,7 @@ public class RAMTTaskLibrary {
 
                 case MAC:
                     if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
-                    Process macCMD = new ProcessBuilder("osascript",  "-e", scriptMacOSBluetooth(true)).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(false)).start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
