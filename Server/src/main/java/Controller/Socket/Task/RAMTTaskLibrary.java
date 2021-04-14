@@ -273,9 +273,8 @@ public class RAMTTaskLibrary {
                                     ClassLoader.getSystemClassLoader().getResourceAsStream(script))));
 
                     PowerShellResponse response = shell.executeScript(srcReader); // Resource Hog. I've optimised the
-                    // script plenty already
+                                                                                  // script plenty already
 
-                    System.out.println(response.getCommandOutput());
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
                 case WINDOWS:
                     ProcessBuilder winCMD = new ProcessBuilder();
