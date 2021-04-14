@@ -24,7 +24,7 @@ There will be 4 Milestones
 Here are some limitations or problems you may run into.
 
 ### Temperature Data
-You may find that temperature data is reading as zero. This most likely isn't a bug (especially if other readings are showing) as firstly, like everything else this needs admin/sudo privileges but more importantly, Oshi (the dependacy for the readings) can't always find these values when it needs them. So in these cases it needs some helping tools. If you're experiencing these problems I recommend installing "Open Hardware Monitor" as does Oshi recommend.
+You may find that temperature data is reading as zero. This most likely isn't a bug (especially if other readings are showing) as firstly, like everything else this needs admin/sudo privileges but more importantly, Oshi (the dependacy for the readings) can't always find these values when it needs them. So in these cases it needs some helping tools. If you're experiencing these problems I recommend installing **[Open Hardware Monitor](https://openhardwaremonitor.org)** as does Oshi recommend.
 
 ### Not accepting my SSL/TLS Certificate!
 If your cert isn't being accepted that is probably because you haven't assigned a correct password when creating/exporting it (read the import prompt on the server) or its not in the right format. Java programs typically need .jks files to handle certs. Java comes bundled with a tool to create these certs, the search term you need is Java Keytool. If you know how to make these it is recommended for improved security. However, you'll need to give these to your clients.
