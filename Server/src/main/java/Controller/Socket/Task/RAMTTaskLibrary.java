@@ -163,7 +163,7 @@ public class RAMTTaskLibrary {
      * @param request The request sent from the client to perform this action and perform authorisation on.
      * @return The response of the procedure containing its state and any parameters expected on success.
      */
-    public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request) {
+    public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request, boolean...test) {
         TaskResponse auth = authorise(request, AppPermission.PROCESS);
         if (auth.getResponse() != Response.SUCCESS) {
             return auth;
@@ -172,38 +172,54 @@ public class RAMTTaskLibrary {
         try {
             switch (getOS()) {
                 case WINDOWS_PS -> {
+                    // Grab process information
                     PowerShellResponse response = shell.executeCommand("Get-WmiObject Win32_Process -Filter \"ProcessId='"
                             + request.getParameter() + "'\" | Select-Object CommandLine | ft -HideTableHeaders | " +
                             "Format-Table -AutoSize | Out-String -Width 10000");
 
+                    // Parse start and end of output
                     String reMsg = response.getCommandOutput();
                     int pathEnd = reMsg.indexOf("\"",reMsg.indexOf("\"") + 1);
 
-                    String path = reMsg.substring(3, pathEnd);
+                    String path;
+                    try { path = reMsg.substring(3, pathEnd); } catch (StringIndexOutOfBoundsException e) { path = reMsg; }
                     String args;
                     try { args = reMsg.substring(pathEnd + 2); } catch (StringIndexOutOfBoundsException e) { args = ""; }
 
-                    System.out.println(path); // Just path
-                    System.out.println(args); // Just Args
-
+                    // Can we kill to restart it?
                     if (killProcess(request).getResponseCode() == 0) {
+                        //Process killed, lets start it.
                         PowerShellResponse responseStart;
                         powershellShortTimeout();
 
                         if (args.isEmpty()) {
-                            System.out.println("Starting a process without arguments");
                             responseStart = shell.executeCommand("Start-Process -FilePath \"" + path + "\" -PassThru");
                         } else {
-                            System.out.println("Starting a process with arguments: " + args);
                             responseStart = shell.executeCommand("Start-Process -FilePath \"" + path + "\" -ArgumentList \"" + args + "\" -PassThru");
                         }
 
                         powershellDefaultTimeout();
 
-                        return (responseStart.isError() || responseStart.isTimeout()) ?
+                        if (responseStart.isError()) {
+                            Process winCMD = new ProcessBuilder( path.split(" ")[2]).start();
+
+                            if (winCMD.isAlive()) {
+                                if (test.length > 0) {
+                                    winCMD.destroyForcibly(); // kill for test.
+                                }
+                                return new TaskResponse<>(request, Response.SUCCESS, 0);
+                            } else {
+                                return new TaskResponse<>(request, Response.FAILED, 31);
+                            }
+                        }
+
+                        // Otherwise no errors, then pass success unless timeout.
+                        return (responseStart.isTimeout()) ?
                                 new TaskResponse<>(request, Response.FAILED, 31) :
                                 new TaskResponse<>(request, Response.SUCCESS, 0);
+
                     } else {
+                        // Couldn't kill.
                         return new TaskResponse<>(request, Response.FAILED, 1);
                     }
                 }
@@ -213,6 +229,7 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
                 }
+                // Linux and Mac depend on a specific signal. Application support is therefore needed.
                 case LINUX -> {
                     Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "kill -19 " + request.getParameter()).start();
                     return linuxCMD.waitFor() != 0 ?
@@ -253,9 +270,8 @@ public class RAMTTaskLibrary {
                                     ClassLoader.getSystemClassLoader().getResourceAsStream(script))));
 
                     PowerShellResponse response = shell.executeScript(srcReader); // Resource Hog. I've optimised the
-                    // script plenty already
+                                                                                  // script plenty already
 
-                    System.out.println(response.getCommandOutput());
                     return new TaskResponse<>(request, Response.SUCCESS, 0, response.getCommandOutput());
                 case WINDOWS:
                     ProcessBuilder winCMD = new ProcessBuilder();
@@ -464,7 +480,6 @@ public class RAMTTaskLibrary {
         if (server != null) {
             System.out.println("FTP already started.");
         } else {
-            System.out.println("server is null.");
             FtpServerFactory serverFactory = new FtpServerFactory();
             ListenerFactory factory = new ListenerFactory();
 
@@ -549,7 +564,6 @@ public class RAMTTaskLibrary {
                 // Server creation.
                 server = serverFactory.createServer();
                 server.start();
-                System.out.println("FTP Server started!");
             } catch (FtpException e) {
                 e.printStackTrace();
                 return new TaskResponse<>(request, Response.FAILED, 99);
@@ -573,7 +587,6 @@ public class RAMTTaskLibrary {
         if (server != null){
             server.stop();
             server = null;
-            System.out.println("FTP Server stopped!");
         }
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
@@ -629,7 +642,6 @@ public class RAMTTaskLibrary {
                             int errorCount = 0;
 
                             // Builder PowerShell Char Array
-                            System.out.println("Building Char Array...");
                             ArrayList<Character> charArray = new ArrayList<>();
 
                             for (int i = 0; i < json.length(); i++) {
@@ -682,17 +694,18 @@ public class RAMTTaskLibrary {
 
                 case LINUX:
                     String linuxScript =  switch (request.getParameter()) {
-                        case 0,1,2 -> "apt-get clean";
+                        case 0,1,2 -> "apt-get autoclean -y";
                         case 3 -> "rm -rf ~/.local/share/Trash/*";
                         default -> "";
                     };
 
                     Process linuxCMD;
                     if (!linuxScript.isEmpty()) {
-                        linuxCMD = new ProcessBuilder("/bin/bash", "/c", linuxScript).start();
+                        linuxCMD = new ProcessBuilder("/bin/bash", "-c", linuxScript).start();
                     } else {
                         return new TaskResponse<>(request, Response.FAILED, 98);
                     }
+
 
                     return (linuxCMD.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -700,8 +713,8 @@ public class RAMTTaskLibrary {
 
                 case MAC:
                     String macScript =  switch (request.getParameter()) {
-                        case 0,1,2 -> "cd /private/var/tmp/; rm -rf TM*";
-                        case 3 -> "cd ~/Library/Caches/; rm -rf ~/Library/Caches/*";
+                        case 0,1,2 -> "rm -rf /private/var/tmp/";
+                        case 3 -> "rm -rf ~/Library/Caches/*";
                         default -> "";
                     };
 
@@ -738,9 +751,7 @@ public class RAMTTaskLibrary {
 
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*WiFi*'}) | " +
-                            "Enable-NetAdapter -Confirm:$false -PassThru");
-
-                    System.out.println(response.getCommandOutput());
+                            "Enable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -796,7 +807,7 @@ public class RAMTTaskLibrary {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*WiFi*'}) | " +
-                            "Disable-NetAdapter -Confirm:$false -PassThru");
+                            "Disable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     System.out.println(response.getCommandOutput());
 
@@ -853,7 +864,7 @@ public class RAMTTaskLibrary {
 
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*Bluetooth*'}) | " +
-                            "Enable-NetAdapter -Confirm:$false -PassThru");
+                            "Enable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -879,10 +890,10 @@ public class RAMTTaskLibrary {
 
                 case MAC:
                     if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(true)).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "launchctl start com.apple.bluetoothd").start();
 
                     return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.FAILED, macCMD.waitFor()) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 default:
@@ -910,7 +921,7 @@ public class RAMTTaskLibrary {
                 case WINDOWS_PS:
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*Bluetooth*'}) | " +
-                            "Disable-NetAdapter -Confirm:$false -PassThru");
+                            "Disable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -932,7 +943,7 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(false)).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "launchctl stop com.apple.bluetoothd").start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -1194,7 +1205,7 @@ public class RAMTTaskLibrary {
     public static TaskResponse<UserGroup> getGroup(TaskRequest<String> request) {
         if (login(((TaskRequest) request)).getResponse() == Response.SUCCESS &&
                 request.getUser().getGroup().equals(request.getParameter())) {
-            System.out.println("Bypassing get group full auth to allow user to grab their own group.");
+            System.out.println("Bypassing get group full auth to allow user to grab only their own group.");
         } else {
             TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
             if (auth.getResponse() != Response.SUCCESS) {
@@ -1324,7 +1335,7 @@ public class RAMTTaskLibrary {
      * @param request The request sent from the client to perform this action and perform authorisation on.
      * @return The response of the procedure containing its state and any parameters expected on success.
      */
-    public static TaskResponse<Void> factoryReset(TaskRequest<Void> request) {
+    public static TaskResponse<Void> factoryReset(TaskRequest<Void> request, Boolean...test) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
             return auth;
@@ -1332,7 +1343,9 @@ public class RAMTTaskLibrary {
 
         stopFTP(request); // May cause errors if not stopped.
 
-        Executors.newScheduledThreadPool(1).schedule(() -> System.exit(0), 2, TimeUnit.SECONDS);
+        if (test.length == 0) {
+            Executors.newScheduledThreadPool(1).schedule(() -> System.exit(0), 2, TimeUnit.SECONDS);
+        }
 
 
         boolean isMarked;
@@ -1408,9 +1421,6 @@ public class RAMTTaskLibrary {
         }
 
         UserGroup group;
-
-        System.out.println("Request group: " + request.getUser().getGroup());
-
         try {
             group = DBManager.getGroup(request.getUser().getGroup());
         } catch (SQLException e) {

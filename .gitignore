@@ -38,3 +38,4 @@ _ignore*
 /gradle/
 /Client/data/
 /Server/data/
+/Server/test/*

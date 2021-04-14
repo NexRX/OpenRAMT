@@ -2,6 +2,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.runtime' version '1.12.1'
+    id 'idea'
 }
 
 repositories {
@@ -12,6 +13,16 @@ dependencies {
     implementation group: 'com.jfoenix', name: 'jfoenix', version: '9.0.10'
     implementation 'org.json:json:20131018'
     implementation project(':Shared')
+
+    testImplementation(platform('org.junit:junit-bom:5.7.0'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 // Project variables
@@ -21,7 +32,7 @@ def projectJvmArgs = [
         "-Xmx256m"
 ]
 
-def projectAppVersion = '0.9.2'
+def projectAppVersion = '1.0.0'
 
 def projectAppName = 'OpenRAMT-Client'
 
