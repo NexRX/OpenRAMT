@@ -32,6 +32,9 @@ If your cert isn't being accepted that is probably because you haven't assigned 
 ### Admin or Sudo warning for server.
 If you attempt to run the server without admin/sudo privileges you'll get a warning. This warning can be progressed passed but it is not recommended. Certain tasks will fail and this mode is not supported. The client may not know it has failed or it won't know why. Please, do not report bugs when running without these requirements. The client however will run just fine with or without these privileges
 
+## Early Days / Autobuild (bots)
+
+At the moment. The repo isn't finely tuned so no CI or working autobuilds. This will be the next challenge to fix any code that will causes these problems to arise.
 
 ## Misc
 
