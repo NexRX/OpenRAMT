@@ -525,7 +525,7 @@ public class JUnitTests {
         UserData setupUser = new UserData(null, username, password, "Administrator");
 
         TaskRequest<Integer> request = new TaskRequest<>(Task.DISABLEWIFI, setupUser);
-        TaskResponse<Void> response = RAMTTaskLibrary.disableWifi(request);
+        TaskResponse<Void> response = RAMTTaskLibrary.disableBluetooth(request);
 
         assertNotNull(response);
         assertEquals(0, response.getResponseCode());
