@@ -712,7 +712,7 @@ public class RAMTTaskLibrary {
                     } else {
                         return new TaskResponse<>(request, Response.FAILED, 98);
                     }
-
+                    System.out.println(linuxCMD.exitValue());
                     return (linuxCMD.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
