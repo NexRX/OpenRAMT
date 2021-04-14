@@ -34,7 +34,7 @@ If you attempt to run the server without admin/sudo privileges you'll get a warn
 
 ## Early Days / Autobuild (bots)
 
-At the moment. The repo isn't finely tuned so no CI or working autobuilds. This will be the next challenge to fix any code that will causes these problems to arise.
+At the moment. The repo isn't finely tuned so no CI/working garuenteed. This will be the next challenge to fix any code that will causes these problems to arise. The main reason is Disable Bluetooth, Clean Disk, Enable Bluetooth, Disable WiFi, Enable WiFi all have platform specific code which is failing successfully (i.e. failing because no bluetooth, etc) in the right way. Untill this is address. It can be CI'd.
 
 ## Misc
 
