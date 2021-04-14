@@ -186,9 +186,6 @@ public class RAMTTaskLibrary {
                     String args;
                     try { args = reMsg.substring(pathEnd + 2); } catch (StringIndexOutOfBoundsException e) { args = ""; }
 
-                    System.out.println("Restart Path: " + path); // Just path
-                    System.out.println("Restart Args: " + args); // Just Args
-
                     // Can we kill to restart it?
                     if (killProcess(request).getResponseCode() == 0) {
                         //Process killed, lets start it.
@@ -483,7 +480,6 @@ public class RAMTTaskLibrary {
         if (server != null) {
             System.out.println("FTP already started.");
         } else {
-            System.out.println("server is null.");
             FtpServerFactory serverFactory = new FtpServerFactory();
             ListenerFactory factory = new ListenerFactory();
 
@@ -568,7 +564,6 @@ public class RAMTTaskLibrary {
                 // Server creation.
                 server = serverFactory.createServer();
                 server.start();
-                System.out.println("FTP Server started!");
             } catch (FtpException e) {
                 e.printStackTrace();
                 return new TaskResponse<>(request, Response.FAILED, 99);
@@ -592,7 +587,6 @@ public class RAMTTaskLibrary {
         if (server != null){
             server.stop();
             server = null;
-            System.out.println("FTP Server stopped!");
         }
 
         return new TaskResponse<>(request, Response.SUCCESS, 0);
@@ -648,7 +642,6 @@ public class RAMTTaskLibrary {
                             int errorCount = 0;
 
                             // Builder PowerShell Char Array
-                            System.out.println("Building Char Array...");
                             ArrayList<Character> charArray = new ArrayList<>();
 
                             for (int i = 0; i < json.length(); i++) {
@@ -713,7 +706,7 @@ public class RAMTTaskLibrary {
                         return new TaskResponse<>(request, Response.FAILED, 98);
                     }
 
-                    System.out.println(linuxCMD.waitFor());
+
                     return (linuxCMD.waitFor() != 0) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
@@ -759,8 +752,6 @@ public class RAMTTaskLibrary {
                     PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
                             ".where({$psitem.name -like '*WiFi*'}) | " +
                             "Enable-NetAdapter -Confirm:$false -PassThru; Write-Host 0;");
-
-                    System.out.println(response.getCommandOutput());
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -1214,7 +1205,7 @@ public class RAMTTaskLibrary {
     public static TaskResponse<UserGroup> getGroup(TaskRequest<String> request) {
         if (login(((TaskRequest) request)).getResponse() == Response.SUCCESS &&
                 request.getUser().getGroup().equals(request.getParameter())) {
-            System.out.println("Bypassing get group full auth to allow user to grab their own group.");
+            System.out.println("Bypassing get group full auth to allow user to grab only their own group.");
         } else {
             TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
             if (auth.getResponse() != Response.SUCCESS) {
