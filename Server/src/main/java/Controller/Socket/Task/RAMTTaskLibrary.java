@@ -889,7 +889,7 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
+                    //if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
                     Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(false)).start();
 
                     return macCMD.waitFor() != 0 ?
