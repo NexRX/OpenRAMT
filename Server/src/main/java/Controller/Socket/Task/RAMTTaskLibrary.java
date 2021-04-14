@@ -708,7 +708,7 @@ public class RAMTTaskLibrary {
 
                     Process linuxCMD;
                     if (!linuxScript.isEmpty()) {
-                        linuxCMD = new ProcessBuilder("/bin/bash", "-c", "apt-get clean").start();
+                        linuxCMD = new ProcessBuilder("/bin/bash", "-c", linuxScript).start();
                     } else {
                         return new TaskResponse<>(request, Response.FAILED, 98);
                     }
