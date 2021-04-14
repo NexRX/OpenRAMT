@@ -163,7 +163,7 @@ public class RAMTTaskLibrary {
      * @param request The request sent from the client to perform this action and perform authorisation on.
      * @return The response of the procedure containing its state and any parameters expected on success.
      */
-    public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request) {
+    public static TaskResponse<Void> restartProcess(TaskRequest<Integer> request, boolean...test) {
         TaskResponse auth = authorise(request, AppPermission.PROCESS);
         if (auth.getResponse() != Response.SUCCESS) {
             return auth;
@@ -172,38 +172,57 @@ public class RAMTTaskLibrary {
         try {
             switch (getOS()) {
                 case WINDOWS_PS -> {
+                    // Grab process information
                     PowerShellResponse response = shell.executeCommand("Get-WmiObject Win32_Process -Filter \"ProcessId='"
                             + request.getParameter() + "'\" | Select-Object CommandLine | ft -HideTableHeaders | " +
                             "Format-Table -AutoSize | Out-String -Width 10000");
 
+                    // Parse start and end of output
                     String reMsg = response.getCommandOutput();
                     int pathEnd = reMsg.indexOf("\"",reMsg.indexOf("\"") + 1);
 
-                    String path = reMsg.substring(3, pathEnd);
+                    String path;
+                    try { path = reMsg.substring(3, pathEnd); } catch (StringIndexOutOfBoundsException e) { path = reMsg; }
                     String args;
                     try { args = reMsg.substring(pathEnd + 2); } catch (StringIndexOutOfBoundsException e) { args = ""; }
 
-                    System.out.println(path); // Just path
-                    System.out.println(args); // Just Args
+                    System.out.println("Restart Path: " + path); // Just path
+                    System.out.println("Restart Args: " + args); // Just Args
 
+                    // Can we kill to restart it?
                     if (killProcess(request).getResponseCode() == 0) {
+                        //Process killed, lets start it.
                         PowerShellResponse responseStart;
                         powershellShortTimeout();
 
                         if (args.isEmpty()) {
-                            System.out.println("Starting a process without arguments");
                             responseStart = shell.executeCommand("Start-Process -FilePath \"" + path + "\" -PassThru");
                         } else {
-                            System.out.println("Starting a process with arguments: " + args);
                             responseStart = shell.executeCommand("Start-Process -FilePath \"" + path + "\" -ArgumentList \"" + args + "\" -PassThru");
                         }
 
                         powershellDefaultTimeout();
 
-                        return (responseStart.isError() || responseStart.isTimeout()) ?
+                        if (responseStart.isError()) {
+                            Process winCMD = new ProcessBuilder( path.split(" ")[2]).start();
+
+                            if (winCMD.isAlive()) {
+                                if (test.length > 0) {
+                                    winCMD.destroyForcibly(); // kill for test.
+                                }
+                                return new TaskResponse<>(request, Response.SUCCESS, 0);
+                            } else {
+                                return new TaskResponse<>(request, Response.FAILED, 31);
+                            }
+                        }
+
+                        // Otherwise no errors, then pass success unless timeout.
+                        return (responseStart.isTimeout()) ?
                                 new TaskResponse<>(request, Response.FAILED, 31) :
                                 new TaskResponse<>(request, Response.SUCCESS, 0);
+
                     } else {
+                        // Couldn't kill.
                         return new TaskResponse<>(request, Response.FAILED, 1);
                     }
                 }
@@ -213,6 +232,7 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
                 }
+                // Linux and Mac depend on a specific signal. Application support is therefore needed.
                 case LINUX -> {
                     Process linuxCMD = new ProcessBuilder("/bin/bash", "-c", "kill -19 " + request.getParameter()).start();
                     return linuxCMD.waitFor() != 0 ?
@@ -851,9 +871,7 @@ public class RAMTTaskLibrary {
                 case WINDOWS_PS:
                     if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
 
-                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter)" +
-                            ".where({$psitem.name -like '*Bluetooth*'}) | " +
-                            "Enable-NetAdapter -Confirm:$false -PassThru");
+                    PowerShellResponse response = shell.executeCommand("(Get-NetAdapter).where({$psitem.name -like '*Bluetooth*'}) | Enable-NetAdapter -Confirm:$false -PassThru");
 
                     return (response.isError() || response.isTimeout()) ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
@@ -1324,7 +1342,7 @@ public class RAMTTaskLibrary {
      * @param request The request sent from the client to perform this action and perform authorisation on.
      * @return The response of the procedure containing its state and any parameters expected on success.
      */
-    public static TaskResponse<Void> factoryReset(TaskRequest<Void> request) {
+    public static TaskResponse<Void> factoryReset(TaskRequest<Void> request, Boolean...test) {
         TaskResponse auth = authorise(request, AppPermission.ADMINISTRATOR);
         if (auth.getResponse() != Response.SUCCESS) {
             return auth;
@@ -1332,7 +1350,9 @@ public class RAMTTaskLibrary {
 
         stopFTP(request); // May cause errors if not stopped.
 
-        Executors.newScheduledThreadPool(1).schedule(() -> System.exit(0), 2, TimeUnit.SECONDS);
+        if (test.length == 0) {
+            Executors.newScheduledThreadPool(1).schedule(() -> System.exit(0), 2, TimeUnit.SECONDS);
+        }
 
 
         boolean isMarked;
@@ -1408,9 +1428,6 @@ public class RAMTTaskLibrary {
         }
 
         UserGroup group;
-
-        System.out.println("Request group: " + request.getUser().getGroup());
-
         try {
             group = DBManager.getGroup(request.getUser().getGroup());
         } catch (SQLException e) {

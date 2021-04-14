@@ -2,6 +2,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.runtime' version '1.11.4'
+    id 'idea'
 }
 
 repositories {
@@ -16,7 +17,12 @@ dependencies {
     implementation 'org.apache.ftpserver:ftpserver:1.1.1'
     implementation 'com.github.oshi:oshi-core:5.7.0'
     implementation project(':Shared')
+
+    testImplementation(platform('org.junit:junit-bom:5.7.1'))
+    testImplementation('org.junit.jupiter:junit-jupiter:5.7.1')
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
 }
+
 // Project variables
 def projectJvmArgs = [
         "--add-exports=javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED",
@@ -25,12 +31,31 @@ def projectJvmArgs = [
 ]
 
 def projectAppName = 'OpenRAMT-Server'
-
-
 def projectAppVersion = '0.9.2'
-
 def projectAppDescription = 'A open source Remote Acess & Monitoring Tool (OpenRAMT) server.'
+
+def testDir = projectDir.getAbsolutePath() + "/test"
 //
+
+task prepareTestDir {
+    doFirst {
+        if (new File(testDir).exists()) {
+            delete testDir
+        }
+        mkdir testDir
+    }
+}
+
+test {
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+    workingDir = testDir
+}
+tasks["test"].dependsOn(prepareTestDir)
 
 javafx {
     modules = ['javafx.controls', 'javafx.fxml']

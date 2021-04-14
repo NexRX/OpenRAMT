@@ -1045,6 +1045,24 @@ public class DBManager {
         }
     }
 
+    /**
+     * Returns a boolean value to determine if the connection is stopped for the JDBC connection object.
+     * @return If the Connection object is null then True. Also true if the connection is reported as closed.
+     *         False otherwise, for example, if a SQL exception occurs while checking then True is returned
+     *         because the data cannot be trusted and a *new* connection should be established before attempting
+     *         anything more.
+     */
+    public static boolean isStopped() {
+        if (con == null) {
+            return true;
+        }
+
+        try {
+            return con.isClosed();
+        } catch (SQLException ignored) {}
+        return true;
+    }
+
     private static void setupDB() throws SQLException {
         con = DriverManager.getConnection("jdbc:h2:./data/db",  dbName, dbPassword);
         Statement stmt = con.createStatement();
