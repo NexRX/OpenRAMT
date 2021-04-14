@@ -1,4 +1,4 @@
-# OpenRAMT
+# OpenRAMT - Open-source Remote Access & Monitoring Tool
 <p align="center">
   <img width="300" height="300" src="https://github.com/Nex-Coder/OpenRAMT/blob/master/nex-circle-cropped-halfrez.png?raw=true">
 </p>
