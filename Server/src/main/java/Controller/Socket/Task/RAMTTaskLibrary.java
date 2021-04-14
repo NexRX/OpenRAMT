@@ -889,8 +889,12 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    //if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
-                    return disableBluetooth(request);
+                    if (request.getParameter() == 1) { disableBluetooth(request); } // Re-enable
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-e", "launchctl start com.apple.blued").start();
+
+                    return macCMD.waitFor() != 0 ?
+                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 default:
                     return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
@@ -939,12 +943,11 @@ public class RAMTTaskLibrary {
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 case MAC:
-                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", scriptMacOSBluetooth(false)).start();
+                    Process macCMD = new ProcessBuilder("/bin/zsh",  "-e", "launchctl stop com.apple.blued").start();
 
                     return macCMD.waitFor() != 0 ?
                             new TaskResponse<>(request, Response.FAILED, 1) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
-
                 default:
                     return new TaskResponse<>(request, Response.FAILED, 98); // Unsupported
             }
