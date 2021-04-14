@@ -893,7 +893,7 @@ public class RAMTTaskLibrary {
                     Process macCMD = new ProcessBuilder("/bin/zsh",  "-c", "launchctl start com.apple.blued").start();
 
                     return macCMD.waitFor() != 0 ?
-                            new TaskResponse<>(request, Response.FAILED, 1) :
+                            new TaskResponse<>(request, Response.FAILED, macCMD.waitFor()) :
                             new TaskResponse<>(request, Response.SUCCESS, 0);
 
                 default:
