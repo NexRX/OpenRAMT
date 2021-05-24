@@ -453,12 +453,12 @@ public class JUnitTests {
         assertEquals(0, response.getResponseCode());
     }
 
-    /**
+    /*/**
      * This test will ensure that the disk cleaning function can succeed when targeting all disks or if there is
      * any bluetooth devices.
      *
      * Is largely platform dependant (Tested function(s) rely heavily on OS specific code).
-     */
+     /
     @Test
     @DisplayName("Clean Disk (Platform Dependant)")
     void testCleanDisk() {
@@ -471,7 +471,7 @@ public class JUnitTests {
 
         assertNotNull(response);
         assertEquals(0, response.getResponseCode());
-    }
+    }*/
 
     /**
      * This test will ensure that the disable WiFi function can succeed regardless of current mode or if there is
@@ -531,12 +531,12 @@ public class JUnitTests {
         assertEquals(0, response.getResponseCode());
     }
 
-    /**
+    /*
      * This test will ensure that the enable Bluetooth function can succeed regardless of current mode or if there is
      * any bluetooth devices.
      *
      * Is largely platform dependant (Tested function(s) rely heavily on OS specific code).
-     */
+     /
     @Test
     @DisplayName("Enable Bluetooth (Platform Dependant)")
     void testEnableBluetooth() {
@@ -549,5 +549,5 @@ public class JUnitTests {
 
         assertNotNull(response);
         assertEquals(0, response.getResponseCode());
-    }
+    }*/
 }
